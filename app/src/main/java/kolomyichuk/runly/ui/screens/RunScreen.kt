@@ -1,5 +1,7 @@
 package kolomyichuk.runly.ui.screens
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.maps.android.compose.GoogleMap
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton

@@ -7,12 +7,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.NotificationHelper
 import kolomyichuk.runly.utils.TrackingUtility
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,11 +28,13 @@ class RunTrackingService : Service() {
     @Inject
     lateinit var notificationHelper: NotificationHelper
 
-    private var timeInSeconds = 0L
+    private var startTime = 0L
+    private var timeRun = 0L
     private var timerJob: Job? = null
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     companion object {
-        val runTime = MutableStateFlow<Long>(0)
+        val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
     }
@@ -42,24 +48,12 @@ class RunTrackingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
         intent.let {
             when (it?.action) {
-                Constants.ACTION_START_TRACKING_SERVICE -> {
-                    startTracking()
-                }
-
-                Constants.ACTION_PAUSE_TRACKING_SERVICE -> {
-                    pauseTracking()
-                }
-
-                Constants.ACTION_RESUME_TRACKING_SERVICE -> {
-                    resumeTracking()
-                }
-
-                Constants.ACTION_STOP_TRACKING_SERVICE -> {
-                    stopTracking()
-                }
+                Constants.ACTION_START_TRACKING_SERVICE -> startTracking()
+                Constants.ACTION_PAUSE_TRACKING_SERVICE -> pauseTracking()
+                Constants.ACTION_RESUME_TRACKING_SERVICE -> resumeTracking()
+                Constants.ACTION_STOP_TRACKING_SERVICE -> stopTracking()
             }
         }
         return START_STICKY
@@ -68,12 +62,12 @@ class RunTrackingService : Service() {
     private fun startTracking() {
         isTracking.value = (true)
         isPause.value = false
-        timeInSeconds = 0
-        runTime.value = timeInSeconds
+        timeRun = 0
+        timeInMillis.value = 0L
 
         val notification = notificationHelper.getNotification(
             "Run",
-            ""
+            TrackingUtility.formatTime(timeInMillis.value / 1000)
         )
         startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
         startTimer()
@@ -82,13 +76,20 @@ class RunTrackingService : Service() {
     private fun pauseTracking() {
         isTracking.value = false
         isPause.value = true
+        timeRun += System.currentTimeMillis() - startTime
         stopTimer()
+        notificationHelper.updateNotification(
+            Constants.TRACKING_NOTIFICATION_ID,
+            "Paused",
+            TrackingUtility.formatTime(timeInMillis.value / 1000)
+        )
     }
 
     private fun resumeTracking() {
-        if (!isTracking.value!!) {
+        if (!isTracking.value) {
             isTracking.value = true
             isPause.value = false
+            startTime = System.currentTimeMillis()
             startTimer()
         }
     }
@@ -96,24 +97,28 @@ class RunTrackingService : Service() {
     private fun stopTracking() {
         isTracking.value = false
         isPause.value = false
-        timeInSeconds = 0
-        runTime.value = timeInSeconds
+        timeRun = 0
+        timeInMillis.value = 0L
         stopTimer()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     private fun startTimer() {
-        timerJob = CoroutineScope(Dispatchers.Main).launch {
-            while (isTracking.value!!) {
+        if (timerJob != null) return
+
+        timerJob = serviceScope.launch(CoroutineExceptionHandler { _, trowable ->
+            Timber.e("Timer error: ${trowable.localizedMessage}")
+        }) {
+            while (isTracking.value) {
                 delay(1000L)
-                timeInSeconds++
-                runTime.value = timeInSeconds
+                val currentTime = System.currentTimeMillis()
+                timeInMillis.value = timeRun + (currentTime - startTime)
 
                 notificationHelper.updateNotification(
                     Constants.TRACKING_NOTIFICATION_ID,
                     "Run",
-                    TrackingUtility.formatTime(timeInSeconds)
+                    TrackingUtility.formatTime(timeInMillis.value / 1000)
                 )
             }
         }
@@ -122,5 +127,10 @@ class RunTrackingService : Service() {
     private fun stopTimer() {
         timerJob?.cancel()
         timerJob = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
     }
 }
