@@ -4,10 +4,17 @@ package kolomyichuk.runly.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +51,34 @@ fun CircleIconButton(
                 contentDescription = contentDescription,
                 tint = iconColor,
                 modifier = Modifier.size(iconSize)
+            )
+        }
+    }
+}
+
+
+@Composable
+fun ButtonStart(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    roundDp: Dp = 8.dp,
+) {
+    Box(modifier = modifier) {
+        Button(
+            shape = RoundedCornerShape(roundDp),
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+
+        ) {
+            Text(
+                text = text
             )
         }
     }
