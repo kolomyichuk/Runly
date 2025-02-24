@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +36,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
@@ -53,12 +62,43 @@ fun RunScreen() {
     val isTracking = rememberSaveable { mutableStateOf(false) }
     val isPause = rememberSaveable { mutableStateOf(false) }
     var hasNotificationPermission by remember { mutableStateOf(true) }
+    val pathPoint = rememberSaveable { mutableStateOf<List<LatLng>>(emptyList()) }
+    val distanceInMeters = rememberSaveable { mutableDoubleStateOf(0.0) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasNotificationPermission = isGranted
-        if (isGranted) startRunTrackingService(context = context)
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val locationGranted = permissions["android.permission.ACCESS_FINE_LOCATION"] == true &&
+                permissions["android.permission.ACCESS_COARSE_LOCATION"] == true
+        val notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions["android.permission.POST_NOTIFICATIONS"] == true
+        } else true
+
+        hasNotificationPermission = notificationGranted
+        if (locationGranted) {
+            startRunTrackingService(context = context)
+        }
+    }
+
+    val formattedDistance =  "%.2f".format(distanceInMeters.doubleValue / 1000)
+
+    val cameraPositionState = rememberCameraPositionState {
+        //refactor LatLng
+        position = CameraPosition.fromLatLngZoom(
+            if (pathPoint.value.isNotEmpty()) pathPoint.value.first() else LatLng(
+                49.010708,
+                25.796191
+            ), 18f
+        )
+    }
+
+    LaunchedEffect(pathPoint.value) {
+        pathPoint.value.lastOrNull()?.let { latestLocation ->
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(latestLocation, 18f),
+                1000
+            )
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -69,6 +109,12 @@ fun RunScreen() {
     }
     LaunchedEffect(Unit) {
         RunTrackingService.timeInMillis.collectLatest { timeInMillisState.longValue = it }
+    }
+    LaunchedEffect(isTracking) {
+        RunTrackingService.pathPoints.collectLatest { pathPoint.value = it }
+    }
+    LaunchedEffect(isTracking) {
+        RunTrackingService.distanceInMeters.collectLatest { distanceInMeters.doubleValue = it }
     }
 
     val formattedTime = TrackingUtility.formatTime(timeInMillisState.longValue)
@@ -81,8 +127,20 @@ fun RunScreen() {
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
-        )
+                .weight(1f),
+            cameraPositionState = cameraPositionState,
+            uiSettings = MapUiSettings(zoomControlsEnabled = true, zoomGesturesEnabled = true)
+        ) {
+            if (pathPoint.value.isNotEmpty()) {
+                Polyline(
+                    points = pathPoint.value,
+                    color = MaterialTheme.colorScheme.primary,
+                    width = 12f
+                )
+                Marker(state = MarkerState(pathPoint.value.first()), title = "Start")
+                Marker(state = MarkerState(pathPoint.value.last()), title = "Finish")
+            }
+        }
 
         Row(
             modifier = Modifier
@@ -91,7 +149,7 @@ fun RunScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            InfoColumn("0.km", "Distance")
+            InfoColumn(formattedDistance, "Distance")
             InfoColumn("--:-- /km", "Current Pace")
             InfoColumn(formattedTime, "Time")
         }
@@ -99,15 +157,34 @@ fun RunScreen() {
         if (!isTracking.value && !isPause.value) {
             ButtonStart(
                 onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            "android.permission.POST_NOTIFICATIONS"
+                    val permissionsToRequest = mutableListOf<String>()
 
+                    if (ContextCompat.checkSelfPermission(
+                            context, "android.permission.ACCESS_FINE_LOCATION"
                         ) != PackageManager.PERMISSION_GRANTED
                     ) {
-                        permissionLauncher.launch("android.permission.POST_NOTIFICATIONS")
-                    } else startRunTrackingService(context)
+                        permissionsToRequest.add("android.permission.ACCESS_FINE_LOCATION")
+                    }
+                    if (ContextCompat.checkSelfPermission(
+                            context, "android.permission.ACCESS_COARSE_LOCATION"
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionsToRequest.add("android.permission.ACCESS_COARSE_LOCATION")
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        ContextCompat.checkSelfPermission(
+                            context, "android.permission.POST_NOTIFICATIONS"
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionsToRequest.add("android.permission.POST_NOTIFICATIONS")
+                    }
+
+                    if (permissionsToRequest.isNotEmpty()) {
+                        permissionsLauncher.launch(permissionsToRequest.toTypedArray())
+                    } else {
+                        isTracking.value = true
+                        startRunTrackingService(context = context)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

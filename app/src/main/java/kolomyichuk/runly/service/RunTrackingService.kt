@@ -32,17 +32,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class RunTrackingService : Service() {
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
-
     @Inject
     lateinit var notificationHelper: NotificationHelper
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    val pathPoints = MutableStateFlow<List<LatLng>>(emptyList())
-    val distanceInMeters = MutableStateFlow(0.0)
+
     private var lastValidLocation: LatLng? = null
 
     private var startTime = 0L
@@ -54,6 +49,8 @@ class RunTrackingService : Service() {
         val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
+        val pathPoints = MutableStateFlow<List<LatLng>>(emptyList())
+        val distanceInMeters = MutableStateFlow(0.0)
     }
 
     override fun onCreate() {
@@ -124,7 +121,7 @@ class RunTrackingService : Service() {
                         timeDiff.toFloat()
                     )
                 ) {
-                    pathPoints.value = pathPoints.value + newPoint
+                    pathPoints.value += newPoint
                     distanceInMeters.value = SphericalUtil.computeLength(pathPoints.value)
                     lastValidLocation = newPoint
 
@@ -156,7 +153,6 @@ class RunTrackingService : Service() {
             isPause.value = false
             startTime = System.currentTimeMillis()
             startTimer()
-            stopLocationTracking()
             startLocationTracking()
         }
     }
@@ -165,6 +161,8 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
+        pathPoints.value = emptyList()
+        distanceInMeters.value = 0.0
         timeInMillis.value = 0L
         stopTimer()
         stopLocationTracking()
@@ -175,8 +173,8 @@ class RunTrackingService : Service() {
     private fun startTimer() {
         if (timerJob != null) return
 
-        timerJob = serviceScope.launch(CoroutineExceptionHandler { _, trowable ->
-            Timber.e("Timer error: ${trowable.localizedMessage}")
+        timerJob = serviceScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Timber.e("Timer error: ${throwable.localizedMessage}")
         }) {
             while (isTracking.value) {
                 delay(Constants.TIMER_INTERVAL)
@@ -200,7 +198,7 @@ class RunTrackingService : Service() {
             prevPoint.latitude, prevPoint.longitude,
             newPoint.latitude, newPoint.longitude, distance
         )
-        val maxSpeed = 30 / 3.6  // Max speed 30 km/hour (переведено в м/с)
+        val maxSpeed = 30 / 3.6  // Max speed 30 km/hour (converted to m/s)
         return distance[0] < 50 && distance[0] / timeDiff < maxSpeed
     }
 
@@ -213,5 +211,9 @@ class RunTrackingService : Service() {
         super.onDestroy()
         stopTracking()
         serviceScope.cancel()
+    }
+
+    override fun onBind(p0: Intent?): IBinder? {
+        return null
     }
 }
