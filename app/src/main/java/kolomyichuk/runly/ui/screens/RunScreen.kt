@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +50,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun RunScreen() {
     val context = LocalContext.current
     val timeInMillisState = remember { mutableLongStateOf(0L) }
-    val isTrackingState = rememberSaveable { mutableStateOf(false) }
-    val isPauseState = rememberSaveable { mutableStateOf(false) }
+    val isTracking = rememberSaveable { mutableStateOf(false) }
+    val isPause = rememberSaveable { mutableStateOf(false) }
     var hasNotificationPermission by remember { mutableStateOf(true) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -61,10 +62,10 @@ fun RunScreen() {
     }
 
     LaunchedEffect(Unit) {
-        RunTrackingService.isTracking.collectLatest { isTrackingState.value = it }
+        RunTrackingService.isTracking.collectLatest { isTracking.value = it }
     }
     LaunchedEffect(Unit) {
-        RunTrackingService.isPause.collectLatest { isPauseState.value = it }
+        RunTrackingService.isPause.collectLatest { isPause.value = it }
     }
     LaunchedEffect(Unit) {
         RunTrackingService.timeInMillis.collectLatest { timeInMillisState.longValue = it }
@@ -90,59 +91,12 @@ fun RunScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "0 km",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-                Text(
-                    text = "Distance",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 12.sp,
-                )
-            }
-
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "--:-- /km",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Current Pace",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 12.sp
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = formattedTime,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Time",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 12.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-            }
+            InfoColumn("0.km", "Distance")
+            InfoColumn("--:-- /km", "Current Pace")
+            InfoColumn(formattedTime, "Time")
         }
 
-        if (!isTrackingState.value && !isPauseState.value) {
+        if (!isTracking.value && !isPause.value) {
             ButtonStart(
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -162,79 +116,84 @@ fun RunScreen() {
                 roundDp = 8.dp
             )
         } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+            ControlButtons(
+                isTracking = isTracking,
+                isPause = isPause,
+                onPause = { pauseTrackingService(context = context) },
+                onResume = { resumeTrackingService(context = context) },
+                onStop = { stopTrackingService(context = context) }
             )
-            {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isTrackingState.value || isPauseState.value) {
-                        CircleIconButton(
-                            onClick = {
-                                stopTrackingService(context = context)
-                            },
-                            imageVector = Icons.Filled.Stop,
-                            iconColor = MaterialTheme.colorScheme.onSurface,
-                            elevation = 10.dp,
-                            iconSize = 28.dp,
-                            buttonSize = 40.dp,
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            contentDescription = "Stop"
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isTrackingState.value) {
-                        Button(
-                            onClick = {
-                                pauseTrackingService(context = context)
-                            },
-                            modifier = Modifier
-                                .width(130.dp)
-                                .height(40.dp)
-                        ) {
-                            Text(text = "Pause")
-                        }
-                    } else if (isPauseState.value) {
-                        Button(
-                            onClick = {
-                                resumeTrackingService(context = context)
-                            },
-                            modifier = Modifier
-                                .width(130.dp)
-                                .height(40.dp)
-                        ) {
-                            Text(text = "Resume")
-                        }
-                    }
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    CircleIconButton(
-                        onClick = {
-
-                        },
-                        imageVector = Icons.Outlined.LocationOn,
-                        iconColor = MaterialTheme.colorScheme.onSurface,
-                        elevation = 10.dp,
-                        iconSize = 28.dp,
-                        buttonSize = 40.dp,
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        contentDescription = "Map view"
-                    )
-                }
-            }
         }
+    }
+}
+
+@Composable
+fun InfoColumn(value: String, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = value,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 12.sp
+        )
+    }
+}
+
+@Composable
+fun ControlButtons(
+    isTracking: MutableState<Boolean>,
+    isPause: MutableState<Boolean>,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onStop: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    )
+    {
+        if (isTracking.value || isPause.value) {
+            CircleIconButton(
+                onClick = { onStop() },
+                imageVector = Icons.Filled.Stop,
+                iconColor = MaterialTheme.colorScheme.onSurface,
+                elevation = 10.dp,
+                iconSize = 28.dp,
+                buttonSize = 40.dp,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentDescription = "Stop"
+            )
+        }
+
+        Button(
+            onClick = { if (isTracking.value) onPause() else onResume() },
+            modifier = Modifier
+                .width(130.dp)
+                .height(40.dp)
+        ) {
+            Text(text = if (isTracking.value) "Pause" else "Resume")
+        }
+
+        CircleIconButton(
+            onClick = {
+
+            },
+            imageVector = Icons.Outlined.LocationOn,
+            iconColor = MaterialTheme.colorScheme.onSurface,
+            elevation = 10.dp,
+            iconSize = 28.dp,
+            buttonSize = 40.dp,
+            backgroundColor = MaterialTheme.colorScheme.surface,
+            contentDescription = "Map view"
+        )
+
     }
 }
