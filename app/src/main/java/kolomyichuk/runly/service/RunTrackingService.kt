@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
+import kolomyichuk.runly.R
 import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.NotificationHelper
 import kolomyichuk.runly.utils.TrackingUtility
@@ -64,10 +65,11 @@ class RunTrackingService : Service() {
         isPause.value = false
         timeRun = 0
         timeInMillis.value = 0L
+        startTime = System.currentTimeMillis()
 
         val notification = notificationHelper.getNotification(
-            "Run",
-            TrackingUtility.formatTime(timeInMillis.value / 1000)
+            getString(R.string.run),
+            TrackingUtility.formatTime(timeInMillis.value)
         )
         startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
         startTimer()
@@ -81,7 +83,7 @@ class RunTrackingService : Service() {
         notificationHelper.updateNotification(
             Constants.TRACKING_NOTIFICATION_ID,
             "Paused",
-            TrackingUtility.formatTime(timeInMillis.value / 1000)
+            TrackingUtility.formatTime(timeInMillis.value)
         )
     }
 
@@ -111,14 +113,14 @@ class RunTrackingService : Service() {
             Timber.e("Timer error: ${trowable.localizedMessage}")
         }) {
             while (isTracking.value) {
-                delay(1000L)
+                delay(Constants.TIMER_INTERVAL)
                 val currentTime = System.currentTimeMillis()
                 timeInMillis.value = timeRun + (currentTime - startTime)
 
                 notificationHelper.updateNotification(
                     Constants.TRACKING_NOTIFICATION_ID,
-                    "Run",
-                    TrackingUtility.formatTime(timeInMillis.value / 1000)
+                    getString(R.string.run),
+                    TrackingUtility.formatTime(timeInMillis.value)
                 )
             }
         }
