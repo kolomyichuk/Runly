@@ -74,6 +74,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.android.maps.utils)
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.data.store.preferences)
     implementation(libs.hilt.android)

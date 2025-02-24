@@ -1,8 +1,18 @@
 package kolomyichuk.runly.service
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
+import android.location.Location
 import android.os.IBinder
+import android.os.Looper
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
 import kolomyichuk.runly.utils.Constants
@@ -28,6 +38,12 @@ class RunTrackingService : Service() {
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
+
+    @Inject
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    val pathPoints = MutableStateFlow<List<LatLng>>(emptyList())
+    val distanceInMeters = MutableStateFlow(0.0)
+    private var lastValidLocation: LatLng? = null
 
     private var startTime = 0L
     private var timeRun = 0L
@@ -73,6 +89,48 @@ class RunTrackingService : Service() {
         )
         startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
         startTimer()
+        startLocationTracking()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationTracking() {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+            .setMinUpdateDistanceMeters(4f)
+            .build()
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            super.onLocationResult(locationResult)
+            locationResult.locations.lastOrNull()?.let { location ->
+                val newPoint = LatLng(location.latitude, location.longitude)
+
+                val timeDiff = (location.time - (lastValidLocation?.let {
+                    Location("").apply {
+                        latitude = it.latitude
+                        longitude = it.longitude
+                    }
+                }?.time ?: location.time)) / 1000
+
+                if (lastValidLocation == null || isValidLocation(
+                        lastValidLocation!!,
+                        newPoint,
+                        timeDiff.toFloat()
+                    )
+                ) {
+                    pathPoints.value = pathPoints.value + newPoint
+                    distanceInMeters.value = SphericalUtil.computeLength(pathPoints.value)
+                    lastValidLocation = newPoint
+
+                }
+            }
+        }
     }
 
     private fun pauseTracking() {
@@ -80,11 +138,16 @@ class RunTrackingService : Service() {
         isPause.value = true
         timeRun += System.currentTimeMillis() - startTime
         stopTimer()
+        stopLocationTracking()
         notificationHelper.updateNotification(
             Constants.TRACKING_NOTIFICATION_ID,
             "Paused",
             TrackingUtility.formatTime(timeInMillis.value)
         )
+    }
+
+    private fun stopLocationTracking() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
     private fun resumeTracking() {
@@ -93,6 +156,8 @@ class RunTrackingService : Service() {
             isPause.value = false
             startTime = System.currentTimeMillis()
             startTimer()
+            stopLocationTracking()
+            startLocationTracking()
         }
     }
 
@@ -102,6 +167,7 @@ class RunTrackingService : Service() {
         timeRun = 0
         timeInMillis.value = 0L
         stopTimer()
+        stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -126,6 +192,18 @@ class RunTrackingService : Service() {
         }
     }
 
+    private fun isValidLocation(prevPoint: LatLng, newPoint: LatLng, timeDiff: Float): Boolean {
+        if (timeDiff <= 0f) return false
+
+        val distance = FloatArray(1)
+        Location.distanceBetween(
+            prevPoint.latitude, prevPoint.longitude,
+            newPoint.latitude, newPoint.longitude, distance
+        )
+        val maxSpeed = 30 / 3.6  // Max speed 30 km/hour (переведено в м/с)
+        return distance[0] < 50 && distance[0] / timeDiff < maxSpeed
+    }
+
     private fun stopTimer() {
         timerJob?.cancel()
         timerJob = null
@@ -133,6 +211,7 @@ class RunTrackingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopTracking()
         serviceScope.cancel()
     }
 }
