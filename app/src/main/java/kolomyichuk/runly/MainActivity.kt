@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import kolomyichuk.runly.ui.screens.RunScreen
+import kolomyichuk.runly.ui.screens.SettingsScreen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RunlyTheme {
-                RunScreen()
+                SettingsScreen()
             }
         }
     }
