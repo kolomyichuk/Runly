@@ -37,7 +37,7 @@ fun ProfileScreen(
 fun ContentProfileScreen() {
     val username = "@kolomyichuk"
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = "User Image"

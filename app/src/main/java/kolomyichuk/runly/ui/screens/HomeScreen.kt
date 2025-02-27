@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.ui.components.TopBarApp
 
 @Composable
@@ -24,7 +25,7 @@ fun HomeScreen() {
 fun ContentHomeScreen(
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
         Text("Home Screen Content")
     }

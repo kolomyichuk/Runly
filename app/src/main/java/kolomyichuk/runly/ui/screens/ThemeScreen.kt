@@ -33,30 +33,29 @@ import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 @Composable
 fun ThemeScreen(
-    onBack:()->Unit,
-    viewModel:ThemeViewModel,
+    onBack: () -> Unit,
+    viewModel: ThemeViewModel,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(title = "Theme")
+        TopBarApp(title = "Theme", onBackClick = onBack)
         ContentThemeScreen(viewModel = viewModel)
     }
 }
 
 @Composable
 fun ContentThemeScreen(
-    viewModel:ThemeViewModel
-){
+    viewModel: ThemeViewModel
+) {
     val currentTheme by viewModel.themeFlow.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             Text(
                 "Choice Theme",

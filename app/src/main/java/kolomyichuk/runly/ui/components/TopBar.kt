@@ -2,7 +2,7 @@ package kolomyichuk.runly.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,7 +22,7 @@ fun TopBarApp(
     menuIcon: ImageVector? = null,
     onMenuClick: () -> Unit = {}
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
             title?.let { text ->
                 Text(
@@ -55,7 +55,7 @@ fun TopBarApp(
             menuIcon?.let {
                 IconButton(onClick = onMenuClick) {
                     Icon(
-                        imageVector = Icons.Filled.Check,
+                        imageVector = menuIcon,
                         contentDescription = null
                     )
                 }

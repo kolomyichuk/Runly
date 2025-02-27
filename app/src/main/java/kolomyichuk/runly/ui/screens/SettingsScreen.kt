@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +21,11 @@ import kolomyichuk.runly.ui.components.TopBarApp
 
 @Composable
 fun SettingsScreen(
-    onBack:()->Unit,
+    onBack: () -> Unit,
     onNavigateToTheme: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(title = "Settings")
+        TopBarApp(title = "Settings", onBackClick = onBack)
         ContentSettingsScreen(onNavigateToTheme = onNavigateToTheme)
     }
 }
@@ -34,6 +35,7 @@ fun ContentSettingsScreen(
     onNavigateToTheme: () -> Unit
 ) {
     Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Column(
