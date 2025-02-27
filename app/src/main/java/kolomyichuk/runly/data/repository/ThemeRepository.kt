@@ -22,7 +22,7 @@ class ThemeRepository @Inject constructor(
     val themeFlow: Flow<AppTheme> = dataStore.data
         .map { preferences ->
             val themeName = preferences[themeKey] ?: AppTheme.SYSTEM.name
-            AppTheme.valueOf(themeName)
+            AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
         }
 
     suspend fun saveTheme(theme: AppTheme) {
