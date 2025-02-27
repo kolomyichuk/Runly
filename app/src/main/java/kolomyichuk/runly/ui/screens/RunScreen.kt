@@ -48,6 +48,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
+import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.utils.TrackingUtility
 import kolomyichuk.runly.utils.pauseTrackingService
 import kolomyichuk.runly.utils.resumeTrackingService
@@ -57,6 +58,16 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RunScreen() {
+    Column (modifier = Modifier.fillMaxSize()) {
+        TopBarApp(
+            title = "Run"
+        )
+        ContentRunScreen()
+    }
+}
+
+@Composable
+fun ContentRunScreen() {
     val context = LocalContext.current
     val timeInMillisState = remember { mutableLongStateOf(0L) }
     val isTracking = rememberSaveable { mutableStateOf(false) }
@@ -80,7 +91,7 @@ fun RunScreen() {
         }
     }
 
-    val formattedDistance =  "%.2f".format(distanceInMeters.doubleValue / 1000)
+    val formattedDistance = "%.2f".format(distanceInMeters.doubleValue / 1000)
 
     val cameraPositionState = rememberCameraPositionState {
         //refactor LatLng
@@ -122,7 +133,6 @@ fun RunScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background)
     ) {
         GoogleMap(
             modifier = Modifier
@@ -203,6 +213,7 @@ fun RunScreen() {
         }
     }
 }
+
 
 @Composable
 fun InfoColumn(value: String, label: String) {

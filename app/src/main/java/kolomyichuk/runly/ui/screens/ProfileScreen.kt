@@ -6,26 +6,39 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.ui.components.TopBarApp
 
 @Composable
-fun ProfileScreen() {
-    val username = "@username"
+fun ProfileScreen(
+    onNavigateToSettings: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        TopBarApp(
+            title = "Profile",
+            menuIcon = Icons.Default.Settings,
+            onMenuClick = onNavigateToSettings
+        )
+        ContentProfileScreen()
+    }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+}
+
+@Composable
+fun ContentProfileScreen() {
+    val username = "@kolomyichuk"
+
+    Column(modifier = Modifier.fillMaxSize()) {
         Image(
-            modifier = Modifier.padding(top = 20.dp),
             painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = "User Image"
         )

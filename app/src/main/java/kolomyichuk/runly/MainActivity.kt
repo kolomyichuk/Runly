@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.repository.AppTheme
-import kolomyichuk.runly.ui.screens.ThemeScreen
+import kolomyichuk.runly.navigation.MainScreen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
             }
             RunlyTheme(darkTheme = isDarkTheme) {
-                ThemeScreen()
+                MainScreen()
             }
         }
     }
