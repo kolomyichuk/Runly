@@ -10,8 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +26,7 @@ fun ProfileScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
-            title = "Profile",
+            title = stringResource(R.string.profile),
             menuIcon = Icons.Default.Settings,
             onMenuClick = onNavigateToSettings
         )
@@ -37,7 +39,12 @@ fun ProfileScreen(
 fun ContentProfileScreen() {
     val username = "@kolomyichuk"
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = "User Image"

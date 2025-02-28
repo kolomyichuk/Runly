@@ -64,7 +64,7 @@ fun RunScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
-            title = "Run",
+            title = stringResource(R.string.run),
             onBackClick = { navController.popBackStack() }
         )
         ContentRunScreen()

@@ -1,6 +1,5 @@
 package kolomyichuk.runly.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +24,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kolomyichuk.runly.R
 import kolomyichuk.runly.data.repository.AppTheme
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
@@ -37,7 +38,10 @@ fun ThemeScreen(
     viewModel: ThemeViewModel,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(title = "Theme", onBackClick = onBack)
+        TopBarApp(
+            title = stringResource(R.string.theme),
+            onBackClick = onBack
+        )
         ContentThemeScreen(viewModel = viewModel)
     }
 }
@@ -124,9 +128,9 @@ fun ThemeIcon(
 
 fun themeName(theme: AppTheme): String {
     return when (theme) {
-        AppTheme.LIGHT -> "Light mode"
-        AppTheme.DARK -> "Dark mode"
-        AppTheme.SYSTEM -> "Phone default"
+        AppTheme.LIGHT -> "Light"
+        AppTheme.DARK -> "Dark"
+        AppTheme.SYSTEM -> "System"
     }
 }
 

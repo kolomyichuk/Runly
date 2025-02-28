@@ -14,15 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import kolomyichuk.runly.R
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem("home", "Home", Icons.Default.Home),
-        BottomNavItem("run", "Run", Icons.AutoMirrored.Filled.DirectionsRun),
-        BottomNavItem("profile", "Profile", Icons.Filled.Person)
+        BottomNavItem("home", stringResource(R.string.home), Icons.Default.Home),
+        BottomNavItem("run", stringResource(R.string.run), Icons.AutoMirrored.Filled.DirectionsRun),
+        BottomNavItem("profile", stringResource(R.string.profile), Icons.Filled.Person)
     )
 
     BottomAppBar() {
