@@ -14,6 +14,7 @@ import javax.inject.Inject
 class ThemeViewModel @Inject constructor(
     private val repository: ThemeRepository
 ) : ViewModel() {
+
     val themeFlow = repository.themeFlow.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,

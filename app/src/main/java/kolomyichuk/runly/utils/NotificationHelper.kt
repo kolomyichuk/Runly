@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import androidx.core.app.NotificationCompat.Builder
+import kolomyichuk.runly.R
 import javax.inject.Inject
 
 class NotificationHelper @Inject constructor(
@@ -28,6 +29,7 @@ class NotificationHelper @Inject constructor(
     fun getNotification(title: String, content: String): Notification {
         return trackingNotificationBuilder
             .setContentTitle(title)
+            .setSmallIcon(R.mipmap.ic_runly)
             .setContentText(content)
             .build()
     }

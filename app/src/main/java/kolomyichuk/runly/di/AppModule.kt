@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.repository.ThemeRepository
+import kolomyichuk.runly.utils.Constants
 import javax.inject.Singleton
 
 @Module
@@ -26,7 +27,7 @@ object AppModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.dataStoreFile("settings.preferences_pb") }
+            produceFile = { context.dataStoreFile(Constants.DATA_STORE_NAME) }
         )
     }
 

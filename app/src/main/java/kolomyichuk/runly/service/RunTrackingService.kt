@@ -91,7 +91,10 @@ class RunTrackingService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun startLocationTracking() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            Constants.LOCATION_UPDATE_INTERVAL
+        )
             .setMinUpdateDistanceMeters(4f)
             .build()
 

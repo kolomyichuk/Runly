@@ -51,6 +51,7 @@ import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.TrackingUtility
 import kolomyichuk.runly.utils.pauseTrackingService
 import kolomyichuk.runly.utils.resumeTrackingService
@@ -104,14 +105,14 @@ fun ContentRunScreen() {
             if (pathPoint.value.isNotEmpty()) pathPoint.value.first() else LatLng(
                 49.010708,
                 25.796191
-            ), 18f
+            ), Constants.MAP_ZOOM
         )
     }
 
     LaunchedEffect(pathPoint.value) {
         pathPoint.value.lastOrNull()?.let { latestLocation ->
             cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(latestLocation, 18f),
+                CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
                 1000
             )
         }
@@ -150,7 +151,7 @@ fun ContentRunScreen() {
                 Polyline(
                     points = pathPoint.value,
                     color = MaterialTheme.colorScheme.primary,
-                    width = 12f
+                    width = Constants.POLYLINE_WIDTH
                 )
                 Marker(state = MarkerState(pathPoint.value.first()), title = "Start")
                 Marker(state = MarkerState(pathPoint.value.last()), title = "Finish")

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kolomyichuk.runly.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,7 +18,7 @@ enum class AppTheme {
 class ThemeRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    private val themeKey = stringPreferencesKey("app_theme")
+    private val themeKey = stringPreferencesKey(Constants.DATA_STORE_THEME_KEY)
 
     val themeFlow: Flow<AppTheme> = dataStore.data
         .map { preferences ->

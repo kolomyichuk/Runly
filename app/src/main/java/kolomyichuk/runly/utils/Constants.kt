@@ -12,4 +12,13 @@ object Constants {
     const val ACTION_STOP_TRACKING_SERVICE = "ACTION_STOP_SERVICE"
 
     const val TIMER_INTERVAL = 1000L
+
+    const val LOCATION_UPDATE_INTERVAL = 5000L
+    const val FASTEST_LOCATION_INTERVAL = 2000L
+
+    const val POLYLINE_WIDTH = 15f
+    const val MAP_ZOOM = 15f
+
+    const val DATA_STORE_NAME = "settings.preferences_pb"
+    const val DATA_STORE_THEME_KEY = "app_theme"
 }
