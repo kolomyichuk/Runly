@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,10 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -45,6 +46,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
@@ -57,10 +59,13 @@ import kolomyichuk.runly.utils.stopTrackingService
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun RunScreen() {
-    Column (modifier = Modifier.fillMaxSize()) {
+fun RunScreen(
+    navController: NavController
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
-            title = "Run"
+            title = "Run",
+            onBackClick = { navController.popBackStack() }
         )
         ContentRunScreen()
     }
@@ -159,9 +164,9 @@ fun ContentRunScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            InfoColumn(formattedDistance, "Distance")
+            InfoColumn(formattedDistance, stringResource(R.string.distance))
             InfoColumn("--:-- /km", "Current Pace")
-            InfoColumn(formattedTime, "Time")
+            InfoColumn(formattedTime, stringResource(R.string.time))
         }
 
         if (!isTracking.value && !isPause.value) {
@@ -199,7 +204,7 @@ fun ContentRunScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 24.dp, end = 24.dp, bottom = 16.dp),
-                text = "Start",
+                text = stringResource(R.string.start),
                 roundDp = 8.dp
             )
         } else {
@@ -257,7 +262,7 @@ fun ControlButtons(
                 iconSize = 28.dp,
                 buttonSize = 40.dp,
                 backgroundColor = MaterialTheme.colorScheme.surface,
-                contentDescription = "Stop"
+                contentDescription = stringResource(R.string.stop)
             )
         }
 
@@ -267,7 +272,7 @@ fun ControlButtons(
                 .width(130.dp)
                 .height(40.dp)
         ) {
-            Text(text = if (isTracking.value) "Pause" else "Resume")
+            Text(text = if (isTracking.value) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
         CircleIconButton(

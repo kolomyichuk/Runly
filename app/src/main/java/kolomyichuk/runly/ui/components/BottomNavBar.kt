@@ -25,7 +25,7 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem("profile", "Profile", Icons.Filled.Person)
     )
 
-    BottomAppBar {
+    BottomAppBar() {
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = currentBackStackEntry?.destination?.route
 
@@ -41,7 +41,7 @@ fun BottomNavigationBar(navController: NavController) {
                     unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
                     unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                    indicatorColor = Color.Transparent
+                    indicatorColor = Color.Transparent,
                 )
             )
         }

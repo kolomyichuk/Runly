@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kolomyichuk.runly.ui.components.BottomNavigationBar
 import kolomyichuk.runly.ui.screens.HomeScreen
@@ -16,7 +17,13 @@ fun MainScreen() {
     val navController = rememberNavController()
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = {
+            val currentRoute =
+                navController.currentBackStackEntryAsState().value?.destination?.route
+            if (currentRoute != "run"){
+                BottomNavigationBar(navController)
+            }
+        }
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -24,7 +31,7 @@ fun MainScreen() {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("home") { HomeScreen() }
-            composable("run") { RunScreen()  }
+            composable("run") { RunScreen(navController) }
             composable("profile") { ProfileNavHost() }
         }
     }
