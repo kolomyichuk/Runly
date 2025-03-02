@@ -74,7 +74,7 @@ class RunTrackingService : Service() {
     }
 
     private fun startTracking() {
-        isTracking.value = (true)
+        isTracking.value = true
         isPause.value = false
         timeRun = 0
         timeInMillis.value = 0L
@@ -124,10 +124,10 @@ class RunTrackingService : Service() {
                         timeDiff.toFloat()
                     )
                 ) {
+
                     pathPoints.value += newPoint
                     distanceInMeters.value = SphericalUtil.computeLength(pathPoints.value)
                     lastValidLocation = newPoint
-
                 }
             }
         }

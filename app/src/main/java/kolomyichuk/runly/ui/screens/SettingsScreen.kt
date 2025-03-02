@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
 
 @Composable
@@ -49,14 +54,30 @@ fun ContentSettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(25.dp)
-                .clickable { onNavigateToTheme() }) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToTheme() },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircleIconButton(
+                    onClick = {},
+                    iconResId = R.drawable.brush,
+                    contentDescription = "",
+                    iconColor = MaterialTheme.colorScheme.primary,
+                    backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                    buttonSize = 40.dp
+                )
+                Spacer(Modifier.width(16.dp))
                 Text(
                     text = "Theme",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = null
                 )
             }
             Spacer(

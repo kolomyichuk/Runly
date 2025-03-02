@@ -2,6 +2,7 @@
 
 package kolomyichuk.runly.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,13 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CircleIconButton(
     onClick: () -> Unit,
-    imageVector: ImageVector,
+    imageVector: ImageVector? = null,
+    iconResId: Int? = null,
     contentDescription: String,
     backgroundColor: Color = Color.White,
     iconColor: Color = Color.Black,
@@ -46,12 +49,23 @@ fun CircleIconButton(
             modifier = Modifier.fillMaxSize()
 
         ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = contentDescription,
-                tint = iconColor,
-                modifier = Modifier.size(iconSize)
-            )
+            if (imageVector != null) {
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = contentDescription,
+                    tint = iconColor,
+                    modifier = Modifier.size(iconSize)
+                )
+            } else if (iconResId != null) {
+                Icon(
+                    painter = painterResource(iconResId),
+                    contentDescription = contentDescription,
+                    tint = iconColor,
+                    modifier = Modifier
+                        .size(iconSize)
+                        .background(backgroundColor)
+                )
+            }
         }
     }
 }
