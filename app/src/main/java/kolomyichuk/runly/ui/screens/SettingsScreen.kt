@@ -61,6 +61,7 @@ fun ContentSettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CircleIconButton(
+                    //edit click
                     onClick = {},
                     iconResId = R.drawable.brush,
                     contentDescription = "",
