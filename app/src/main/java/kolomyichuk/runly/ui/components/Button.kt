@@ -3,6 +3,7 @@
 package kolomyichuk.runly.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CircleIconButton(
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     imageVector: ImageVector? = null,
     iconResId: Int? = null,
     contentDescription: String,
@@ -41,8 +42,12 @@ fun CircleIconButton(
         shape = CircleShape,
         color = backgroundColor,
         shadowElevation = elevation,
-        modifier = Modifier.size(buttonSize),
-        onClick = onClick
+        modifier = Modifier
+            .size(buttonSize)
+            .then(if (onClick != null) {
+                Modifier.clickable { onClick() }
+            } else Modifier
+            )
     ) {
         Box(
             contentAlignment = Alignment.Center,
