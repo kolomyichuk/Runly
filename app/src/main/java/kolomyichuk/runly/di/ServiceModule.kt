@@ -34,7 +34,7 @@ object ServiceModule {
         .setAutoCancel(false)
         .setOngoing(true)
         .setOnlyAlertOnce(true)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.mipmap.ic_runly)
         .setContentTitle(context.getString(R.string.app_name))
         .setContentText("00:00:00")
         .setContentIntent(pendingIntent)

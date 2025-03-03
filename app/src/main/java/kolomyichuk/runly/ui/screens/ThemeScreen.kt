@@ -14,6 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.ModeNight
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -28,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.repository.AppTheme
+import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
@@ -61,12 +66,6 @@ fun ContentThemeScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Text(
-                "Choice Theme",
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
             ThemeOption(AppTheme.LIGHT, currentTheme) { viewModel.saveTheme(it) }
             ThemeOption(AppTheme.DARK, currentTheme) { viewModel.saveTheme(it) }
             ThemeOption(AppTheme.SYSTEM, currentTheme) { viewModel.saveTheme(it) }
@@ -89,7 +88,7 @@ fun ThemeOption(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ThemeIcon(theme = theme)
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = themeName(theme),
             modifier = Modifier.weight(1f),
@@ -100,7 +99,7 @@ fun ThemeOption(
             onClick = { onThemeSelected(theme) },
             colors = RadioButtonDefaults.colors(
                 selectedColor = MaterialTheme.colorScheme.primary,
-                unselectedColor = MaterialTheme.colorScheme.onBackground   //?
+                unselectedColor = MaterialTheme.colorScheme.onBackground
             )
         )
     }
@@ -112,16 +111,16 @@ fun ThemeIcon(
     theme: AppTheme
 ) {
     val icon = when (theme) {
-        AppTheme.LIGHT -> Icons.Default.WbSunny
-        AppTheme.DARK -> Icons.Default.NightsStay
-        AppTheme.SYSTEM -> Icons.Default.Settings
+        AppTheme.LIGHT -> Icons.Outlined.LightMode
+        AppTheme.DARK -> Icons.Outlined.ModeNight
+        AppTheme.SYSTEM -> Icons.Outlined.Settings
     }
-
-    Icon(
+    CircleIconButton(
         imageVector = icon,
-        contentDescription = null,
-        modifier = Modifier.size(40.dp),
-        tint = MaterialTheme.colorScheme.onBackground
+        contentDescription = "",
+        backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        iconColor = MaterialTheme.colorScheme.primary,
+        buttonSize = 40.dp
     )
 }
 

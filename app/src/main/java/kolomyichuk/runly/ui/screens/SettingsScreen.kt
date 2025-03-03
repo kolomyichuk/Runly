@@ -71,7 +71,7 @@ fun ContentSettingsScreen(
                 Text(
                     text = "Theme",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Normal,
                     modifier = Modifier.weight(1f)
                 )
                 Icon(

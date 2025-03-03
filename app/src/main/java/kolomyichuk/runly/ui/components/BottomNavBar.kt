@@ -2,8 +2,14 @@ package kolomyichuk.runly.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
+import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.DirectionsRun
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Person2
+import androidx.compose.material.icons.outlined.RunCircle
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,8 +29,8 @@ import kolomyichuk.runly.R
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem("home", stringResource(R.string.home), Icons.Default.Home),
-        BottomNavItem("run", stringResource(R.string.run), Icons.AutoMirrored.Filled.DirectionsRun),
-        BottomNavItem("profile", stringResource(R.string.profile), Icons.Filled.Person)
+        BottomNavItem("run", stringResource(R.string.run), Icons.AutoMirrored.Default.DirectionsRun),
+        BottomNavItem("profile", stringResource(R.string.profile), Icons.Default.Person)
     )
 
     BottomAppBar() {
