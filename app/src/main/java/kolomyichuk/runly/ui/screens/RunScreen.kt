@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -36,21 +38,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapEffect
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.repository.AppTheme
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.TrackingUtility
 import kolomyichuk.runly.utils.pauseTrackingService
@@ -61,19 +69,28 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RunScreen(
-    navController: NavController
+    navController: NavController,
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
             title = stringResource(R.string.run),
             onBackClick = { navController.popBackStack() }
         )
-        ContentRunScreen()
+        val theme by themeViewModel.themeFlow.collectAsState()
+
+        val isDarkTheme = when(theme){
+            AppTheme.DARK -> true
+            AppTheme.LIGHT -> false
+            AppTheme.SYSTEM -> isSystemInDarkTheme()
+        }
+        ContentRunScreen(isDarkTheme = isDarkTheme)
     }
 }
 
+@OptIn(MapsComposeExperimentalApi::class)
 @Composable
-fun ContentRunScreen() {
+fun ContentRunScreen(isDarkTheme:Boolean) {
     val context = LocalContext.current
     val timeInMillisState = remember { mutableLongStateOf(0L) }
     val isTracking = rememberSaveable { mutableStateOf(false) }
@@ -81,6 +98,12 @@ fun ContentRunScreen() {
     var hasNotificationPermission by remember { mutableStateOf(true) }
     val pathPoint = rememberSaveable { mutableStateOf<List<LatLng>>(emptyList()) }
     val distanceInMeters = rememberSaveable { mutableDoubleStateOf(0.0) }
+
+    val mapStyleRes = if (isDarkTheme) {
+        R.raw.map_night_style
+    } else {
+        R.raw.map_light_style
+    }
 
     val permissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -147,6 +170,10 @@ fun ContentRunScreen() {
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(zoomControlsEnabled = true, zoomGesturesEnabled = true)
         ) {
+            MapEffect(isDarkTheme) { map ->
+                val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
+                map.setMapStyle(mapStyle)
+            }
             if (pathPoint.value.isNotEmpty()) {
                 Polyline(
                     points = pathPoint.value,
