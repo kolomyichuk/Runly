@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.local.datastore.ProfilePreferencesDataStore
+import kolomyichuk.runly.data.local.datastore.ThemePreferencesDataStore
 import kolomyichuk.runly.data.local.storage.ImageStorage
 import kolomyichuk.runly.data.repository.ProfileRepository
 import kolomyichuk.runly.data.repository.ThemeRepository
@@ -38,10 +39,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideThemeRepository(
-        @ThemePreferences dataStore: DataStore<Preferences>
+        preferencesDataStore:ThemePreferencesDataStore
     ): ThemeRepository {
-        return ThemeRepository(dataStore)
+        return ThemeRepository(preferencesDataStore)
     }
+
+    @Provides
+    @Singleton
+    fun provideThemePreferencesDataStore(
+        @ThemePreferences dataStore: DataStore<Preferences>
+    ): ThemePreferencesDataStore {
+        return ThemePreferencesDataStore(dataStore)
+    }
+
 
     @Provides
     @Singleton
@@ -51,13 +61,13 @@ object AppModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.dataStoreFile("profile.preferences_pb") }
+            produceFile = { context.dataStoreFile(Constants.PROFILE_DATA_STORE_NAME) }
         )
     }
 
     @Provides
     @Singleton
-    fun provideUserPreferencesDataStore(
+    fun provideProfilePreferencesDataStore(
         @ProfilePreferences dataStore: DataStore<Preferences>
     ): ProfilePreferencesDataStore {
         return ProfilePreferencesDataStore(dataStore)

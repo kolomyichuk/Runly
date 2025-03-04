@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kolomyichuk.runly.data.repository.AppTheme
+import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.navigation.MainScreen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel

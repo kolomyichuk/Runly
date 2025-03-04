@@ -53,7 +53,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.repository.AppTheme
+import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
