@@ -19,6 +19,6 @@ object Constants {
     const val POLYLINE_WIDTH = 15f
     const val MAP_ZOOM = 15f
 
-    const val DATA_STORE_NAME = "settings.preferences_pb"
-    const val DATA_STORE_THEME_KEY = "app_theme"
+    const val PROFILE_DATA_STORE_NAME = "profile.preferences_pb"
+    const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
 }

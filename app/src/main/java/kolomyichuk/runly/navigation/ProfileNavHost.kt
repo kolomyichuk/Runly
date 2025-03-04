@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import kolomyichuk.runly.ui.screens.ProfileScreen
 import kolomyichuk.runly.ui.screens.SettingsScreen
 import kolomyichuk.runly.ui.screens.ThemeScreen
+import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 @Composable
@@ -19,9 +20,13 @@ fun ProfileNavHost() {
         startDestination = "profile_graph"
     ) {
         composable("profile_graph") {
-            ProfileScreen(onNavigateToSettings = {
-                profileNavController.navigate("settings")
-            })
+            val profileViewModel: ProfileViewModel = hiltViewModel()
+            ProfileScreen(
+                onNavigateToSettings = {
+                    profileNavController.navigate("settings")
+                },
+                viewModel = profileViewModel
+            )
         }
         composable("settings") {
             SettingsScreen(
@@ -34,12 +39,12 @@ fun ProfileNavHost() {
             )
         }
         composable("theme") {
-            val viewModel = hiltViewModel<ThemeViewModel>()
+            val themeViewModel = hiltViewModel<ThemeViewModel>()
             ThemeScreen(
                 onBack = {
                     profileNavController.popBackStack()
                 },
-                viewModel = viewModel
+                viewModel = themeViewModel
             )
         }
     }

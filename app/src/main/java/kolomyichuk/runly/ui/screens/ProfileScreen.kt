@@ -1,6 +1,6 @@
 package kolomyichuk.runly.ui.screens
 
-import android.net.Uri
+import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,26 +23,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.rememberAsyncImagePainter
+import androidx.hilt.navigation.compose.hiltViewModel
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
@@ -50,39 +51,36 @@ fun ProfileScreen(
             menuIcon = Icons.Outlined.Settings,
             onMenuClick = onNavigateToSettings
         )
-        ContentProfileScreen()
+        ContentProfileScreen(
+            viewModel = viewModel
+        )
     }
 
 }
 
 @Composable
-fun ContentProfileScreen() {
-    val username = "@username"
-
+fun ContentProfileScreen(
+    viewModel: ProfileViewModel
+) {
+    val bitmap by viewModel.bitmap.collectAsState()
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            viewModel.saveProfileImage(uri)
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-        val galleryLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri ->
-                imageUri = uri
-            }
-        )
-
-
-        UserProfilePicture(
-            onEditClick = {
-                galleryLauncher.launch("image/*")
-            },
-            imageUrl = imageUri?.toString()
+        UserProfileImage(
+            bitmap = bitmap,
+            onEditClick = { launcher.launch("image/*") }
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = username,
+            text = "username",
             fontWeight = FontWeight.Normal,
             fontSize = 20.sp
         )
@@ -90,27 +88,35 @@ fun ContentProfileScreen() {
 }
 
 @Composable
-fun UserProfilePicture(
-    imageUrl: String?,
+fun UserProfileImage(
+    bitmap: Bitmap?,
     onEditClick: () -> Unit
 ) {
+
     Box(
         contentAlignment = Alignment.BottomEnd,
         modifier = Modifier.size(120.dp)
     ) {
-        Image(
-            painter = if (imageUrl != null) {
-                rememberAsyncImagePainter(model = imageUrl)
-            } else {
-                painterResource(R.drawable.user)
-            },
-            contentDescription = "User profile picture",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "User picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.user),
+                contentDescription = "User profile picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
 
-        )
+            )
+        }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
