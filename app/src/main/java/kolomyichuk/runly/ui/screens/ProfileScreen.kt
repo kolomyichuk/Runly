@@ -1,6 +1,5 @@
 package kolomyichuk.runly.ui.screens
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -28,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,9 +34,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
+import java.io.File
 
 @Composable
 fun ProfileScreen(
@@ -62,12 +62,14 @@ fun ProfileScreen(
 fun ContentProfileScreen(
     viewModel: ProfileViewModel
 ) {
-    val bitmap by viewModel.bitmap.collectAsState()
+    val imageFile by viewModel.imageFile.collectAsState()
+
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             viewModel.saveProfileImage(uri)
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,7 +77,7 @@ fun ContentProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         UserProfileImage(
-            bitmap = bitmap,
+            imageFile = imageFile,
             onEditClick = { launcher.launch("image/*") }
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -89,7 +91,7 @@ fun ContentProfileScreen(
 
 @Composable
 fun UserProfileImage(
-    bitmap: Bitmap?,
+    imageFile: File?,
     onEditClick: () -> Unit
 ) {
 
@@ -97,9 +99,9 @@ fun UserProfileImage(
         contentAlignment = Alignment.BottomEnd,
         modifier = Modifier.size(120.dp)
     ) {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap.asImageBitmap(),
+        if (imageFile != null) {
+            AsyncImage(
+                model = imageFile.absolutePath,
                 contentDescription = "User picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

@@ -1,17 +1,17 @@
 package kolomyichuk.runly.ui.viewmodel
 
-import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.repository.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,30 +25,26 @@ class ProfileViewModel @Inject constructor(
         "username"
     )
 
-    private val _bitmap = MutableStateFlow<Bitmap?>(null)
-    val bitmap: StateFlow<Bitmap?> = _bitmap.asStateFlow()
+    private val _imageFile = MutableStateFlow<File?>(null)
+    val imageFile = _imageFile.asStateFlow()
 
     init {
         loadImage()
     }
 
-    fun saveUsername(newUsername: String) {
+    fun saveProfileImage(uri: Uri) {
         viewModelScope.launch {
-            repository.saveUsername(newUsername)
+            val newFile = repository.saveImage(uri)
+            Log.d("ProfileViewModel", "saveProfileImage: newFile = $newFile")
+            _imageFile.value = newFile
         }
     }
 
-    private fun loadImage() {
-        val loadedImage = repository.loadImage()
-        _bitmap.value = loadedImage
-    }
-
-    fun saveProfileImage(uri: Uri): Boolean {
-        val success = repository.saveImage(uri)
-        if (success) {
-            loadImage()
+    fun loadImage() {
+        viewModelScope.launch {
+            _imageFile.value = repository.loadImage()
+            Log.d("ProfileViewModel", "loadImage: ${_imageFile.value}")
         }
-        return success
     }
 }
 

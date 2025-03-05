@@ -1,10 +1,10 @@
 package kolomyichuk.runly.data.repository
 
-import android.graphics.Bitmap
 import android.net.Uri
 import kolomyichuk.runly.data.local.datastore.ProfilePreferencesDataStore
 import kolomyichuk.runly.data.local.storage.ImageStorage
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
@@ -17,11 +17,11 @@ class ProfileRepository @Inject constructor(
         preferencesDataStore.saveUsername(username)
     }
 
-    fun saveImage(uri: Uri):Boolean {
+    suspend fun saveImage(uri: Uri):File? {
         return imageStorage.saveImage(uri)
     }
 
-    fun loadImage(): Bitmap? {
+    suspend fun loadImage(): File? {
         return imageStorage.loadImage()
     }
 }
