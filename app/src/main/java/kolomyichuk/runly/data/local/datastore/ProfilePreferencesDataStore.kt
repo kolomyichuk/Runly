@@ -20,7 +20,7 @@ class ProfilePreferencesDataStore @Inject constructor(
         }
     }
 
-    val username: Flow<String> = dataStore.data.map { it[PROFILE_USERNAME_KEY] ?: "username" }
+    val username: Flow<String> = dataStore.data.map { it[PROFILE_USERNAME_KEY] ?: "@username" }
 
     suspend fun saveProfileImageFileName(fileName: String) {
         dataStore.edit { preferences ->
