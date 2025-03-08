@@ -1,7 +1,6 @@
 package kolomyichuk.runly.ui.viewmodel
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,21 +28,19 @@ class ProfileViewModel @Inject constructor(
     val imageFile = _imageFile.asStateFlow()
 
     init {
-        loadImage()
+        loadProfileImage()
     }
 
     fun saveProfileImage(uri: Uri) {
         viewModelScope.launch {
-            val newFile = repository.saveImage(uri)
-            Log.d("ProfileViewModel", "saveProfileImage: newFile = $newFile")
+            val newFile = repository.saveProfileImage(uri)
             _imageFile.value = newFile
         }
     }
 
-    fun loadImage() {
+    private fun loadProfileImage() {
         viewModelScope.launch {
-            _imageFile.value = repository.loadImage()
-            Log.d("ProfileViewModel", "loadImage: ${_imageFile.value}")
+            _imageFile.value = repository.loadProfileImage()
         }
     }
 }

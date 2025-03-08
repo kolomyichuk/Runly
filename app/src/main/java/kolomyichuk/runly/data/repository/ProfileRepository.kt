@@ -17,12 +17,24 @@ class ProfileRepository @Inject constructor(
         preferencesDataStore.saveUsername(username)
     }
 
-    suspend fun saveImage(uri: Uri):File? {
-        return imageStorage.saveImage(uri)
+    suspend fun saveProfileImage(uri: Uri): File? {
+        val oldFileName = preferencesDataStore.getProfileImageFileName()
+        val newFile = imageStorage.saveImage(uri)
+
+        newFile?.let { file ->
+            preferencesDataStore.saveProfileImageFileName(file.name)
+            oldFileName?.let { imageStorage.deleteFile(it) }
+        }
+        return newFile
     }
 
-    suspend fun loadImage(): File? {
-        return imageStorage.loadImage()
+    suspend fun loadProfileImage(): File? {
+        val fileName = preferencesDataStore.getProfileImageFileName()
+        return if (fileName != null) {
+            imageStorage.getFileByName(fileName)
+        } else {
+            null
+        }
     }
 }
 

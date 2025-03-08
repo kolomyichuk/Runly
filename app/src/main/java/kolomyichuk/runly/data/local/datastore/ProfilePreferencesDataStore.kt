@@ -16,13 +16,25 @@ class ProfilePreferencesDataStore @Inject constructor(
 
     suspend fun saveUsername(username: String) {
         dataStore.edit { preferences ->
-            preferences[USERNAME_KEY] = username
+            preferences[PROFILE_USERNAME_KEY] = username
         }
     }
 
-    val username: Flow<String> = dataStore.data.map { it[USERNAME_KEY] ?: "username" }
+    val username: Flow<String> = dataStore.data.map { it[PROFILE_USERNAME_KEY] ?: "username" }
+
+    suspend fun saveProfileImageFileName(fileName: String) {
+        dataStore.edit { preferences ->
+            preferences[PROFILE_IMAGE_KEY] = fileName
+        }
+    }
+
+    suspend fun getProfileImageFileName(): String? {
+        val prefs = dataStore.data.first()
+        return prefs[PROFILE_IMAGE_KEY]
+    }
 
     companion object {
-        private val USERNAME_KEY = stringPreferencesKey("username")
+        private val PROFILE_USERNAME_KEY = stringPreferencesKey("profile_username_key")
+        private val PROFILE_IMAGE_KEY = stringPreferencesKey("profile_image_key")
     }
 }
