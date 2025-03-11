@@ -315,6 +315,5 @@ fun ControlButtons(
             backgroundColor = MaterialTheme.colorScheme.surface,
             contentDescription = "Map view"
         )
-
     }
 }

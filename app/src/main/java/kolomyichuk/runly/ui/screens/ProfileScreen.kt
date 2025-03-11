@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -119,7 +120,8 @@ fun ContentProfileScreen(
                                 viewModel.saveUsername(newName)
                                 showDialog = false
                             }
-                        }
+                        },
+                        enabled = newName.isNotEmpty(),
                     ) {
                         Text(text = stringResource(R.string.save))
                     }
@@ -128,7 +130,11 @@ fun ContentProfileScreen(
                     Button(
                         onClick = {
                             showDialog = false
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                            containerColor = MaterialTheme.colorScheme.tertiary
+                        )
                     ) {
                         Text(text = stringResource(R.string.cancel))
                     }
