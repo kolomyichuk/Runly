@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,14 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +55,8 @@ import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.components.currentLocationMarker
+import kolomyichuk.runly.ui.components.startMarker
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.TrackingUtility
@@ -65,7 +64,6 @@ import kolomyichuk.runly.utils.pauseTrackingService
 import kolomyichuk.runly.utils.resumeTrackingService
 import kolomyichuk.runly.utils.startRunTrackingService
 import kolomyichuk.runly.utils.stopTrackingService
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RunScreen(
@@ -79,7 +77,7 @@ fun RunScreen(
         )
         val theme by themeViewModel.themeFlow.collectAsState()
 
-        val isDarkTheme = when(theme){
+        val isDarkTheme = when (theme) {
             AppTheme.DARK -> true
             AppTheme.LIGHT -> false
             AppTheme.SYSTEM -> isSystemInDarkTheme()
@@ -90,14 +88,14 @@ fun RunScreen(
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
-fun ContentRunScreen(isDarkTheme:Boolean) {
+fun ContentRunScreen(isDarkTheme: Boolean) {
     val context = LocalContext.current
-    val timeInMillisState = remember { mutableLongStateOf(0L) }
-    val isTracking = rememberSaveable { mutableStateOf(false) }
-    val isPause = rememberSaveable { mutableStateOf(false) }
+    val timeInMillisState by RunTrackingService.timeInMillis.collectAsState(0L)
+    val isTracking by RunTrackingService.isTracking.collectAsState(initial = false)
+    val isPause by RunTrackingService.isPause.collectAsState(initial = false)
     var hasNotificationPermission by remember { mutableStateOf(true) }
-    val pathPoint = rememberSaveable { mutableStateOf<List<LatLng>>(emptyList()) }
-    val distanceInMeters = rememberSaveable { mutableDoubleStateOf(0.0) }
+    val pathPoint by RunTrackingService.pathPoints.collectAsState(emptyList())
+    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsState(0.0)
 
     val mapStyleRes = if (isDarkTheme) {
         R.raw.map_night_style
@@ -120,20 +118,20 @@ fun ContentRunScreen(isDarkTheme:Boolean) {
         }
     }
 
-    val formattedDistance = "%.2f".format(distanceInMeters.doubleValue / 1000)
+    val formattedDistance = "%.2f".format(distanceInMeters / 1000)
 
     val cameraPositionState = rememberCameraPositionState {
         //refactor LatLng
         position = CameraPosition.fromLatLngZoom(
-            if (pathPoint.value.isNotEmpty()) pathPoint.value.first() else LatLng(
+            if (pathPoint.isNotEmpty()) pathPoint.first() else LatLng(
                 49.010708,
                 25.796191
             ), Constants.MAP_ZOOM
         )
     }
 
-    LaunchedEffect(pathPoint.value) {
-        pathPoint.value.lastOrNull()?.let { latestLocation ->
+    LaunchedEffect(pathPoint) {
+        pathPoint.lastOrNull()?.let { latestLocation ->
             cameraPositionState.animate(
                 CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
                 1000
@@ -141,47 +139,42 @@ fun ContentRunScreen(isDarkTheme:Boolean) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        RunTrackingService.isTracking.collectLatest { isTracking.value = it }
-    }
-    LaunchedEffect(Unit) {
-        RunTrackingService.isPause.collectLatest { isPause.value = it }
-    }
-    LaunchedEffect(Unit) {
-        RunTrackingService.timeInMillis.collectLatest { timeInMillisState.longValue = it }
-    }
-    LaunchedEffect(isTracking) {
-        RunTrackingService.pathPoints.collectLatest { pathPoint.value = it }
-    }
-    LaunchedEffect(isTracking) {
-        RunTrackingService.distanceInMeters.collectLatest { distanceInMeters.doubleValue = it }
-    }
-
-    val formattedTime = TrackingUtility.formatTime(timeInMillisState.longValue)
+    val formattedTime = TrackingUtility.formatTime(timeInMillisState)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        GoogleMap(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(zoomControlsEnabled = true, zoomGesturesEnabled = true)
+        Box(
+            modifier = Modifier.weight(1f)
         ) {
-            MapEffect(isDarkTheme) { map ->
-                val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
-                map.setMapStyle(mapStyle)
-            }
-            if (pathPoint.value.isNotEmpty()) {
-                Polyline(
-                    points = pathPoint.value,
-                    color = MaterialTheme.colorScheme.primary,
-                    width = Constants.POLYLINE_WIDTH
-                )
-                Marker(state = MarkerState(pathPoint.value.first()), title = "Start")
-                Marker(state = MarkerState(pathPoint.value.last()), title = "Finish")
+            GoogleMap(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(zoomControlsEnabled = true, zoomGesturesEnabled = true)
+            ) {
+                MapEffect(isDarkTheme) { map ->
+                    val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
+                    map.setMapStyle(mapStyle)
+                }
+                if (pathPoint.isNotEmpty()) {
+                    Polyline(
+                        points = pathPoint,
+                        color = MaterialTheme.colorScheme.primary,
+                        width = Constants.POLYLINE_WIDTH
+                    )
+                    Marker(
+                        state = MarkerState(pathPoint.first()),
+                        icon = startMarker
+                    )
+                    if (pathPoint.size >= 5){
+                        Marker(
+                            state = MarkerState(pathPoint.last()),
+                            icon = currentLocationMarker
+                        )
+                    }
+                }
             }
         }
 
@@ -197,7 +190,7 @@ fun ContentRunScreen(isDarkTheme:Boolean) {
             InfoColumn(formattedTime, stringResource(R.string.time))
         }
 
-        if (!isTracking.value && !isPause.value) {
+        if (!isTracking && !isPause) {
             ButtonStart(
                 onClick = {
                     val permissionsToRequest = mutableListOf<String>()
@@ -225,7 +218,6 @@ fun ContentRunScreen(isDarkTheme:Boolean) {
                     if (permissionsToRequest.isNotEmpty()) {
                         permissionsLauncher.launch(permissionsToRequest.toTypedArray())
                     } else {
-                        isTracking.value = true
                         startRunTrackingService(context = context)
                     }
                 },
@@ -267,8 +259,8 @@ fun InfoColumn(value: String, label: String) {
 
 @Composable
 fun ControlButtons(
-    isTracking: MutableState<Boolean>,
-    isPause: MutableState<Boolean>,
+    isTracking: Boolean,
+    isPause: Boolean,
     onPause: () -> Unit,
     onResume: () -> Unit,
     onStop: () -> Unit
@@ -281,7 +273,7 @@ fun ControlButtons(
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        if (isTracking.value || isPause.value) {
+        if (isTracking || isPause) {
             CircleIconButton(
                 onClick = { onStop() },
                 imageVector = Icons.Filled.Stop,
@@ -295,12 +287,12 @@ fun ControlButtons(
         }
 
         Button(
-            onClick = { if (isTracking.value) onPause() else onResume() },
+            onClick = { if (isTracking) onPause() else onResume() },
             modifier = Modifier
                 .width(130.dp)
                 .height(40.dp)
         ) {
-            Text(text = if (isTracking.value) stringResource(R.string.pause) else stringResource(R.string.resume))
+            Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
         CircleIconButton(

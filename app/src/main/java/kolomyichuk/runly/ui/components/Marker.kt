@@ -1,78 +1,95 @@
 package kolomyichuk.runly.ui.components
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.toArgb
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-@Composable
-fun StartMarker(modifier: Modifier = Modifier) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    Canvas(modifier = modifier.size(22.dp)) {
-        val radius = size.minDimension / 2
-        drawCircle(
-            color = primaryColor,
-            radius = radius * 0.8f,
-            center = center
-        )
-        drawCircle(
-            color = Color.White,
-            radius = radius,
-            center = center,
-            style = Stroke(width = 2.dp.toPx())
-        )
-    }
+val currentLocationMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
+    val centerX = 40f
+    val centerY = 40f
+    val outerRadius = 30f
+    val strokeWidth = 4f
+    val innerRadius = outerRadius - strokeWidth / 2
+
+    paint.style = Paint.Style.STROKE
+    paint.color = Color.White.toArgb()
+    paint.strokeWidth = strokeWidth
+    canvas.drawCircle(centerX, centerY, outerRadius, paint)
+
+    paint.style = Paint.Style.FILL
+    paint.color = Color.Blue.toArgb()
+    canvas.drawCircle(centerX, centerY, innerRadius, paint)
 }
 
-@Composable
-fun CurrentLocationMarker(modifier: Modifier = Modifier) {
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
-    Canvas(
-        modifier = modifier.size(22.dp)
-    ) {
-        val radius = size.minDimension / 2
-        drawCircle(
-            color = tertiaryColor,
-            radius = radius * 0.8f,
-            center = center
-        )
-        drawCircle(
-            color = Color.White,
-            radius = radius,
-            center = center,
-            style = Stroke(width = 2.dp.toPx())
-        )
-    }
-}
+@Suppress("NAME_SHADOWING")
+val finishMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
+    val centerX = 40f
+    val centerY = 40f
+    val radius = 30f
+    val strokeWidth = 4f
+    val tileSize = radius - strokeWidth /2
+    val paintBlack = Paint().apply { color = Color.Black.toArgb(); style = Paint.Style.FILL }
+    val paintWhite = Paint().apply { color = Color.White.toArgb(); style = Paint.Style.FILL }
 
-@Composable
-fun FinishMarker(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.size(22.dp)) {
-        val radius = size.minDimension / 2
-        val tileSize = radius * 0.8f
-        for (i in 0..2) {
-            for (j in 0..2) {
-                drawRect(
-                    color = if ((i + j) % 2 == 0) Color.Black else Color.White,
-                    topLeft = Offset(
-                        center.x - tileSize + i * tileSize / 1.5f,
-                        center.y - tileSize + j * tileSize / 1.5f
-                    ),
-                    size = Size(tileSize / 1.5f, tileSize / 1.5f)
-                )
-            }
+    val path = Path().apply { addCircle(centerX,centerY, radius, Path.Direction.CCW) }
+    canvas.save()
+    canvas.clipPath(path)
+
+    for (i in 0..2) {
+        for (j in 0..2) {
+            val paint = if ((i + j) % 2 == 0) paintBlack else paintWhite
+            val left = centerX - tileSize + i * tileSize / 1.5f
+            val top = centerY - tileSize + j * tileSize / 1.5f
+            val size = tileSize / 1.5f
+            canvas.drawRect(left, top, left + size, top + size, paint)
         }
-        drawCircle(
-            color = Color.White,
-            radius = radius,
-            center = center,
-            style = Stroke(width = 2.dp.toPx())
-        )
     }
+
+    canvas.restore()
+
+    paint.style = Paint.Style.STROKE
+    paint.color = Color.White.toArgb()
+    paint.strokeWidth = 4f
+    canvas.drawCircle(centerX, centerY, radius, paint)
 }
+
+val startMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
+    val centerX = 40f
+    val centerY = 40f
+    val outerRadius = 30f
+    val strokeWidth = 4f
+    val innerRadius = outerRadius - strokeWidth / 2
+
+    paint.style = Paint.Style.STROKE
+    paint.color = android.graphics.Color.WHITE
+    paint.strokeWidth = strokeWidth
+    canvas.drawCircle(centerX, centerY, outerRadius, paint)
+
+    paint.style = Paint.Style.FILL
+    paint.color = Color.Green.toArgb()
+    canvas.drawCircle(centerX, centerY, innerRadius, paint)
+}
+
+fun canvasToBitmapDescriptor(size: Int, draw: (Canvas, Paint) -> Unit): BitmapDescriptor {
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    draw(canvas, paint)
+
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
+}
+
+
+
+
+
+
+
+
+
