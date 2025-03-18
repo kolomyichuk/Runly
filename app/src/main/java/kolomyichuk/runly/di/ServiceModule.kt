@@ -42,13 +42,17 @@ object ServiceModule {
 
     @ServiceScoped
     @Provides
-    fun provideActivityPendingIntent(@ApplicationContext context: Context) =
-        PendingIntent.getActivity(
-            context, 0, Intent(context, MainActivity::class.java).apply {
-                action = Constants.ACTION_SHOW_TRACKING_FRAGMENT
-            },
-            PendingIntent.FLAG_IMMUTABLE
+    fun provideActivityPendingIntent(@ApplicationContext context: Context): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            action = Constants.ACTION_SHOW_RUN_SCREEN
+        }
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+    }
 
 
     @ServiceScoped

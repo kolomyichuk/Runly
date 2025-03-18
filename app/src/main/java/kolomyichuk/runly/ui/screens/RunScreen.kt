@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -121,7 +122,6 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
     val formattedDistance = "%.2f".format(distanceInMeters / 1000)
 
     val cameraPositionState = rememberCameraPositionState {
-        //refactor LatLng
         position = CameraPosition.fromLatLngZoom(
             if (pathPoint.isNotEmpty()) pathPoint.first() else LatLng(
                 49.010708,
@@ -166,12 +166,14 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                     )
                     Marker(
                         state = MarkerState(pathPoint.first()),
-                        icon = startMarker
+                        icon = startMarker,
+                        anchor = Offset(0.5f, 0.5f)
                     )
-                    if (pathPoint.size >= 5){
+                    if (pathPoint.size >= 5) {
                         Marker(
                             state = MarkerState(pathPoint.last()),
-                            icon = currentLocationMarker
+                            icon = currentLocationMarker,
+                            anchor = Offset(0.5f, 0.5f)
                         )
                     }
                 }
