@@ -168,7 +168,7 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                 }
 
                 val lastSegment = pathPoints.lastOrNull()
-                if (lastSegment != null && lastSegment.isNotEmpty()) {
+                if (!lastSegment.isNullOrEmpty()) {
                     Marker(
                         state = MarkerState(lastSegment.last()),
                         icon = currentLocationMarker,

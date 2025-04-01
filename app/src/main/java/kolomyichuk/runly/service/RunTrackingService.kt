@@ -48,6 +48,7 @@ class RunTrackingService : Service() {
     companion object {
         val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
+        val isActiveRun = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
         val pathPoints = MutableStateFlow<MutableList<MutableList<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.0)
@@ -75,6 +76,7 @@ class RunTrackingService : Service() {
 
     private fun startTracking() {
         isTracking.value = true
+        isActiveRun.value = true
         isPause.value = false
         timeRun = 0
         timeInMillis.value = 0L
@@ -181,6 +183,7 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
+        isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
         pathPoints.update { mutableListOf() }
