@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +49,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
@@ -96,6 +103,10 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
     var hasNotificationPermission by remember { mutableStateOf(true) }
     val pathPoints by RunTrackingService.pathPoints.collectAsState(emptyList())
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsState(0.0)
+    var isSatellite by remember { mutableStateOf(false) }
+    val mapProperties =
+        MapProperties(mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL)
+
 
     val mapStyleRes = if (isDarkTheme) {
         R.raw.map_night_style
@@ -150,7 +161,12 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 cameraPositionState = cameraPositionState,
-                uiSettings = MapUiSettings(zoomControlsEnabled = true, zoomGesturesEnabled = true)
+                properties = mapProperties,
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = true,
+                    zoomGesturesEnabled = true,
+                    mapToolbarEnabled = true
+                )
             ) {
                 MapEffect(isDarkTheme) { map ->
                     val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
@@ -158,7 +174,7 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                 }
 
                 pathPoints.forEach { segment ->
-                    if (segment.isNotEmpty()){
+                    if (segment.isNotEmpty()) {
                         Polyline(
                             points = segment,
                             color = MaterialTheme.colorScheme.primary,
@@ -175,6 +191,23 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                         anchor = Offset(0.5f, 0.5f)
                     )
                 }
+            }
+            IconButton(
+                onClick = {
+                    isSatellite = !isSatellite
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.LocationOn,
+                    contentDescription = null
+                )
             }
         }
 
@@ -296,10 +329,8 @@ fun ControlButtons(
         }
 
         CircleIconButton(
-            onClick = {
-
-            },
-            imageVector = Icons.Outlined.LocationOn,
+            onClick = {},
+            imageVector = Icons.Outlined.Map,
             iconColor = MaterialTheme.colorScheme.onPrimary,
             elevation = 10.dp,
             iconSize = 28.dp,
