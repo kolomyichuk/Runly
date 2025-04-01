@@ -26,6 +26,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,7 +40,6 @@ class RunTrackingService : Service() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var lastValidLocation: LatLng? = null
-
     private var startTime = 0L
     private var timeRun = 0L
     private var timerJob: Job? = null
@@ -49,7 +49,7 @@ class RunTrackingService : Service() {
         val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
-        val pathPoints = MutableStateFlow<List<LatLng>>(emptyList())
+        val pathPoints = MutableStateFlow<MutableList<MutableList<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.0)
     }
 
@@ -84,6 +84,7 @@ class RunTrackingService : Service() {
             getString(R.string.run),
             TrackingUtility.formatTime(timeInMillis.value)
         )
+
         startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
         startTimer()
         startLocationTracking()
@@ -95,7 +96,7 @@ class RunTrackingService : Service() {
             Priority.PRIORITY_HIGH_ACCURACY,
             Constants.LOCATION_UPDATE_INTERVAL
         )
-            .setMinUpdateDistanceMeters(4f)
+            .setMinUpdateDistanceMeters(1f)
             .build()
 
         fusedLocationProviderClient.requestLocationUpdates(
@@ -124,12 +125,24 @@ class RunTrackingService : Service() {
                         timeDiff.toFloat()
                     )
                 ) {
-
-                    pathPoints.value += newPoint
-                    distanceInMeters.value = SphericalUtil.computeLength(pathPoints.value)
+                    addLocationPoints(newPoint)
+                    val segmentDistance = pathPoints.value.map { segment ->
+                        SphericalUtil.computeLength(segment)
+                    }
+                    distanceInMeters.value = segmentDistance.sum()
                     lastValidLocation = newPoint
                 }
             }
+        }
+    }
+
+    private fun addLocationPoints(point: LatLng) {
+        pathPoints.update { list ->
+            if (list.isEmpty()) {
+                list.add(mutableListOf())
+            }
+            list.last().add(point)
+            list
         }
     }
 
@@ -156,6 +169,10 @@ class RunTrackingService : Service() {
             isPause.value = false
             startTime = System.currentTimeMillis()
             startTimer()
+            pathPoints.update { list->
+                list.add(mutableListOf())
+                list
+            }
             startLocationTracking()
         }
     }
@@ -164,9 +181,9 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
-        pathPoints.value = emptyList()
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
+        pathPoints.update { mutableListOf() }
         stopTimer()
         stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -201,7 +218,7 @@ class RunTrackingService : Service() {
             prevPoint.latitude, prevPoint.longitude,
             newPoint.latitude, newPoint.longitude, distance
         )
-        val maxSpeed = 30 / 3.6  // Max speed 30 km/hour (converted to m/s)
+        val maxSpeed = 30 / 3.6
         return distance[0] < 50 && distance[0] / timeDiff < maxSpeed
     }
 
@@ -212,7 +229,8 @@ class RunTrackingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopTracking()
+        stopLocationTracking()
+        stopTimer()
         serviceScope.cancel()
     }
 

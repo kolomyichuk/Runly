@@ -57,7 +57,6 @@ import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.components.currentLocationMarker
-import kolomyichuk.runly.ui.components.startMarker
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.TrackingUtility
@@ -95,7 +94,7 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
     val isTracking by RunTrackingService.isTracking.collectAsState(initial = false)
     val isPause by RunTrackingService.isPause.collectAsState(initial = false)
     var hasNotificationPermission by remember { mutableStateOf(true) }
-    val pathPoint by RunTrackingService.pathPoints.collectAsState(emptyList())
+    val pathPoints by RunTrackingService.pathPoints.collectAsState(emptyList())
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsState(0.0)
 
     val mapStyleRes = if (isDarkTheme) {
@@ -123,15 +122,14 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            if (pathPoint.isNotEmpty()) pathPoint.first() else LatLng(
-                49.010708,
-                25.796191
-            ), Constants.MAP_ZOOM
+            if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()) pathPoints.first()
+                .first()
+            else LatLng(49.010708, 25.796191), Constants.MAP_ZOOM
         )
     }
 
-    LaunchedEffect(pathPoint) {
-        pathPoint.lastOrNull()?.let { latestLocation ->
+    LaunchedEffect(pathPoints) {
+        pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
             cameraPositionState.animate(
                 CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
                 1000
@@ -158,24 +156,24 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                     val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                     map.setMapStyle(mapStyle)
                 }
-                if (pathPoint.isNotEmpty()) {
-                    Polyline(
-                        points = pathPoint,
-                        color = MaterialTheme.colorScheme.primary,
-                        width = Constants.POLYLINE_WIDTH
-                    )
-                    Marker(
-                        state = MarkerState(pathPoint.first()),
-                        icon = startMarker,
-                        anchor = Offset(0.5f, 0.5f)
-                    )
-                    if (pathPoint.size >= 5) {
-                        Marker(
-                            state = MarkerState(pathPoint.last()),
-                            icon = currentLocationMarker,
-                            anchor = Offset(0.5f, 0.5f)
+
+                pathPoints.forEach { segment ->
+                    if (segment.isNotEmpty()){
+                        Polyline(
+                            points = segment,
+                            color = MaterialTheme.colorScheme.primary,
+                            width = Constants.POLYLINE_WIDTH
                         )
                     }
+                }
+
+                val lastSegment = pathPoints.lastOrNull()
+                if (lastSegment != null && lastSegment.isNotEmpty()) {
+                    Marker(
+                        state = MarkerState(lastSegment.last()),
+                        icon = currentLocationMarker,
+                        anchor = Offset(0.5f, 0.5f)
+                    )
                 }
             }
         }
