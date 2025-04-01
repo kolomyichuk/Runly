@@ -200,7 +200,7 @@ fun ContentRunScreen(isDarkTheme: Boolean) {
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surface,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = CircleShape
                     )
             ) {
