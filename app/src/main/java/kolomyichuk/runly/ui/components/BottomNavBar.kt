@@ -1,5 +1,6 @@
 package kolomyichuk.runly.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
@@ -16,17 +17,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import kolomyichuk.runly.R
 
 sealed class BottomNavItem(
     val route: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector
 ) {
-    data object Home : BottomNavItem("home","Home", Icons.Default.Home)
-    data object Run : BottomNavItem("run", "Run", Icons.AutoMirrored.Default.DirectionsRun)
-    data object Profile : BottomNavItem("profile", "Profile", Icons.Default.Person)
+    data object Home : BottomNavItem("home", R.string.home, Icons.Default.Home)
+    data object Run : BottomNavItem("run", R.string.run, Icons.AutoMirrored.Default.DirectionsRun)
+    data object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.Person)
 }
 
 @Composable
@@ -49,8 +52,8 @@ fun BottomNavigationBar(
             }
 
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+                icon = { Icon(item.icon, contentDescription = stringResource(item.labelRes)) },
+                label = { Text(stringResource(item.labelRes)) },
                 selected = currentRoute == item.route,
                 onClick = { navController.navigate(item.route) },
                 alwaysShowLabel = true,

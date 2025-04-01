@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Runly</string>
+    <string name="run">Bieg</string>
+    <string name="pause">Pauza</string>
+    <string name="resume">Wznów</string>
+    <string name="stop">Stop</string>
+    <string name="start">Start</string>
+    <string name="time">Czas</string>
+    <string name="distance">Dystans</string>
+    <string name="theme">Motyw</string>
+    <string name="profile">Profil</string>
+    <string name="settings">Ustawienia</string>
+    <string name="home">Strona główna</string>
+    <string name="paused">Wstrzymano</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="enter_your_username">Wpisz swoją nazwę użytkownika</string>
+    <string name="light">Jasny</string>
+    <string name="dark">Ciemny</string>
+    <string name="system">Systemowy</string>
+</resources>

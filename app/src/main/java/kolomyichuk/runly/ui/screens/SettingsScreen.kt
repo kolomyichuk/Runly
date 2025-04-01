@@ -69,7 +69,7 @@ fun ContentSettingsScreen(
                 )
                 Spacer(Modifier.width(16.dp))
                 Text(
-                    text = "Theme",
+                    text = stringResource(R.string.theme),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.weight(1f)

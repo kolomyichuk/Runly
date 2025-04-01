@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Runly</string>
+    <string name="run">Біг</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продовжити</string>
+    <string name="stop">Стоп</string>
+    <string name="start">Старт</string>
+    <string name="time">Час</string>
+    <string name="distance">Дистанція</string>
+    <string name="theme">Тема</string>
+    <string name="profile">Профіль</string>
+    <string name="settings">Налаштування</string>
+    <string name="home">Головна</string>
+    <string name="paused">Призупинено</string>
+    <string name="cancel">Скасувати</string>
+    <string name="save">Зберегти</string>
+    <string name="enter_your_username">Введіть ваше ім\'я</string>
+    <string name="light">Світла</string>
+    <string name="dark">Темна</string>
+    <string name="system">Системна</string>
+</resources>

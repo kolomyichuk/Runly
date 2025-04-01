@@ -277,11 +277,11 @@ fun ControlButtons(
             CircleIconButton(
                 onClick = { onStop() },
                 imageVector = Icons.Filled.Stop,
-                iconColor = MaterialTheme.colorScheme.onSurface,
+                iconColor = MaterialTheme.colorScheme.onPrimary,
                 elevation = 10.dp,
                 iconSize = 28.dp,
                 buttonSize = 40.dp,
-                backgroundColor = MaterialTheme.colorScheme.surface,
+                backgroundColor = MaterialTheme.colorScheme.primary,
                 contentDescription = stringResource(R.string.stop)
             )
         }
@@ -289,7 +289,7 @@ fun ControlButtons(
         Button(
             onClick = { if (isTracking) onPause() else onResume() },
             modifier = Modifier
-                .width(130.dp)
+                .width(140.dp)
                 .height(40.dp)
         ) {
             Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
@@ -300,11 +300,11 @@ fun ControlButtons(
 
             },
             imageVector = Icons.Outlined.LocationOn,
-            iconColor = MaterialTheme.colorScheme.onSurface,
+            iconColor = MaterialTheme.colorScheme.onPrimary,
             elevation = 10.dp,
             iconSize = 28.dp,
             buttonSize = 40.dp,
-            backgroundColor = MaterialTheme.colorScheme.surface,
+            backgroundColor = MaterialTheme.colorScheme.primary,
             contentDescription = "Map view"
         )
     }

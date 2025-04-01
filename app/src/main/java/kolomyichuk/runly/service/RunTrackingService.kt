@@ -156,7 +156,7 @@ class RunTrackingService : Service() {
         stopLocationTracking()
         notificationHelper.updateNotification(
             Constants.TRACKING_NOTIFICATION_ID,
-            "Paused",
+            getString(R.string.paused),
             TrackingUtility.formatTime(timeInMillis.value)
         )
     }

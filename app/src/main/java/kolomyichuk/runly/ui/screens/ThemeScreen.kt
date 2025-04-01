@@ -117,12 +117,12 @@ fun ThemeIcon(
     )
 }
 
-
+@Composable
 fun themeName(theme: AppTheme): String {
     return when (theme) {
-        AppTheme.LIGHT -> "Light"
-        AppTheme.DARK -> "Dark"
-        AppTheme.SYSTEM -> "System"
+        AppTheme.LIGHT -> stringResource(R.string.light)
+        AppTheme.DARK -> stringResource(R.string.dark)
+        AppTheme.SYSTEM -> stringResource(R.string.system)
     }
 }
 

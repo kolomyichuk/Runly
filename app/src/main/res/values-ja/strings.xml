@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Runly</string>
+    <string name="run">ラン</string>
+    <string name="pause">一時停止</string>
+    <string name="resume">再開</string>
+    <string name="stop">停止</string>
+    <string name="start">開始</string>
+    <string name="time">時間</string>
+    <string name="distance">距離</string>
+    <string name="theme">テーマ</string>
+    <string name="profile">プロフィール</string>
+    <string name="settings">設定</string>
+    <string name="home">ホーム</string>
+    <string name="paused">一時停止中</string>
+    <string name="cancel">キャンセル</string>
+    <string name="save">保存</string>
+    <string name="enter_your_username">ユーザー名を入力してください</string>
+    <string name="light">ライト</string>
+    <string name="dark">ダーク</string>
+    <string name="system">システム</string>
+</resources>

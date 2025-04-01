@@ -15,4 +15,7 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="enter_your_username">Enter your username</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
 </resources>
