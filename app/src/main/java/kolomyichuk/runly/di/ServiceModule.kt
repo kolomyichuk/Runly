@@ -39,7 +39,6 @@ object ServiceModule {
         .setContentText("00:00:00")
         .setContentIntent(pendingIntent)
 
-
     @ServiceScoped
     @Provides
     fun provideActivityPendingIntent(@ApplicationContext context: Context): PendingIntent {
@@ -53,7 +52,6 @@ object ServiceModule {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
-
 
     @ServiceScoped
     @Provides

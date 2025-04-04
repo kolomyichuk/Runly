@@ -113,7 +113,7 @@ class RunTrackingService : Service() {
             super.onLocationResult(locationResult)
             locationResult.locations.lastOrNull()?.let { location ->
                 val newPoint = LatLng(location.latitude, location.longitude)
-
+                Timber.d("newPoint ${newPoint.latitude}, ${newPoint.longitude}")
                 val timeDiff = (location.time - (lastValidLocation?.let {
                     Location("").apply {
                         latitude = it.latitude
@@ -139,6 +139,7 @@ class RunTrackingService : Service() {
     }
 
     private fun addLocationPoints(point: LatLng) {
+        Timber.d("Add location points call")
         pathPoints.update { list ->
             if (list.isEmpty()) {
                 list.add(mutableListOf())
@@ -146,11 +147,13 @@ class RunTrackingService : Service() {
             list.last().add(point)
             list
         }
+        Timber.d("Path Points now: ${pathPoints.value}")
     }
 
     private fun pauseTracking() {
         isTracking.value = false
         isPause.value = true
+        Timber.d("Paused")
         timeRun += System.currentTimeMillis() - startTime
         stopTimer()
         stopLocationTracking()
@@ -171,10 +174,12 @@ class RunTrackingService : Service() {
             isPause.value = false
             startTime = System.currentTimeMillis()
             startTimer()
+            Timber.d("Resume")
             pathPoints.update { list->
                 list.add(mutableListOf())
                 list
             }
+            Timber.d("Path: ${pathPoints.value}")
             startLocationTracking()
         }
     }
@@ -183,10 +188,12 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
+        Timber.d("Stop Tracking")
         isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
         pathPoints.update { mutableListOf() }
+        Timber.d("Path stop ${pathPoints.value}")
         stopTimer()
         stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)

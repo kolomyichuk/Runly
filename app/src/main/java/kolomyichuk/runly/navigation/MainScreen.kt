@@ -16,7 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.BottomNavigationBar
 import kolomyichuk.runly.ui.screens.HomeScreen
-import kolomyichuk.runly.ui.screens.RunScreen
+import kolomyichuk.runly.ui.screens.run.RunScreen
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 @Composable
