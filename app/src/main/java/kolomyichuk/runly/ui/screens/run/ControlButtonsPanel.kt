@@ -34,12 +34,13 @@ import kolomyichuk.runly.utils.pauseTrackingService
 import kolomyichuk.runly.utils.resumeTrackingService
 import kolomyichuk.runly.utils.startRunTrackingService
 import kolomyichuk.runly.utils.stopTrackingService
+import android.Manifest
 
 @Composable
 fun ControlButtonsPanel(
     isTracking: Boolean,
     isPause: Boolean
-){
+) {
     val context = LocalContext.current
 
     var hasNotificationPermission by remember { mutableStateOf(true) }
@@ -47,10 +48,10 @@ fun ControlButtonsPanel(
     val permissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val locationGranted = permissions["android.permission.ACCESS_FINE_LOCATION"] == true &&
-                permissions["android.permission.ACCESS_COARSE_LOCATION"] == true
+        val locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         val notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions["android.permission.POST_NOTIFICATIONS"] == true
+            permissions[Manifest.permission.POST_NOTIFICATIONS] == true
         } else true
 
         hasNotificationPermission = notificationGranted
@@ -65,23 +66,23 @@ fun ControlButtonsPanel(
                 val permissionsToRequest = mutableListOf<String>()
 
                 if (ContextCompat.checkSelfPermission(
-                        context, "android.permission.ACCESS_FINE_LOCATION"
+                        context, Manifest.permission.ACCESS_FINE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    permissionsToRequest.add("android.permission.ACCESS_FINE_LOCATION")
+                    permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
                 if (ContextCompat.checkSelfPermission(
-                        context, "android.permission.ACCESS_COARSE_LOCATION"
+                        context, Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    permissionsToRequest.add("android.permission.ACCESS_COARSE_LOCATION")
+                    permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                     ContextCompat.checkSelfPermission(
-                        context, "android.permission.POST_NOTIFICATIONS"
+                        context, Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    permissionsToRequest.add("android.permission.POST_NOTIFICATIONS")
+                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
                 }
 
                 if (permissionsToRequest.isNotEmpty()) {
@@ -146,7 +147,9 @@ fun OtherButtons(
         }
 
         CircleIconButton(
-            onClick = {},
+            onClick = {
+
+            },
             imageVector = Icons.Outlined.Map,
             iconColor = MaterialTheme.colorScheme.onPrimary,
             elevation = 10.dp,

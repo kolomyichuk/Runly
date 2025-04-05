@@ -1,6 +1,11 @@
 package kolomyichuk.runly.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
@@ -45,11 +50,21 @@ fun BottomNavigationBar(
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = currentBackStackEntry?.destination?.route
 
+        val transition = rememberInfiniteTransition(label = "BlinkingTransition")
+        val alpha by transition.animateFloat(
+            initialValue = 1f,
+            targetValue = 0f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(800),
+                repeatMode = RepeatMode.Reverse
+            ), label = "Blinking Color"
+        )
+
         items.forEach { item ->
             val isRunTab = item.route == BottomNavItem.Run.route
 
             val backgroundColor = when {
-                isRunTab && isRunActive -> MaterialTheme.colorScheme.secondaryContainer
+                isRunTab && isRunActive -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = alpha)
                 else -> Color.Transparent
             }
 

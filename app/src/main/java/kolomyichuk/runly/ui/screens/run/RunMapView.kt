@@ -93,7 +93,6 @@ fun RunMapView(
                 val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                 map.setMapStyle(mapStyle)
             }
-
             pathPoints.forEach { segment ->
                 if (segment.isNotEmpty()) {
                     Polyline(
@@ -103,7 +102,6 @@ fun RunMapView(
                     )
                 }
             }
-
             val lastSegment = pathPoints.lastOrNull()
             if (!lastSegment.isNullOrEmpty()) {
                 Marker(
