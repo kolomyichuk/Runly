@@ -1,9 +1,5 @@
 package kolomyichuk.runly.ui.screens.run
 
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,16 +13,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
@@ -34,7 +25,6 @@ import kolomyichuk.runly.utils.pauseTrackingService
 import kolomyichuk.runly.utils.resumeTrackingService
 import kolomyichuk.runly.utils.startRunTrackingService
 import kolomyichuk.runly.utils.stopTrackingService
-import android.Manifest
 
 @Composable
 fun ControlButtonsPanel(
@@ -43,53 +33,10 @@ fun ControlButtonsPanel(
 ) {
     val context = LocalContext.current
 
-    var hasNotificationPermission by remember { mutableStateOf(true) }
-
-    val permissionsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        val notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions[Manifest.permission.POST_NOTIFICATIONS] == true
-        } else true
-
-        hasNotificationPermission = notificationGranted
-        if (locationGranted) {
-            startRunTrackingService(context = context)
-        }
-    }
-
     if (!isTracking && !isPause) {
         ButtonStart(
             onClick = {
-                val permissionsToRequest = mutableListOf<String>()
-
-                if (ContextCompat.checkSelfPermission(
-                        context, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-                if (ContextCompat.checkSelfPermission(
-                        context, Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(
-                        context, Manifest.permission.POST_NOTIFICATIONS
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-                }
-
-                if (permissionsToRequest.isNotEmpty()) {
-                    permissionsLauncher.launch(permissionsToRequest.toTypedArray())
-                } else {
                     startRunTrackingService(context = context)
-                }
             },
             modifier = Modifier
                 .fillMaxWidth()
