@@ -26,7 +26,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -50,7 +49,7 @@ class RunTrackingService : Service() {
         val isTracking = MutableStateFlow(false)
         val isActiveRun = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
-        val pathPoints = MutableStateFlow<MutableList<MutableList<LatLng>>>(mutableListOf())
+        val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.0)
     }
 
@@ -65,10 +64,10 @@ class RunTrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent.let {
             when (it?.action) {
-                Constants.ACTION_START_TRACKING_SERVICE -> startTracking()
-                Constants.ACTION_PAUSE_TRACKING_SERVICE -> pauseTracking()
-                Constants.ACTION_RESUME_TRACKING_SERVICE -> resumeTracking()
-                Constants.ACTION_STOP_TRACKING_SERVICE -> stopTracking()
+                Constants.ACTION_START_TRACKING -> startTracking()
+                Constants.ACTION_PAUSE_TRACKING -> pauseTracking()
+                Constants.ACTION_RESUME_TRACKING -> resumeTracking()
+                Constants.ACTION_STOP_TRACKING -> stopTracking()
             }
         }
         return START_STICKY
@@ -140,13 +139,15 @@ class RunTrackingService : Service() {
 
     private fun addLocationPoints(point: LatLng) {
         Timber.d("Add location points call")
-        pathPoints.update { list ->
-            if (list.isEmpty()) {
-                list.add(mutableListOf())
-            }
-            list.last().add(point)
-            list
+        val updatedPath = pathPoints.value.toMutableList()
+        if (updatedPath.isEmpty()) {
+            updatedPath.add(listOf(point))
+        } else {
+            val lastSegment = updatedPath.last().toMutableList()
+            lastSegment.add(point)
+            updatedPath[updatedPath.lastIndex] = lastSegment
         }
+        pathPoints.value = updatedPath.toList()
         Timber.d("Path Points now: ${pathPoints.value}")
     }
 
@@ -175,10 +176,9 @@ class RunTrackingService : Service() {
             startTime = System.currentTimeMillis()
             startTimer()
             Timber.d("Resume")
-            pathPoints.update { list->
-                list.add(mutableListOf())
-                list
-            }
+            val updated = pathPoints.value.toMutableList()
+            updated.add(emptyList())
+            pathPoints.value = updated.toList()
             Timber.d("Path: ${pathPoints.value}")
             startLocationTracking()
         }
@@ -192,7 +192,7 @@ class RunTrackingService : Service() {
         isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
-        pathPoints.update { mutableListOf() }
+        pathPoints.value = emptyList()
         Timber.d("Path stop ${pathPoints.value}")
         stopTimer()
         stopLocationTracking()

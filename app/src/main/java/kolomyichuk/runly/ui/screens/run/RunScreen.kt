@@ -15,6 +15,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,70 +28,104 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
+import timber.log.Timber
 
 @Composable
 fun RunScreen(
     navController: NavController,
     themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(
-            title = stringResource(R.string.run),
-            onBackClick = { navController.popBackStack() }
-        )
-        val theme by themeViewModel.themeFlow.collectAsState()
+    val theme by themeViewModel.themeFlow.collectAsState()
 
-        val isDarkTheme = when (theme) {
-            AppTheme.DARK -> true
-            AppTheme.LIGHT -> false
-            AppTheme.SYSTEM -> isSystemInDarkTheme()
+    val isDarkTheme = when (theme) {
+        AppTheme.DARK -> true
+        AppTheme.LIGHT -> false
+        AppTheme.SYSTEM -> isSystemInDarkTheme()
+    }
+
+    val context = LocalContext.current
+    val activity = context as? android.app.Activity
+    val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    var isLocationGranted by remember { mutableStateOf(false) }
+    var alreadyRequestedPermission by remember { mutableStateOf(false) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        isLocationGranted = allGranted
+
+        val shouldShowRationale = locationPermissions.any { permission ->
+            activity != null && ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                permission
+            )
         }
-        ContentRunScreen(isDarkTheme = isDarkTheme)
-
-        val context = LocalContext.current
-        val activity = context as? android.app.Activity
-        val locationPermissions = arrayOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        var showSettingsDialog by remember { mutableStateOf(false) }
-        var isLocationGranted by remember { mutableStateOf(false) }
-
-        val locationPermissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            val allGranted = permissions.values.all { it }
-            isLocationGranted = allGranted
-
-            val shouldShowRationale = locationPermissions.any { permission ->
-                activity != null && ActivityCompat.shouldShowRequestPermissionRationale(
-                    activity,
-                    permission
-                )
-            }
-            if (!shouldShowRationale) {
-                showSettingsDialog = true
-            } else {
-                Toast.makeText(context, "Дозвіл на локацію відхилено", Toast.LENGTH_SHORT).show()
-            }
+        if (!shouldShowRationale) {
+            showSettingsDialog = true
+        } else {
+            Toast.makeText(context, "Дозвіл на локацію відхилено", Toast.LENGTH_SHORT).show()
         }
+    }
 
-        LaunchedEffect(Unit) {
-            isLocationGranted = locationPermissions.all {
-                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-            }
+    LaunchedEffect(Unit) {
+        isLocationGranted = locationPermissions.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
-
-        LaunchedEffect(!isLocationGranted) {
+        if (!isLocationGranted && !alreadyRequestedPermission) {
+            alreadyRequestedPermission = true
             locationPermissionLauncher.launch(locationPermissions)
         }
+    }
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val granted = locationPermissions.all {
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        it
+                    ) == PackageManager.PERMISSION_GRANTED
+                }
+                isLocationGranted = granted
+
+                if (!granted) {
+                    val shouldShowRationale = locationPermissions.any { permission ->
+                        activity != null && ActivityCompat.shouldShowRequestPermissionRationale(
+                            activity,
+                            permission
+                        )
+                    }
+
+                    if (!shouldShowRationale) {
+                        showSettingsDialog = true
+                    }
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    if (showSettingsDialog) {
         AlertDialog(
             onDismissRequest = {
                 showSettingsDialog = false
@@ -120,24 +155,36 @@ fun RunScreen(
             }
         )
     }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        TopBarApp(
+            title = stringResource(R.string.run),
+            onBackClick = { navController.popBackStack() }
+        )
+        ContentRunScreen(isDarkTheme = isDarkTheme)
+    }
 }
 
 @Composable
-fun ContentRunScreen(isDarkTheme: Boolean) {
+fun ContentRunScreen(
+    isDarkTheme: Boolean
+) {
     val timeInMillis by RunTrackingService.timeInMillis.collectAsState(0L)
     val isTracking by RunTrackingService.isTracking.collectAsState(initial = false)
     val isPause by RunTrackingService.isPause.collectAsState(initial = false)
-    val pathPoints by RunTrackingService.pathPoints.collectAsState(emptyList())
+    val pathPoints by RunTrackingService.pathPoints.collectAsState()
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsState(0.0)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        Timber.d("path: $pathPoints")
         RunMapView(
             pathPoints = pathPoints,
             isDarkTheme = isDarkTheme,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            isTracking = isTracking
         )
 
         InfoPanel(

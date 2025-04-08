@@ -1,5 +1,8 @@
 package kolomyichuk.runly.ui.screens.run
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Looper
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -38,15 +47,47 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.currentLocationMarker
 import kolomyichuk.runly.utils.Constants
+import timber.log.Timber
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun RunMapView(
     pathPoints: List<List<LatLng>>,
-    isDarkTheme:Boolean,
+    isDarkTheme: Boolean,
+    isTracking: Boolean,
     modifier: Modifier
 ) {
     val context = LocalContext.current
+
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    var currentLocation by remember { mutableStateOf<LatLng?>(null) }
+    var locationCallback by remember { mutableStateOf<LocationCallback?>(null) }
+
+    LaunchedEffect(!isTracking) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val request = LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                5000L
+            ).build()
+
+            val callback = object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    result.lastLocation?.let {
+                        currentLocation = LatLng(it.latitude, it.longitude)
+                    }
+                }
+            }
+            fusedLocationClient.requestLocationUpdates(request, callback, Looper.getMainLooper())
+            locationCallback = callback
+        } else {
+            locationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
+            locationCallback = null
+        }
+    }
 
     var isSatellite by remember { mutableStateOf(false) }
     val mapProperties =
@@ -93,6 +134,14 @@ fun RunMapView(
                 val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                 map.setMapStyle(mapStyle)
             }
+            if (!isTracking && currentLocation != null){
+                Marker(
+                    state = MarkerState(currentLocation!!),
+                    icon = currentLocationMarker,
+                    anchor = Offset(0.5f, 0.5f)
+                )
+            }
+            Timber.d("path: ${pathPoints}")
             pathPoints.forEach { segment ->
                 if (segment.isNotEmpty()) {
                     Polyline(
@@ -101,6 +150,9 @@ fun RunMapView(
                         width = Constants.POLYLINE_WIDTH
                     )
                 }
+            }
+            if (isTracking){
+
             }
             val lastSegment = pathPoints.lastOrNull()
             if (!lastSegment.isNullOrEmpty()) {
