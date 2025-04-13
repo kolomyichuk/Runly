@@ -9,10 +9,10 @@ import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-val currentLocationMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
-    val centerX = 40f
-    val centerY = 40f
-    val outerRadius = 30f
+val currentLocationMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
+    val centerX = 25f
+    val centerY = 25f
+    val outerRadius = 20f
     val strokeWidth = 4f
     val innerRadius = outerRadius - strokeWidth / 2
 
@@ -27,16 +27,16 @@ val currentLocationMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
 }
 
 @Suppress("NAME_SHADOWING")
-val finishMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
-    val centerX = 40f
-    val centerY = 40f
-    val radius = 30f
+val finishMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
+    val centerX = 25f
+    val centerY = 25f
+    val radius = 20f
     val strokeWidth = 4f
-    val tileSize = radius - strokeWidth /2
+    val tileSize = radius - strokeWidth / 2
     val paintBlack = Paint().apply { color = Color.Black.toArgb(); style = Paint.Style.FILL }
     val paintWhite = Paint().apply { color = Color.White.toArgb(); style = Paint.Style.FILL }
 
-    val path = Path().apply { addCircle(centerX,centerY, radius, Path.Direction.CCW) }
+    val path = Path().apply { addCircle(centerX, centerY, radius, Path.Direction.CCW) }
     canvas.save()
     canvas.clipPath(path)
 
@@ -58,10 +58,10 @@ val finishMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
     canvas.drawCircle(centerX, centerY, radius, paint)
 }
 
-val startMarker = canvasToBitmapDescriptor(80) { canvas, paint ->
-    val centerX = 40f
-    val centerY = 40f
-    val outerRadius = 30f
+val startMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
+    val centerX = 25f
+    val centerY = 25f
+    val outerRadius = 20f
     val strokeWidth = 4f
     val innerRadius = outerRadius - strokeWidth / 2
 

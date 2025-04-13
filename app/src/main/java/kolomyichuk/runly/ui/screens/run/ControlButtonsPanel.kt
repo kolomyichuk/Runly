@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
@@ -46,7 +47,8 @@ import kolomyichuk.runly.utils.Constants
 @Composable
 fun ControlButtonsPanel(
     isTracking: Boolean,
-    isPause: Boolean
+    isPause: Boolean,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val activity = context as? android.app.Activity
@@ -112,7 +114,8 @@ fun ControlButtonsPanel(
             isPause = isPause,
             onPause = { sendCommandToRunService(context, Constants.ACTION_PAUSE_TRACKING) },
             onResume = { sendCommandToRunService(context, Constants.ACTION_RESUME_TRACKING) },
-            onStop = { sendCommandToRunService(context, Constants.ACTION_STOP_TRACKING) }
+            onStop = { sendCommandToRunService(context, Constants.ACTION_STOP_TRACKING) },
+            navController = navController
         )
     }
 
@@ -152,7 +155,8 @@ fun OtherButtons(
     isPause: Boolean,
     onPause: () -> Unit,
     onResume: () -> Unit,
-    onStop: () -> Unit
+    onStop: () -> Unit,
+    navController: NavController
 ) {
     Row(
         modifier = Modifier
@@ -186,7 +190,7 @@ fun OtherButtons(
 
         CircleIconButton(
             onClick = {
-
+                navController.navigate(route = "dashboard")
             },
             imageVector = Icons.Outlined.Map,
             iconColor = MaterialTheme.colorScheme.onPrimary,
@@ -194,7 +198,7 @@ fun OtherButtons(
             iconSize = 28.dp,
             buttonSize = 40.dp,
             backgroundColor = MaterialTheme.colorScheme.primary,
-            contentDescription = "Map view"
+            contentDescription = "Map hide"
         )
     }
 }

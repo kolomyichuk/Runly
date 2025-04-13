@@ -46,13 +46,7 @@ fun MainScreen(navController: NavHostController, startScreen: MutableState<Strin
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("home") { HomeScreen() }
-            composable("run") {
-                val themeViewModel = hiltViewModel<ThemeViewModel>()
-                RunScreen(
-                    navController = navController,
-                    themeViewModel = themeViewModel
-                )
-            }
+            composable("run") { RunNavHost() }
             composable("profile") { ProfileNavHost() }
         }
     }

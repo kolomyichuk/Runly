@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
@@ -149,9 +150,9 @@ fun RunScreen(
                     Text(text = "Скасувати")
                 }
             },
-            title = { Text("Дозвіл заблоковано") },
+            title = { Text("Дозвіл на локацію заблоковано") },
             text = {
-                Text("Ви відхилили дозвіл і обрали 'Більше не питати'. Щоб надати доступ, відкрийте налаштування додатку.")
+                Text("Ви відхилили дозвіл на локацію і обрали 'Більше не питати'. Щоб мати можливість записати пробіжку потрібно надати доступ до локації на постійній основі у налаштуваннях.")
             }
         )
     }
@@ -161,19 +162,23 @@ fun RunScreen(
             title = stringResource(R.string.run),
             onBackClick = { navController.popBackStack() }
         )
-        ContentRunScreen(isDarkTheme = isDarkTheme)
+        ContentRunScreen(
+            isDarkTheme = isDarkTheme,
+            navController = navController
+        )
     }
 }
 
 @Composable
 fun ContentRunScreen(
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    navController: NavController
 ) {
-    val timeInMillis by RunTrackingService.timeInMillis.collectAsState(0L)
-    val isTracking by RunTrackingService.isTracking.collectAsState(initial = false)
-    val isPause by RunTrackingService.isPause.collectAsState(initial = false)
-    val pathPoints by RunTrackingService.pathPoints.collectAsState()
-    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsState(0.0)
+    val timeInMillis by RunTrackingService.timeInMillis.collectAsStateWithLifecycle(initialValue = 0L)
+    val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
+    val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
+    val pathPoints by RunTrackingService.pathPoints.collectAsStateWithLifecycle()
+    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
 
     Column(
         modifier = Modifier
@@ -194,7 +199,8 @@ fun ContentRunScreen(
 
         ControlButtonsPanel(
             isTracking = isTracking,
-            isPause = isPause
+            isPause = isPause,
+            navController = navController
         )
     }
 }

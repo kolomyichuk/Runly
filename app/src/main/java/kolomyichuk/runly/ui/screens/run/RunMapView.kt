@@ -152,15 +152,14 @@ fun RunMapView(
                 }
             }
             if (isTracking){
-
-            }
-            val lastSegment = pathPoints.lastOrNull()
-            if (!lastSegment.isNullOrEmpty()) {
-                Marker(
-                    state = MarkerState(lastSegment.last()),
-                    icon = currentLocationMarker,
-                    anchor = Offset(0.5f, 0.5f)
-                )
+                val lastSegment = pathPoints.lastOrNull()
+                if (!lastSegment.isNullOrEmpty()) {
+                    Marker(
+                        state = MarkerState(lastSegment.last()),
+                        icon = currentLocationMarker,
+                        anchor = Offset(0.5f, 0.5f)
+                    )
+                }
             }
         }
         IconButton(
