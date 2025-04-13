@@ -107,12 +107,25 @@ fun RunMapView(
         )
     }
 
-    LaunchedEffect(pathPoints) {
-        pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
-                1000
-            )
+    LaunchedEffect(isTracking, currentLocation, pathPoints) {
+        if (currentLocation != null) {
+            if (isTracking) {
+                pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
+                        1000
+                    )
+                }
+            } else {
+                currentLocation.let {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngZoom(
+                            currentLocation!!,
+                            Constants.MAP_ZOOM
+                        ), 1000
+                    )
+                }
+            }
         }
     }
 
@@ -134,7 +147,7 @@ fun RunMapView(
                 val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                 map.setMapStyle(mapStyle)
             }
-            if (!isTracking && currentLocation != null){
+            if (!isTracking && currentLocation != null) {
                 Marker(
                     state = MarkerState(currentLocation!!),
                     icon = currentLocationMarker,
@@ -151,7 +164,7 @@ fun RunMapView(
                     )
                 }
             }
-            if (isTracking){
+            if (isTracking) {
                 val lastSegment = pathPoints.lastOrNull()
                 if (!lastSegment.isNullOrEmpty()) {
                     Marker(
