@@ -117,7 +117,7 @@ fun RunMapView(
                     )
                 }
             } else {
-                currentLocation.let {
+                currentLocation?.let {
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(
                             currentLocation!!,
@@ -154,7 +154,6 @@ fun RunMapView(
                     anchor = Offset(0.5f, 0.5f)
                 )
             }
-            Timber.d("path: ${pathPoints}")
             pathPoints.forEach { segment ->
                 if (segment.isNotEmpty()) {
                     Polyline(

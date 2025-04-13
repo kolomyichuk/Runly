@@ -186,7 +186,7 @@ fun ContentDashboardScreen(
 
             CircleIconButton(
                 onClick = {
-                    navController.navigate(route = "dashboard")
+                    navController.popBackStack()
                 },
                 imageVector = Icons.Outlined.Map,
                 iconColor = MaterialTheme.colorScheme.onPrimary,

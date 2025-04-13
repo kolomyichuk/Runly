@@ -138,7 +138,6 @@ class RunTrackingService : Service() {
     }
 
     private fun addLocationPoints(point: LatLng) {
-        Timber.d("Add location points call")
         val updatedPath = pathPoints.value.toMutableList()
         if (updatedPath.isEmpty()) {
             updatedPath.add(listOf(point))
@@ -148,13 +147,11 @@ class RunTrackingService : Service() {
             updatedPath[updatedPath.lastIndex] = lastSegment
         }
         pathPoints.value = updatedPath.toList()
-        Timber.d("Path Points now: ${pathPoints.value}")
     }
 
     private fun pauseTracking() {
         isTracking.value = false
         isPause.value = true
-        Timber.d("Paused")
         timeRun += System.currentTimeMillis() - startTime
         stopTimer()
         stopLocationTracking()
@@ -175,11 +172,9 @@ class RunTrackingService : Service() {
             isPause.value = false
             startTime = System.currentTimeMillis()
             startTimer()
-            Timber.d("Resume")
             val updated = pathPoints.value.toMutableList()
             updated.add(emptyList())
             pathPoints.value = updated.toList()
-            Timber.d("Path: ${pathPoints.value}")
             startLocationTracking()
         }
     }
@@ -188,12 +183,10 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
-        Timber.d("Stop Tracking")
         isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
         pathPoints.value = emptyList()
-        Timber.d("Path stop ${pathPoints.value}")
         stopTimer()
         stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)

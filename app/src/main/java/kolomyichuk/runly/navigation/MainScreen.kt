@@ -8,16 +8,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.BottomNavigationBar
-import kolomyichuk.runly.ui.screens.HomeScreen
-import kolomyichuk.runly.ui.screens.run.RunScreen
-import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
+import kolomyichuk.runly.ui.screens.home.HomeScreen
 
 @Composable
 fun MainScreen(navController: NavHostController, startScreen: MutableState<String?>) {
