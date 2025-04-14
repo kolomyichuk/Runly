@@ -20,7 +20,8 @@ import kolomyichuk.runly.utils.TrackingUtility
 @Composable
 fun InfoPanel(
     distanceInMeters: Double,
-    timeInMillis: Long
+    timeInMillis: Long,
+    avgSpeed:Double
 ) {
     val formattedDistance = "%.2f".format(distanceInMeters / 1000)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)
@@ -33,7 +34,7 @@ fun InfoPanel(
         verticalAlignment = Alignment.CenterVertically
     ) {
         InfoColumn(formattedDistance, stringResource(R.string.distance))
-        InfoColumn("--:-- /km", "Current Pace")
+        InfoColumn("$avgSpeed", "Avg Speed")
         InfoColumn(formattedTime, stringResource(R.string.time))
     }
 }

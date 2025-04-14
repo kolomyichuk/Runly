@@ -26,8 +26,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -51,6 +55,7 @@ class RunTrackingService : Service() {
         val isPause = MutableStateFlow(false)
         val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.0)
+        var avgSpeed = MutableStateFlow(0.00)
     }
 
     override fun onCreate() {
@@ -59,6 +64,7 @@ class RunTrackingService : Service() {
             Constants.TRACKING_CHANNEL_ID,
             Constants.TRACKING_CHANNEL_NAME
         )
+        speedCalculation()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -71,6 +77,30 @@ class RunTrackingService : Service() {
             }
         }
         return START_STICKY
+    }
+
+    private fun speedCalculation(){
+        serviceScope.launch {
+            combine(distanceInMeters, timeInMillis, isTracking) { distance, time, tracking ->
+                if (!tracking) return@combine null
+
+                val timeInSeconds = time / 1000.0
+                val distanceInKm = distance / 1000.0
+
+                if (timeInSeconds > 5 && distanceInKm > 0.02){
+                    val speed = distanceInKm / (timeInSeconds / 3600.0)
+                    if (speed.isFinite()) {
+                        String.format(Locale.US,"%.2f", speed).toDouble()
+                    } else null
+                } else null
+            }
+                .filterNotNull()
+                .catch { e -> Timber.e("Error in speedCalculation: ${e.localizedMessage}") }
+                .collect { calculatedSpeed ->
+                    avgSpeed.value = calculatedSpeed
+                    Timber.d("avgSpeed = $calculatedSpeed km/h")
+                }
+        }
     }
 
     private fun startTracking() {
@@ -89,6 +119,26 @@ class RunTrackingService : Service() {
         startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
         startTimer()
         startLocationTracking()
+    }
+
+    private fun startTimer() {
+        if (timerJob != null) return
+
+        timerJob = serviceScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Timber.e("Timer error: ${throwable.localizedMessage}")
+        }) {
+            while (isTracking.value) {
+                delay(Constants.TIMER_INTERVAL)
+                val currentTime = System.currentTimeMillis()
+                timeInMillis.value = timeRun + (currentTime - startTime)
+
+                notificationHelper.updateNotification(
+                    Constants.TRACKING_NOTIFICATION_ID,
+                    getString(R.string.run),
+                    TrackingUtility.formatTime(timeInMillis.value)
+                )
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -162,10 +212,6 @@ class RunTrackingService : Service() {
         )
     }
 
-    private fun stopLocationTracking() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
     private fun resumeTracking() {
         if (!isTracking.value) {
             isTracking.value = true
@@ -179,10 +225,15 @@ class RunTrackingService : Service() {
         }
     }
 
+    private fun stopLocationTracking() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
     private fun stopTracking() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
+        avgSpeed.value = 0.00
         isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L
@@ -191,26 +242,6 @@ class RunTrackingService : Service() {
         stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-    }
-
-    private fun startTimer() {
-        if (timerJob != null) return
-
-        timerJob = serviceScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Timber.e("Timer error: ${throwable.localizedMessage}")
-        }) {
-            while (isTracking.value) {
-                delay(Constants.TIMER_INTERVAL)
-                val currentTime = System.currentTimeMillis()
-                timeInMillis.value = timeRun + (currentTime - startTime)
-
-                notificationHelper.updateNotification(
-                    Constants.TRACKING_NOTIFICATION_ID,
-                    getString(R.string.run),
-                    TrackingUtility.formatTime(timeInMillis.value)
-                )
-            }
-        }
     }
 
     private fun isValidLocation(prevPoint: LatLng, newPoint: LatLng, timeDiff: Float): Boolean {
@@ -241,3 +272,4 @@ class RunTrackingService : Service() {
         return null
     }
 }
+

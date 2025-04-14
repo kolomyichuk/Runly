@@ -60,6 +60,7 @@ fun ContentDashboardScreen(
     val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
     val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
+    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)
     val formattedDistance = "%.2f".format(distanceInMeters / 1000)
 
@@ -101,7 +102,7 @@ fun ContentDashboardScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "0,00",
+                text = "$avgSpeed",
                 fontSize = 70.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground

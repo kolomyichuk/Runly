@@ -179,6 +179,7 @@ fun ContentRunScreen(
     val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
     val pathPoints by RunTrackingService.pathPoints.collectAsStateWithLifecycle()
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
+    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00)
 
     Column(
         modifier = Modifier
@@ -194,7 +195,8 @@ fun ContentRunScreen(
 
         InfoPanel(
             distanceInMeters = distanceInMeters,
-            timeInMillis = timeInMillis
+            timeInMillis = timeInMillis,
+            avgSpeed = avgSpeed
         )
 
         ControlButtonsPanel(
