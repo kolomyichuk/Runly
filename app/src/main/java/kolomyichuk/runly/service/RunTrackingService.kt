@@ -42,21 +42,21 @@ class RunTrackingService : Service() {
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private var lastValidLocation: LatLng? = null
-    private var startTime = 0L
-    private var timeRun = 0L
-    private var timerJob: Job? = null
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
     companion object {
         val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
         val isActiveRun = MutableStateFlow(false)
         val isPause = MutableStateFlow(false)
         val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
-        val distanceInMeters = MutableStateFlow(0.0)
+        val distanceInMeters = MutableStateFlow(0.00)
         var avgSpeed = MutableStateFlow(0.00)
     }
+
+    private var lastValidLocation: LatLng? = null
+    private var startTime = 0L
+    private var timeRun = 0L
+    private var timerJob: Job? = null
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun onCreate() {
         super.onCreate()
@@ -98,7 +98,6 @@ class RunTrackingService : Service() {
                 .catch { e -> Timber.e("Error in speedCalculation: ${e.localizedMessage}") }
                 .collect { calculatedSpeed ->
                     avgSpeed.value = calculatedSpeed
-                    Timber.d("avgSpeed = $calculatedSpeed km/h")
                 }
         }
     }
@@ -132,10 +131,12 @@ class RunTrackingService : Service() {
                 val currentTime = System.currentTimeMillis()
                 timeInMillis.value = timeRun + (currentTime - startTime)
 
+                val formattedDistance = "%.2f".format(distanceInMeters.value / 1000)
+
                 notificationHelper.updateNotification(
                     Constants.TRACKING_NOTIFICATION_ID,
                     getString(R.string.run),
-                    TrackingUtility.formatTime(timeInMillis.value)
+                    "${TrackingUtility.formatTime(timeInMillis.value)} · $formattedDistance km"
                 )
             }
         }
@@ -162,7 +163,6 @@ class RunTrackingService : Service() {
             super.onLocationResult(locationResult)
             locationResult.locations.lastOrNull()?.let { location ->
                 val newPoint = LatLng(location.latitude, location.longitude)
-                Timber.d("newPoint ${newPoint.latitude}, ${newPoint.longitude}")
                 val timeDiff = (location.time - (lastValidLocation?.let {
                     Location("").apply {
                         latitude = it.latitude
