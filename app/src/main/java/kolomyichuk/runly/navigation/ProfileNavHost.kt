@@ -5,7 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kolomyichuk.runly.ui.screens.ProfileScreen
+import kolomyichuk.runly.ui.screens.profile.ProfileScreen
 import kolomyichuk.runly.ui.screens.SettingsScreen
 import kolomyichuk.runly.ui.screens.ThemeScreen
 import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
