@@ -14,5 +14,5 @@ interface RunDao {
     suspend fun getAllRun(): Flow<List<Run>>
 
     @Delete
-    fun deleteRun(run: Run)
+    suspend fun deleteRun(run: Run)
 }
