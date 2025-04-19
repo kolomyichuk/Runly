@@ -1,8 +1,9 @@
-package kolomyichuk.runly.data.local.room.run
+package kolomyichuk.runly.data.local.room.dao
 
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import kolomyichuk.runly.data.local.room.entity.Run
 import kotlinx.coroutines.flow.Flow
 
 interface RunDao {

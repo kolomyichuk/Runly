@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.local.room.run
+package kolomyichuk.runly.data.local.room.entity
 
 data class LatLngPoint(
     val latitude: Double,

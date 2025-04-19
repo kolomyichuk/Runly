@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +15,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.local.datastore.ProfilePreferencesDataStore
 import kolomyichuk.runly.data.local.datastore.ThemePreferencesDataStore
+import kolomyichuk.runly.data.local.room.AppDatabase
+import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.local.storage.ImageStorage
 import kolomyichuk.runly.data.repository.ProfileRepository
 import kolomyichuk.runly.data.repository.ThemeRepository
@@ -25,6 +26,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRunDao(db: AppDatabase): RunDao {
+        return db.runDao()
+    }
 
     @Provides
     @Singleton
@@ -41,7 +58,7 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideThemeRepository(
-        preferencesDataStore:ThemePreferencesDataStore
+        preferencesDataStore: ThemePreferencesDataStore
     ): ThemeRepository {
         return ThemeRepository(preferencesDataStore)
     }
