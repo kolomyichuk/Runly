@@ -74,6 +74,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.philjay.mpandroidchart)
     implementation(libs.coil.compose)
     implementation(libs.android.maps.utils)
     implementation(libs.androidx.compose.material.iconsExtended)

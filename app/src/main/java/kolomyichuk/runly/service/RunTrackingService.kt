@@ -49,7 +49,7 @@ class RunTrackingService : Service() {
         val isPause = MutableStateFlow(false)
         val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.00)
-        var avgSpeed = MutableStateFlow(0.00)
+        var avgSpeed = MutableStateFlow(0.00f)
     }
 
     private var lastValidLocation: LatLng? = null
@@ -90,7 +90,7 @@ class RunTrackingService : Service() {
                 if (timeInSeconds > 5 && distanceInKm > 0.02){
                     val speed = distanceInKm / (timeInSeconds / 3600.0)
                     if (speed.isFinite()) {
-                        String.format(Locale.US,"%.2f", speed).toDouble()
+                        String.format(Locale.US,"%.2f", speed).toFloat()
                     } else null
                 } else null
             }
@@ -233,7 +233,7 @@ class RunTrackingService : Service() {
         isTracking.value = false
         isPause.value = false
         timeRun = 0
-        avgSpeed.value = 0.00
+        avgSpeed.value = 0.00f
         isActiveRun.value = false
         distanceInMeters.value = 0.0
         timeInMillis.value = 0L

@@ -21,7 +21,7 @@ import kolomyichuk.runly.utils.TrackingUtility
 fun InfoPanel(
     distanceInMeters: Double,
     timeInMillis: Long,
-    avgSpeed:Double
+    avgSpeed:Float
 ) {
     val formattedDistance = "%.2f".format(distanceInMeters / 1000)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)

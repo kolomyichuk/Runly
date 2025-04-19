@@ -60,7 +60,7 @@ fun ContentDashboardScreen(
     val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
     val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
-    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00)
+    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)
     val formattedDistance = "%.2f".format(distanceInMeters / 1000)
 

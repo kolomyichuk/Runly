@@ -179,7 +179,7 @@ fun ContentRunScreen(
     val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
     val pathPoints by RunTrackingService.pathPoints.collectAsStateWithLifecycle()
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
-    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00)
+    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
 
     Column(
         modifier = Modifier
