@@ -7,6 +7,8 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +24,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object DatabaseModule {
 
     @Provides
     @Singleton

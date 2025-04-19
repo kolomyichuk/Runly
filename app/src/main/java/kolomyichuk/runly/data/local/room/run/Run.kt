@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.local.room
+package kolomyichuk.runly.data.local.room.run
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

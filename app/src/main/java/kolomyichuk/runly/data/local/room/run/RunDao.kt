@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.local.room
+package kolomyichuk.runly.data.local.room.run
 
 import androidx.room.Delete
 import androidx.room.Insert
