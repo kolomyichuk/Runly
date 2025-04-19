@@ -19,6 +19,7 @@ import kolomyichuk.runly.data.local.room.AppDatabase
 import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.local.storage.ImageStorage
 import kolomyichuk.runly.data.repository.ProfileRepository
+import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.data.repository.ThemeRepository
 import kolomyichuk.runly.utils.Constants
 import javax.inject.Singleton
@@ -41,6 +42,12 @@ object DatabaseModule {
     @Singleton
     fun provideRunDao(db: AppDatabase): RunDao {
         return db.runDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRunRepository(runDao: RunDao): RunRepository {
+        return RunRepository(runDao)
     }
 
     @Provides
