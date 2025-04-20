@@ -8,8 +8,8 @@ import javax.inject.Inject
 class RunRepository @Inject constructor(
     private val runDao: RunDao
 ) {
-    suspend fun getAllRun(): Flow<List<Run>> {
-        return runDao.getAllRun()
+    suspend fun getAllRuns(): Flow<List<Run>> {
+        return runDao.getAllRuns()
     }
 
     suspend fun insertRun(run: Run) {

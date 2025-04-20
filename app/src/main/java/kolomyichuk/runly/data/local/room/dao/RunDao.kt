@@ -11,7 +11,7 @@ interface RunDao {
     suspend fun insertRun(run: Run)
 
     @Query("SELECT * FROM runs ORDER BY timestamp DESC")
-    suspend fun getAllRun(): Flow<List<Run>>
+    suspend fun getAllRuns(): Flow<List<Run>>
 
     @Delete
     suspend fun deleteRun(run: Run)
