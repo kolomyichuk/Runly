@@ -17,7 +17,10 @@ import kolomyichuk.runly.ui.components.BottomNavigationBar
 import kolomyichuk.runly.ui.screens.home.HomeScreen
 
 @Composable
-fun MainScreen(navController: NavHostController, startScreen: MutableState<String?>) {
+fun MainScreen(
+    navController: NavHostController,
+    startScreen: MutableState<String?>
+) {
     val isRunActive by RunTrackingService.isActiveRun.collectAsState(false)
 
     LaunchedEffect(startScreen.value) {

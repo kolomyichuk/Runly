@@ -11,22 +11,22 @@ import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 @Composable
 fun RunNavHost() {
-    val runNavController = rememberNavController()
+    val navController = rememberNavController()
 
     NavHost(
-        navController = runNavController,
+        navController = navController,
         startDestination = "run_graph"
     ) {
         composable("run_graph") {
             val themeViewModel = hiltViewModel<ThemeViewModel>()
             RunScreen(
-                navController = runNavController,
+                navController = navController,
                 themeViewModel = themeViewModel
             )
         }
         composable("dashboard"){
             DashboardScreen(
-                navController = runNavController
+                navController = navController
             )
         }
     }

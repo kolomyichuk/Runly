@@ -185,7 +185,6 @@ fun ContentRunScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Timber.d("path: $pathPoints")
         RunMapView(
             pathPoints = pathPoints,
             isDarkTheme = isDarkTheme,
