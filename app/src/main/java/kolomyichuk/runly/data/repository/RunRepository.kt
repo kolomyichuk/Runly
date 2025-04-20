@@ -20,3 +20,4 @@ class RunRepository @Inject constructor(
         runDao.deleteRun(run)
     }
 }
+
