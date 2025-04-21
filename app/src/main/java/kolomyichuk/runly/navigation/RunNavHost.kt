@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kolomyichuk.runly.ui.screens.DashboardScreen
 import kolomyichuk.runly.ui.screens.run.RunScreen
+import kolomyichuk.runly.ui.viewmodel.RunViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 @Composable
@@ -19,12 +20,14 @@ fun RunNavHost() {
     ) {
         composable("run_graph") {
             val themeViewModel = hiltViewModel<ThemeViewModel>()
+            val runViewModel = hiltViewModel<RunViewModel>()
             RunScreen(
                 navController = navController,
-                themeViewModel = themeViewModel
+                themeViewModel = themeViewModel,
+                runViewModel = runViewModel
             )
         }
-        composable("dashboard"){
+        composable("dashboard") {
             DashboardScreen(
                 navController = navController
             )

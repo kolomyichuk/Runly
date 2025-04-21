@@ -8,6 +8,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.BottomNavigationBar
 import kolomyichuk.runly.ui.screens.home.HomeScreen
+import kolomyichuk.runly.ui.viewmodel.RunViewModel
 
 @Composable
 fun MainScreen(
@@ -45,7 +47,12 @@ fun MainScreen(
             startDestination = "home",
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable("home") { HomeScreen() }
+            composable("home") {
+                val runViewModel: RunViewModel = hiltViewModel<RunViewModel>()
+                HomeScreen(
+                    runViewModel = runViewModel
+                )
+            }
             composable("run") { RunNavHost() }
             composable("profile") { ProfileNavHost() }
         }

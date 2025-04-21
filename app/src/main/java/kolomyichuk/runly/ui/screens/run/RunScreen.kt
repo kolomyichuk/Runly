@@ -37,13 +37,15 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.viewmodel.RunViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 import timber.log.Timber
 
 @Composable
 fun RunScreen(
     navController: NavController,
-    themeViewModel: ThemeViewModel = hiltViewModel()
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    runViewModel: RunViewModel = hiltViewModel(),
 ) {
     val theme by themeViewModel.themeFlow.collectAsState()
 

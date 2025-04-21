@@ -10,20 +10,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.viewmodel.RunViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    runViewModel: RunViewModel
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
             title = stringResource(R.string.home)
         )
-        ContentHomeScreen()
+        ContentHomeScreen(
+            runViewModel = runViewModel
+        )
     }
 
 }
 
 @Composable
 fun ContentHomeScreen(
+    runViewModel: RunViewModel
 ) {
     Column(
         modifier = Modifier
