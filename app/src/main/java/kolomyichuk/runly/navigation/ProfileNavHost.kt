@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kolomyichuk.runly.ui.screens.profile.ProfileScreen
-import kolomyichuk.runly.ui.screens.SettingsScreen
-import kolomyichuk.runly.ui.screens.ThemeScreen
+import kolomyichuk.runly.ui.screens.settings.SettingsScreen
+import kolomyichuk.runly.ui.screens.theme.ThemeScreen
 import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 

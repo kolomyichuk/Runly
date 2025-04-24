@@ -5,7 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kolomyichuk.runly.ui.screens.DashboardScreen
+import kolomyichuk.runly.ui.screens.dashboard.DashboardScreen
 import kolomyichuk.runly.ui.screens.run.RunScreen
 import kolomyichuk.runly.ui.viewmodel.RunViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel

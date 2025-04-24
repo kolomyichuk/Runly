@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.data.local.room.entity.Run
+import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
 fun RunCard(
@@ -89,8 +90,9 @@ fun RunCard(
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val time = TrackingUtility.formatTime(run.durationInMillis)
                     Text(
-                        text = run.durationInMillis.toString(),
+                        text = time,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground

@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.screens
+package kolomyichuk.runly.ui.screens.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

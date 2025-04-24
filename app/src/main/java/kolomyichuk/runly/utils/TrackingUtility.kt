@@ -20,4 +20,8 @@ object TrackingUtility {
             String.format("%02d:%02d:%02d", hours, minutes, seconds)
         }
     }
+
+    fun formatDistanceToKm(distanceInMeters:Double):String{
+        return "%.2f".format(distanceInMeters / 1000)
+    }
 }

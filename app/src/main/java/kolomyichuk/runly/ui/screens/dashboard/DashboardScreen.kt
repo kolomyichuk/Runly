@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.screens
+package kolomyichuk.runly.ui.screens.dashboard
 
 import android.content.Context
 import android.content.Intent
@@ -62,7 +62,7 @@ fun ContentDashboardScreen(
     val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
     val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)
-    val formattedDistance = "%.2f".format(distanceInMeters / 1000)
+    val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters)
 
     Column(
         modifier = Modifier

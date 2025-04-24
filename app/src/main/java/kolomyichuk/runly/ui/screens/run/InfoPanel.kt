@@ -23,7 +23,7 @@ fun InfoPanel(
     timeInMillis: Long,
     avgSpeed:Float
 ) {
-    val formattedDistance = "%.2f".format(distanceInMeters / 1000)
+    val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters)
     val formattedTime = TrackingUtility.formatTime(timeInMillis)
 
     Row(

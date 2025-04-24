@@ -131,7 +131,7 @@ class RunTrackingService : Service() {
                 val currentTime = System.currentTimeMillis()
                 timeInMillis.value = timeRun + (currentTime - startTime)
 
-                val formattedDistance = "%.2f".format(distanceInMeters.value / 1000)
+                val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters.value)
 
                 notificationHelper.updateNotification(
                     Constants.TRACKING_NOTIFICATION_ID,
