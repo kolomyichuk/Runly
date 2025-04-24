@@ -41,7 +41,7 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRunDao(db: AppDatabase): RunDao {
-        return db.runDao()
+        return db.getRunDao()
     }
 
     @Provides

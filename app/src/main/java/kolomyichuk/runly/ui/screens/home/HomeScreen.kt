@@ -4,24 +4,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.viewmodel.HomeViewModel
 import kolomyichuk.runly.ui.viewmodel.RunViewModel
 
 @Composable
 fun HomeScreen(
-    runViewModel: RunViewModel
+    homeViewModel: HomeViewModel
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
             title = stringResource(R.string.home)
         )
         ContentHomeScreen(
-            runViewModel = runViewModel
+            homeViewModel = homeViewModel
         )
     }
 
@@ -29,8 +32,9 @@ fun HomeScreen(
 
 @Composable
 fun ContentHomeScreen(
-    runViewModel: RunViewModel
+    homeViewModel: HomeViewModel
 ) {
+    val runs = homeViewModel.runs.collectAsStateWithLifecycle(initialValue = emptyList())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,8 +43,8 @@ fun ContentHomeScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(20) {
-                RunCard()
+            items(runs.value) { run ->
+                RunCard(run)
             }
         }
     }

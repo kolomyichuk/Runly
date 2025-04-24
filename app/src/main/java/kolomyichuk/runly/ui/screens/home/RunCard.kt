@@ -21,9 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kolomyichuk.runly.data.local.room.entity.Run
 
 @Composable
-fun RunCard() {
+fun RunCard(
+    run: Run
+) {
     Card(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(5.dp),
@@ -47,10 +50,10 @@ fun RunCard() {
                     modifier = Modifier.padding(start = 10.dp)
                 ) {
                     Text(
-                        text = "Today",
+                        text = run.timestamp.toString(),
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = "Morning Run")
+                    Text(text = "Date")
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -61,7 +64,7 @@ fun RunCard() {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "3.12",
+                        text = run.distanceInMeters.toString(),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -74,20 +77,20 @@ fun RunCard() {
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "8.21",
+                        text = run.avgSpeed.toString(),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "Avg. Pace",
+                        text = "Avg. Speed",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "32:04",
+                        text = run.durationInMillis.toString(),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground

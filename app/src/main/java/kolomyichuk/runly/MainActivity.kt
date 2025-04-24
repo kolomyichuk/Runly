@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val viewModel: ThemeViewModel = hiltViewModel()
-            val currentTheme by viewModel.themeFlow.collectAsState(initial = AppTheme.SYSTEM)
+            val themeViewModel: ThemeViewModel = hiltViewModel()
+            val currentTheme by themeViewModel.themeFlow.collectAsState(initial = AppTheme.SYSTEM)
 
             val isDarkTheme = when (currentTheme) {
                 AppTheme.LIGHT -> false
