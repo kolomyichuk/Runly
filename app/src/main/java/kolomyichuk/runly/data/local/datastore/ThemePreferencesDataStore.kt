@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+// TODO @Inject constructor annotation is redundant here
+// TODO You already provided this class in DatabaseModule
 class ThemePreferencesDataStore @Inject constructor(
     @ThemePreferences private val dataStore: DataStore<Preferences>
 ) {

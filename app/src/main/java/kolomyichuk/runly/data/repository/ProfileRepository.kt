@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 import javax.inject.Inject
 
+// TODO @Inject constructor annotation is redundant here
+// TODO You already provided this class in DatabaseModule
 class ProfileRepository @Inject constructor(
     private val preferencesDataStore: ProfilePreferencesDataStore,
     private val imageStorage: ImageStorage
@@ -17,6 +19,7 @@ class ProfileRepository @Inject constructor(
         preferencesDataStore.saveUsername(username)
     }
 
+    // TODO We should not expose File object to the ViewModel. Let's return a file path as a String
     suspend fun saveProfileImage(uri: Uri): File? {
         val oldFileName = preferencesDataStore.getProfileImageFileName()
         val newFile = imageStorage.saveImage(uri)
@@ -28,6 +31,7 @@ class ProfileRepository @Inject constructor(
         return newFile
     }
 
+    // TODO We should not expose File object to the ViewModel. Let's return a file path as a String
     suspend fun loadProfileImage(): File? {
         val fileName = preferencesDataStore.getProfileImageFileName()
         return if (fileName != null) {

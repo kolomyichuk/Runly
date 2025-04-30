@@ -74,6 +74,9 @@ android {
 }
 
 dependencies {
+    // TODO What about dividing dependencies to the logical sections and add some comments to describe?
+    // TODO It will improve readability.
+    // TODO You can check this link as an example - https://github.com/android/architecture-samples/blob/main/app/build.gradle.kts
     implementation (libs.philjay.mpandroidchart)
     implementation(libs.coil.compose)
     implementation(libs.android.maps.utils)

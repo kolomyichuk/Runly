@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO @Singleton annotation and @Inject constructor annotation is redundant here
+// TODO You already provided this class in DatabaseModule
 @Singleton
 class ThemeRepository @Inject constructor(
     private val preferencesDataStore: ThemePreferencesDataStore

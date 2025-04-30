@@ -5,6 +5,8 @@ import kolomyichuk.runly.data.local.room.entity.Run
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// TODO @Inject constructor annotation is redundant here
+// TODO You already provided this class in DatabaseModule
 class RunRepository @Inject constructor(
     private val runDao: RunDao
 ) {

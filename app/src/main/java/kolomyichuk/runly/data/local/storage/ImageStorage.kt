@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
-class ImageStorage @Inject constructor(
+class ImageStorage(
     @ApplicationContext private val context: Context
 ) {
     suspend fun getFileByName(fileName: String): File {
