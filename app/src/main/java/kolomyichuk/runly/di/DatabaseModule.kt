@@ -23,8 +23,8 @@ import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.data.repository.ThemeRepository
 import javax.inject.Singleton
 
-const val PROFILE_DATA_STORE_NAME = "profile.preferences_pb"
-const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
+private const val PROFILE_DATA_STORE_NAME = "profile.preferences_pb"
+private const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
 
 @Module
 @InstallIn(SingletonComponent::class)

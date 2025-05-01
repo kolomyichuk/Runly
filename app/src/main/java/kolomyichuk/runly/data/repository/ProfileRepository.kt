@@ -15,7 +15,6 @@ class ProfileRepository (
         preferencesDataStore.saveUsername(username)
     }
 
-    // TODO We should not expose File object to the ViewModel. Let's return a file path as a String
     suspend fun saveProfileImage(uri: Uri): String? {
         val oldFileName = preferencesDataStore.getProfileImageFileName()
         val newFile = imageStorage.saveImage(uri)
@@ -27,7 +26,6 @@ class ProfileRepository (
         return newFile?.absolutePath
     }
 
-    // TODO We should not expose File object to the ViewModel. Let's return a file path as a String
     suspend fun loadProfileImage(): String? {
         val fileName = preferencesDataStore.getProfileImageFileName()
         return fileName?.let {

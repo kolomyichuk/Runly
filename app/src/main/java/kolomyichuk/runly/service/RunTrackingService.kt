@@ -50,18 +50,17 @@ class RunTrackingService : Service() {
         val distanceInMeters = MutableStateFlow(0.00)
         var avgSpeed = MutableStateFlow(0.00f)
 
-
         const val ACTION_START_TRACKING = "ACTION_START_SERVICE"
         const val ACTION_RESUME_TRACKING = "ACTION_RESUME_SERVICE"
         const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_SERVICE"
         const val ACTION_STOP_TRACKING = "ACTION_STOP_SERVICE"
 
         const val TRACKING_CHANNEL_ID = "ch-1"
-        const val TRACKING_CHANNEL_NAME = "run"
-        const val TRACKING_NOTIFICATION_ID = 1
+        private const val TRACKING_CHANNEL_NAME = "run"
+        private const val TRACKING_NOTIFICATION_ID = 1
 
-        const val LOCATION_UPDATE_INTERVAL = 5000L
-        const val TIMER_INTERVAL = 1000L
+        private const val LOCATION_UPDATE_INTERVAL = 5000L
+        private const val TIMER_INTERVAL = 1000L
     }
 
     private var lastValidLocation: LatLng? = null
