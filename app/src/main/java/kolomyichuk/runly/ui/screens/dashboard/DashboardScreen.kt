@@ -34,7 +34,6 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
@@ -154,7 +153,7 @@ fun ContentDashboardScreen(
                     onClick = {
                         sendCommandToRunService(
                             context = context,
-                            route = Constants.ACTION_STOP_TRACKING
+                            route = RunTrackingService.ACTION_STOP_TRACKING
                         )
                         navController.popBackStack()
                     },
@@ -172,10 +171,10 @@ fun ContentDashboardScreen(
                 onClick = {
                     if (isTracking) sendCommandToRunService(
                         context = context,
-                        route = Constants.ACTION_PAUSE_TRACKING
+                        route = RunTrackingService.ACTION_PAUSE_TRACKING
                     ) else sendCommandToRunService(
                         context = context,
-                        route = Constants.ACTION_RESUME_TRACKING
+                        route = RunTrackingService.ACTION_RESUME_TRACKING
                     )
                 },
                 modifier = Modifier

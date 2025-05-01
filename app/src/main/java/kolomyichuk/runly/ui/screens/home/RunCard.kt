@@ -64,8 +64,9 @@ fun RunCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val distance = TrackingUtility.formatDistanceToKm(run.distanceInMeters)
                     Text(
-                        text = run.distanceInMeters.toString(),
+                        text = distance,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground

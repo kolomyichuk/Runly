@@ -21,20 +21,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kolomyichuk.runly.R
-import java.io.File
 
 @Composable
 fun UserImage(
-    imageFile: File?,
+    imageFilePath: String?,
     onEditClick: () -> Unit
 ) {
     Box(
         contentAlignment = Alignment.BottomEnd,
         modifier = Modifier.size(120.dp)
     ) {
-        if (imageFile != null) {
+        if (imageFilePath != null) {
             AsyncImage(
-                model = imageFile.absolutePath,
+                model = imageFilePath,
                 contentDescription = "User picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

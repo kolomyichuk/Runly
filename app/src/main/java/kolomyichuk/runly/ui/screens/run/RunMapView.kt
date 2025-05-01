@@ -46,8 +46,9 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.currentLocationMarker
-import kolomyichuk.runly.utils.Constants
-import timber.log.Timber
+
+const val POLYLINE_WIDTH = 12f
+const val MAP_ZOOM = 15f
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
@@ -103,7 +104,7 @@ fun RunMapView(
         position = CameraPosition.fromLatLngZoom(
             if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()) pathPoints.first()
                 .first()
-            else LatLng(49.010708, 25.796191), Constants.MAP_ZOOM
+            else LatLng(49.010708, 25.796191), MAP_ZOOM
         )
     }
 
@@ -112,7 +113,7 @@ fun RunMapView(
             if (isTracking) {
                 pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
                     cameraPositionState.animate(
-                        CameraUpdateFactory.newLatLngZoom(latestLocation, Constants.MAP_ZOOM),
+                        CameraUpdateFactory.newLatLngZoom(latestLocation, MAP_ZOOM),
                         1000
                     )
                 }
@@ -121,7 +122,7 @@ fun RunMapView(
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(
                             currentLocation!!,
-                            Constants.MAP_ZOOM
+                            MAP_ZOOM
                         ), 1000
                     )
                 }
@@ -159,7 +160,7 @@ fun RunMapView(
                     Polyline(
                         points = segment,
                         color = MaterialTheme.colorScheme.primary,
-                        width = Constants.POLYLINE_WIDTH
+                        width = POLYLINE_WIDTH
                     )
                 }
             }

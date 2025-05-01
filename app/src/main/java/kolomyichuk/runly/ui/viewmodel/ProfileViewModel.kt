@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,8 +19,8 @@ class ProfileViewModel @Inject constructor(
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username.asStateFlow()
 
-    private val _imageFile = MutableStateFlow<File?>(null)
-    val imageFile = _imageFile.asStateFlow()
+    private val _imageFilePath = MutableStateFlow<String?>(null)
+    val imageFilePath = _imageFilePath.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -40,14 +39,14 @@ class ProfileViewModel @Inject constructor(
 
     fun saveProfileImage(uri: Uri) {
         viewModelScope.launch {
-            val newFile = repository.saveProfileImage(uri)
-            _imageFile.value = newFile
+            val newFilePath = repository.saveProfileImage(uri)
+            _imageFilePath.value = newFilePath
         }
     }
 
     private fun loadProfileImage() {
         viewModelScope.launch {
-            _imageFile.value = repository.loadProfileImage()
+            _imageFilePath.value = repository.loadProfileImage()
         }
     }
 }

@@ -10,5 +10,5 @@ import kolomyichuk.runly.data.local.room.entity.Run
 @Database(entities = [Run::class], version = 1)
 @TypeConverters(LatLngPointsConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun getRunDao():RunDao
+    abstract fun getRunDao(): RunDao
 }

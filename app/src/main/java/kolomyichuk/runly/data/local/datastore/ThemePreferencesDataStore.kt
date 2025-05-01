@@ -7,11 +7,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kolomyichuk.runly.di.ThemePreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-// TODO @Inject constructor annotation is redundant here
-// TODO You already provided this class in DatabaseModule
-class ThemePreferencesDataStore @Inject constructor(
+class ThemePreferencesDataStore (
     @ThemePreferences private val dataStore: DataStore<Preferences>
 ) {
     val themeFlow: Flow<AppTheme> = dataStore.data
