@@ -4,10 +4,8 @@ import android.net.Uri
 import kolomyichuk.runly.data.local.datastore.ProfilePreferencesDataStore
 import kolomyichuk.runly.data.local.storage.ImageStorage
 import kotlinx.coroutines.flow.Flow
-import java.io.File
-import javax.inject.Inject
 
-class ProfileRepository @Inject constructor(
+class ProfileRepository (
     private val preferencesDataStore: ProfilePreferencesDataStore,
     private val imageStorage: ImageStorage
 ) {
@@ -17,7 +15,7 @@ class ProfileRepository @Inject constructor(
         preferencesDataStore.saveUsername(username)
     }
 
-    suspend fun saveProfileImage(uri: Uri): File? {
+    suspend fun saveProfileImage(uri: Uri): String? {
         val oldFileName = preferencesDataStore.getProfileImageFileName()
         val newFile = imageStorage.saveImage(uri)
 
@@ -25,15 +23,13 @@ class ProfileRepository @Inject constructor(
             preferencesDataStore.saveProfileImageFileName(file.name)
             oldFileName?.let { imageStorage.deleteFile(it) }
         }
-        return newFile
+        return newFile?.absolutePath
     }
 
-    suspend fun loadProfileImage(): File? {
+    suspend fun loadProfileImage(): String? {
         val fileName = preferencesDataStore.getProfileImageFileName()
-        return if (fileName != null) {
-            imageStorage.getFileByName(fileName)
-        } else {
-            null
+        return fileName?.let {
+            imageStorage.getFileByName(it).absolutePath
         }
     }
 }

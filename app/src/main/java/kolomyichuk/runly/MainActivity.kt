@@ -17,7 +17,8 @@ import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.navigation.MainScreen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
-import kolomyichuk.runly.utils.Constants
+
+const val ACTION_SHOW_RUN_SCREEN = "ACTION_SHOW_RUN_SCREEN"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
             val startScreen = remember { mutableStateOf<String?>(null) }
 
             LaunchedEffect(Unit) {
-                if (intent?.action == Constants.ACTION_SHOW_RUN_SCREEN){
+                if (intent?.action == ACTION_SHOW_RUN_SCREEN){
                     startScreen.value = "run"
                 }
             }
@@ -50,9 +51,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.action == Constants.ACTION_SHOW_RUN_SCREEN){
+        if (intent.action == ACTION_SHOW_RUN_SCREEN){
             startActivity(Intent(this, MainActivity::class.java).apply {
-                action = Constants.ACTION_SHOW_RUN_SCREEN
+                action = ACTION_SHOW_RUN_SCREEN
             })
         }
     }

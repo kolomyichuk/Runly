@@ -7,9 +7,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kolomyichuk.runly.di.ThemePreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ThemePreferencesDataStore @Inject constructor(
+class ThemePreferencesDataStore (
     @ThemePreferences private val dataStore: DataStore<Preferences>
 ) {
     val themeFlow: Flow<AppTheme> = dataStore.data

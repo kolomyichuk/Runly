@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
-import kolomyichuk.runly.utils.Constants
 import kolomyichuk.runly.utils.NotificationHelper
 import kolomyichuk.runly.utils.TrackingUtility
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -50,6 +49,18 @@ class RunTrackingService : Service() {
         val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
         val distanceInMeters = MutableStateFlow(0.00)
         var avgSpeed = MutableStateFlow(0.00f)
+
+        const val ACTION_START_TRACKING = "ACTION_START_SERVICE"
+        const val ACTION_RESUME_TRACKING = "ACTION_RESUME_SERVICE"
+        const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_SERVICE"
+        const val ACTION_STOP_TRACKING = "ACTION_STOP_SERVICE"
+
+        const val TRACKING_CHANNEL_ID = "ch-1"
+        private const val TRACKING_CHANNEL_NAME = "run"
+        private const val TRACKING_NOTIFICATION_ID = 1
+
+        private const val LOCATION_UPDATE_INTERVAL = 5000L
+        private const val TIMER_INTERVAL = 1000L
     }
 
     private var lastValidLocation: LatLng? = null
@@ -61,8 +72,8 @@ class RunTrackingService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationHelper.createNotificationChannel(
-            Constants.TRACKING_CHANNEL_ID,
-            Constants.TRACKING_CHANNEL_NAME
+            TRACKING_CHANNEL_ID,
+            TRACKING_CHANNEL_NAME
         )
         speedCalculation()
     }
@@ -70,16 +81,16 @@ class RunTrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent.let {
             when (it?.action) {
-                Constants.ACTION_START_TRACKING -> startTracking()
-                Constants.ACTION_PAUSE_TRACKING -> pauseTracking()
-                Constants.ACTION_RESUME_TRACKING -> resumeTracking()
-                Constants.ACTION_STOP_TRACKING -> stopTracking()
+                ACTION_START_TRACKING -> startTracking()
+                ACTION_PAUSE_TRACKING -> pauseTracking()
+                ACTION_RESUME_TRACKING -> resumeTracking()
+                ACTION_STOP_TRACKING -> stopTracking()
             }
         }
         return START_STICKY
     }
 
-    private fun speedCalculation(){
+    private fun speedCalculation() {
         serviceScope.launch {
             combine(distanceInMeters, timeInMillis, isTracking) { distance, time, tracking ->
                 if (!tracking) return@combine null
@@ -87,10 +98,10 @@ class RunTrackingService : Service() {
                 val timeInSeconds = time / 1000.0
                 val distanceInKm = distance / 1000.0
 
-                if (timeInSeconds > 5 && distanceInKm > 0.02){
+                if (timeInSeconds > 5 && distanceInKm > 0.02) {
                     val speed = distanceInKm / (timeInSeconds / 3600.0)
                     if (speed.isFinite()) {
-                        String.format(Locale.US,"%.2f", speed).toFloat()
+                        String.format(Locale.US, "%.2f", speed).toFloat()
                     } else null
                 } else null
             }
@@ -115,7 +126,7 @@ class RunTrackingService : Service() {
             TrackingUtility.formatTime(timeInMillis.value)
         )
 
-        startForeground(Constants.TRACKING_NOTIFICATION_ID, notification)
+        startForeground(TRACKING_NOTIFICATION_ID, notification)
         startTimer()
         startLocationTracking()
     }
@@ -127,14 +138,14 @@ class RunTrackingService : Service() {
             Timber.e("Timer error: ${throwable.localizedMessage}")
         }) {
             while (isTracking.value) {
-                delay(Constants.TIMER_INTERVAL)
+                delay(TIMER_INTERVAL)
                 val currentTime = System.currentTimeMillis()
                 timeInMillis.value = timeRun + (currentTime - startTime)
 
                 val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters.value)
 
                 notificationHelper.updateNotification(
-                    Constants.TRACKING_NOTIFICATION_ID,
+                    TRACKING_NOTIFICATION_ID,
                     getString(R.string.run),
                     "${TrackingUtility.formatTime(timeInMillis.value)} · $formattedDistance km"
                 )
@@ -146,7 +157,7 @@ class RunTrackingService : Service() {
     private fun startLocationTracking() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            Constants.LOCATION_UPDATE_INTERVAL
+            LOCATION_UPDATE_INTERVAL
         )
             .setMinUpdateDistanceMeters(1f)
             .build()
@@ -206,7 +217,7 @@ class RunTrackingService : Service() {
         stopTimer()
         stopLocationTracking()
         notificationHelper.updateNotification(
-            Constants.TRACKING_NOTIFICATION_ID,
+            TRACKING_NOTIFICATION_ID,
             getString(R.string.paused),
             TrackingUtility.formatTime(timeInMillis.value)
         )

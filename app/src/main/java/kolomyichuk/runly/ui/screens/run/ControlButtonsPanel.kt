@@ -42,7 +42,6 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton
-import kolomyichuk.runly.utils.Constants
 
 @Composable
 fun ControlButtonsPanel(
@@ -89,7 +88,7 @@ fun ControlButtonsPanel(
                 if (isBackgroundGranted) {
                     sendCommandToRunService(
                         context = context,
-                        route = Constants.ACTION_START_TRACKING
+                        route = RunTrackingService.ACTION_START_TRACKING
                     )
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -97,7 +96,7 @@ fun ControlButtonsPanel(
                     } else {
                         sendCommandToRunService(
                             context = context,
-                            route = Constants.ACTION_START_TRACKING
+                            route = RunTrackingService.ACTION_START_TRACKING
                         )
                     }
                 }
@@ -112,9 +111,9 @@ fun ControlButtonsPanel(
         OtherButtons(
             isTracking = isTracking,
             isPause = isPause,
-            onPause = { sendCommandToRunService(context, Constants.ACTION_PAUSE_TRACKING) },
-            onResume = { sendCommandToRunService(context, Constants.ACTION_RESUME_TRACKING) },
-            onStop = { sendCommandToRunService(context, Constants.ACTION_STOP_TRACKING) },
+            onPause = { sendCommandToRunService(context, RunTrackingService.ACTION_PAUSE_TRACKING) },
+            onResume = { sendCommandToRunService(context, RunTrackingService.ACTION_RESUME_TRACKING) },
+            onStop = { sendCommandToRunService(context, RunTrackingService.ACTION_STOP_TRACKING) },
             navController = navController
         )
     }

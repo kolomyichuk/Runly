@@ -21,8 +21,10 @@ import kolomyichuk.runly.data.local.storage.ImageStorage
 import kolomyichuk.runly.data.repository.ProfileRepository
 import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.data.repository.ThemeRepository
-import kolomyichuk.runly.utils.Constants
 import javax.inject.Singleton
+
+private const val PROFILE_DATA_STORE_NAME = "profile.preferences_pb"
+private const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -58,7 +60,7 @@ object DatabaseModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.dataStoreFile(Constants.THEME_DATA_STORE_NAME) }
+            produceFile = { context.dataStoreFile(THEME_DATA_STORE_NAME) }
         )
     }
 
@@ -87,7 +89,7 @@ object DatabaseModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.dataStoreFile(Constants.PROFILE_DATA_STORE_NAME) }
+            produceFile = { context.dataStoreFile(PROFILE_DATA_STORE_NAME) }
         )
     }
 

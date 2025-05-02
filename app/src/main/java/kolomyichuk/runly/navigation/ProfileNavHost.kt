@@ -25,7 +25,7 @@ fun ProfileNavHost() {
                 onNavigateToSettings = {
                     profileNavController.navigate("settings")
                 },
-                viewModel = profileViewModel
+                profileViewModel = profileViewModel
             )
         }
         composable("settings") {

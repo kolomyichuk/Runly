@@ -12,9 +12,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
+import kolomyichuk.runly.ACTION_SHOW_RUN_SCREEN
 import kolomyichuk.runly.MainActivity
 import kolomyichuk.runly.R
-import kolomyichuk.runly.utils.Constants
+import kolomyichuk.runly.service.RunTrackingService
 
 @Module
 @InstallIn(ServiceComponent::class)
@@ -30,7 +31,7 @@ object ServiceModule {
     fun provideTrackingNotificationBuilder(
         @ApplicationContext context: Context,
         pendingIntent: PendingIntent
-    ) = NotificationCompat.Builder(context, Constants.TRACKING_CHANNEL_ID)
+    ) = NotificationCompat.Builder(context, RunTrackingService.TRACKING_CHANNEL_ID)
         .setAutoCancel(false)
         .setOngoing(true)
         .setOnlyAlertOnce(true)
@@ -43,7 +44,7 @@ object ServiceModule {
     @Provides
     fun provideActivityPendingIntent(@ApplicationContext context: Context): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            action = Constants.ACTION_SHOW_RUN_SCREEN
+            action = ACTION_SHOW_RUN_SCREEN
         }
         return PendingIntent.getActivity(
             context,

@@ -8,9 +8,8 @@ import kolomyichuk.runly.di.ProfilePreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ProfilePreferencesDataStore @Inject constructor(
+class ProfilePreferencesDataStore (
     @ProfilePreferences private val dataStore: DataStore<Preferences>
 ) {
 

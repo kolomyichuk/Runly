@@ -5,7 +5,7 @@ import kolomyichuk.runly.data.local.room.entity.Run
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class RunRepository @Inject constructor(
+class RunRepository (
     private val runDao: RunDao
 ) {
     fun getAllRuns(): Flow<List<Run>> {

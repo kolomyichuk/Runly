@@ -17,7 +17,7 @@ import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 @Composable
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
-    viewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
@@ -26,7 +26,7 @@ fun ProfileScreen(
             onMenuClick = onNavigateToSettings
         )
         ContentProfileScreen(
-            viewModel = viewModel
+            profileViewModel = profileViewModel
         )
     }
 
@@ -34,7 +34,7 @@ fun ProfileScreen(
 
 @Composable
 fun ContentProfileScreen(
-    viewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel
 ) {
     Column(
         modifier = Modifier
@@ -42,9 +42,7 @@ fun ContentProfileScreen(
             .padding(16.dp)
     ) {
         UserInfo(
-            viewModel = viewModel
+            profileViewModel = profileViewModel
         )
-        val dis = listOf(10f, 20f, 15f, 40f, 12f)
-        WeeklyRunLineChart(dis)
     }
 }

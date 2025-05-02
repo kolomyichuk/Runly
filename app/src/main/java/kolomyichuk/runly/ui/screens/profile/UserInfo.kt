@@ -30,16 +30,16 @@ import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun UserInfo(
-    viewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    val username by viewModel.username.collectAsState()
+    val username by profileViewModel.username.collectAsState()
     var newName by remember { mutableStateOf("") }
-    val imageFile by viewModel.imageFile.collectAsState()
+    val imageFile by profileViewModel.imageFilePath.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
-            viewModel.saveProfileImage(uri)
+            profileViewModel.saveProfileImage(uri)
         }
     }
 
@@ -48,7 +48,7 @@ fun UserInfo(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         UserImage(
-            imageFile = imageFile,
+            imageFilePath = imageFile,
             onEditClick = { launcher.launch("image/*") }
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -77,7 +77,7 @@ fun UserInfo(
                     Button(
                         onClick = {
                             if (newName.isNotBlank()) {
-                                viewModel.saveUsername(newName)
+                                profileViewModel.saveUsername(newName)
                                 showDialog = false
                             }
                         },
