@@ -24,6 +24,8 @@ fun MainScreen(
     navController: NavHostController,
     startScreen: MutableState<String?>
 ) {
+    // TODO Let's collect use state with collectAsStateWithLifecycle extension
+    // TODO A difference is that we are collecting the values in lifecycle-aware manner
     val isRunActive by RunTrackingService.isActiveRun.collectAsState(false)
 
     LaunchedEffect(startScreen.value) {
@@ -43,6 +45,8 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
+        // TODO Let's migrate route declaration from defining them as Strings to Serializable objects or classes
+        // TODO More info - https://developer.android.com/guide/navigation/design#compose
         NavHost(
             navController = navController,
             startDestination = "home",

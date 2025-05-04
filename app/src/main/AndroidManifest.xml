@@ -9,6 +9,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- TODO It looks like you currently don't need dataExtractionRules and fullBackupContent attributes-->
+    <!-- TODO data_extraction_rules.xml and backup_rules.xml files are empty, so you can remove them-->
+    <!-- TODO Also, you can set allowBackup attribute to false-->
+    <!-- TODO More about data backup - https://developer.android.com/identity/data/backup-->
     <application
         android:name=".App"
         android:allowBackup="true"

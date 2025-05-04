@@ -26,6 +26,10 @@ import javax.inject.Singleton
 private const val PROFILE_DATA_STORE_NAME = "profile.preferences_pb"
 private const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
 
+// TODO I would recommend to divide this Module to more feature-specific modules
+// TODO The name says DatabaseModule, but there are only AppDatabase and RunDao classes that are related to database
+// TODO For example, you can divide it into ThemeModule, ProfileModule, RunModule
+// TODO AppDatabase is needed only for RunDao, so you can put it into RunModule
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
