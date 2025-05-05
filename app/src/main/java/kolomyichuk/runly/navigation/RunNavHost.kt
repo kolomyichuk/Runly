@@ -27,7 +27,7 @@ fun RunNavHost() {
                 runViewModel = runViewModel
             )
         }
-        composable("dashboard") {
+        composable<Screen.Dashboard> {
             DashboardScreen(
                 navController = navController
             )

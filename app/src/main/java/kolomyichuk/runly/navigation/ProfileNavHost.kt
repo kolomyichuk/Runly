@@ -23,22 +23,22 @@ fun ProfileNavHost() {
             val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 onNavigateToSettings = {
-                    profileNavController.navigate("settings")
+                    profileNavController.navigate(Screen.Settings)
                 },
                 profileViewModel = profileViewModel
             )
         }
-        composable("settings") {
+        composable<Screen.Settings> {
             SettingsScreen(
                 onNavigateToTheme = {
-                    profileNavController.navigate("theme")
+                    profileNavController.navigate(Screen.Theme)
                 },
                 onBack = {
                     profileNavController.popBackStack()
                 }
             )
         }
-        composable("theme") {
+        composable<Screen.Theme> {
             val themeViewModel = hiltViewModel<ThemeViewModel>()
             ThemeScreen(
                 onBack = {

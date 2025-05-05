@@ -1,0 +1,25 @@
+package kolomyichuk.runly.navigation
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed interface Screen {
+    @Serializable
+    object Home : Screen
+
+    @Serializable
+    object Profile : Screen
+
+    @Serializable
+    object Run : Screen
+
+    @Serializable
+    object Theme : Screen
+
+    @Serializable
+    object Settings : Screen
+
+    @Serializable
+    object Dashboard : Screen
+}
+

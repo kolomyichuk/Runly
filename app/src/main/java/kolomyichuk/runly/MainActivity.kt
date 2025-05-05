@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.navigation.MainScreen
+import kolomyichuk.runly.navigation.Screen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
@@ -37,11 +38,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             // TODO Let's try to get rid of nullable String in this State
             // TODO Make it non-nullable and pass some default value (default start screen)
-            val startScreen = remember { mutableStateOf<String?>(null) }
+            val startScreen = remember { mutableStateOf<Screen>(Screen.Home) }
 
             LaunchedEffect(Unit) {
-                if (intent?.action == ACTION_SHOW_RUN_SCREEN){
-                    startScreen.value = "run"
+                if (intent?.action == ACTION_SHOW_RUN_SCREEN) {
+                    startScreen.value = Screen.Run
                 }
             }
 
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
     // https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.action == ACTION_SHOW_RUN_SCREEN){
+        if (intent.action == ACTION_SHOW_RUN_SCREEN) {
             startActivity(Intent(this, MainActivity::class.java).apply {
                 action = ACTION_SHOW_RUN_SCREEN
             })
