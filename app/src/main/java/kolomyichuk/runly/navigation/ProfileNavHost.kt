@@ -1,29 +1,23 @@
 package kolomyichuk.runly.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.navigation
 import kolomyichuk.runly.ui.screens.profile.ProfileScreen
 import kolomyichuk.runly.ui.screens.settings.SettingsScreen
 import kolomyichuk.runly.ui.screens.theme.ThemeScreen
 import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
-@Composable
-fun ProfileNavHost() {
-    val profileNavController = rememberNavController()
-
-    NavHost(
-        navController = profileNavController,
-        startDestination = "profile_graph"
-    ) {
-        composable("profile_graph") {
+fun NavGraphBuilder.profileNavGraph(navController: NavController){
+    navigation<ProfileScreens>(startDestination = Screen.Profile){
+        composable<Screen.Profile>{
             val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 onNavigateToSettings = {
-                    profileNavController.navigate(Screen.Settings)
+                    navController.navigate(Screen.Settings)
                 },
                 profileViewModel = profileViewModel
             )
@@ -31,10 +25,10 @@ fun ProfileNavHost() {
         composable<Screen.Settings> {
             SettingsScreen(
                 onNavigateToTheme = {
-                    profileNavController.navigate(Screen.Theme)
+                    navController.navigate(Screen.Theme)
                 },
                 onBack = {
-                    profileNavController.popBackStack()
+                    navController.popBackStack()
                 }
             )
         }
@@ -42,7 +36,7 @@ fun ProfileNavHost() {
             val themeViewModel = hiltViewModel<ThemeViewModel>()
             ThemeScreen(
                 onBack = {
-                    profileNavController.popBackStack()
+                    navController.popBackStack()
                 },
                 viewModel = themeViewModel
             )

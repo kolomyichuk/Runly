@@ -35,11 +35,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
+import kolomyichuk.runly.navigation.Screen
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.viewmodel.RunViewModel
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
-import timber.log.Timber
 
 @Composable
 fun RunScreen(
@@ -193,13 +193,11 @@ fun ContentRunScreen(
             modifier = Modifier.weight(1f),
             isTracking = isTracking
         )
-
         InfoPanel(
             distanceInMeters = distanceInMeters,
             timeInMillis = timeInMillis,
             avgSpeed = avgSpeed
         )
-
         ControlButtonsPanel(
             isTracking = isTracking,
             isPause = isPause,

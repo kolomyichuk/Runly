@@ -26,8 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.toRoute
 import kolomyichuk.runly.R
 import kolomyichuk.runly.navigation.Screen
 
@@ -49,8 +49,8 @@ fun BottomNavigationBar(
     val items = listOf(BottomNavItem.Home, BottomNavItem.Run, BottomNavItem.Profile)
 
     NavigationBar(modifier = Modifier.height(65.dp)) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentScreen = currentBackStackEntry?.toRoute<Screen>()
+        val currentEntry by navController.currentBackStackEntryAsState()
+        val currentScreen = currentEntry?.destination
 
         val transition = rememberInfiniteTransition(label = "BlinkingTransition")
         val alpha by transition.animateFloat(
@@ -73,7 +73,7 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = stringResource(item.labelRes)) },
                 label = { Text(stringResource(item.labelRes)) },
-                selected = currentScreen == item.screen,
+                selected = currentScreen?.hasRoute(item.screen::class) == true,
                 onClick = { navController.navigate(item.screen) },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(

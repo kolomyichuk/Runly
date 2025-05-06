@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.toRoute
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.BottomNavigationBar
 import kolomyichuk.runly.ui.screens.home.HomeScreen
@@ -36,15 +36,12 @@ fun MainScreen(
     }
     Scaffold(
         bottomBar = {
-            val currentEntry = navController.currentBackStackEntryAsState().value
-            val currentRoute = currentEntry?.toRoute<Screen>()
-            if (currentRoute != Screen.Run) {
+            val currentEntry by navController.currentBackStackEntryAsState()
+            if (currentEntry?.destination?.hasRoute<Screen.Run>() == false && currentEntry?.destination?.hasRoute<Screen.Dashboard>() == false) {
                 BottomNavigationBar(navController = navController, isRunActive = isRunActive)
             }
         }
     ) { paddingValues ->
-        // TODO Let's migrate route declaration from defining them as Strings to Serializable objects or classes
-        // TODO More info - https://developer.android.com/guide/navigation/design#compose
         NavHost(
             navController = navController,
             startDestination = Screen.Home,
@@ -56,8 +53,8 @@ fun MainScreen(
                     homeViewModel = homeViewModel
                 )
             }
-            composable<Screen.Run> { RunNavHost() }
-            composable<Screen.Profile> { ProfileNavHost() }
+            runNavGraph(navController)
+            profileNavGraph(navController)
         }
     }
 }

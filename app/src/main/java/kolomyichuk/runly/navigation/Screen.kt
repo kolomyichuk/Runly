@@ -23,3 +23,9 @@ sealed interface Screen {
     object Dashboard : Screen
 }
 
+@Serializable
+object RunScreens
+
+@Serializable
+object ProfileScreens
+
