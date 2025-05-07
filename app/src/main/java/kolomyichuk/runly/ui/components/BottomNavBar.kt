@@ -25,11 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.navigation.Screen
+import kolomyichuk.runly.service.RunTrackingService
 
 private sealed class BottomNavItem(
     val screen: Screen,
@@ -44,9 +46,9 @@ private sealed class BottomNavItem(
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
-    isRunActive: Boolean
 ) {
     val items = listOf(BottomNavItem.Home, BottomNavItem.Run, BottomNavItem.Profile)
+    val isRunActive by RunTrackingService.isActiveRun.collectAsStateWithLifecycle(false)
 
     NavigationBar(modifier = Modifier.height(65.dp)) {
         val currentEntry by navController.currentBackStackEntryAsState()

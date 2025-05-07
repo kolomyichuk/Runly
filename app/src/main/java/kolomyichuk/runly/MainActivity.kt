@@ -18,6 +18,7 @@ import kolomyichuk.runly.navigation.MainScreen
 import kolomyichuk.runly.navigation.Screen
 import kolomyichuk.runly.ui.theme.RunlyTheme
 import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
+import timber.log.Timber
 
 const val ACTION_SHOW_RUN_SCREEN = "ACTION_SHOW_RUN_SCREEN"
 
@@ -34,10 +35,6 @@ class MainActivity : ComponentActivity() {
                 AppTheme.DARK -> true
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
             }
-
-            val navController = rememberNavController()
-            // TODO Let's try to get rid of nullable String in this State
-            // TODO Make it non-nullable and pass some default value (default start screen)
             val startScreen = remember { mutableStateOf<Screen>(Screen.Home) }
 
             LaunchedEffect(Unit) {
@@ -47,17 +44,11 @@ class MainActivity : ComponentActivity() {
             }
 
             RunlyTheme(darkTheme = isDarkTheme) {
-                MainScreen(navController, startScreen)
+                MainScreen(startScreen)
             }
         }
     }
 
-    // TODO This callback would not be invoked because a launch mode of the MainActivity is standard
-    // TODO Let's talk about and learn Android Launch modes and get back to it
-    // TODO More info:
-    // https://medium.com/huawei-developers/android-launch-modes-explained-8b32ae01f204
-    // https://www.youtube.com/watch?v=Z0AzoFOiH9c
-    // https://developer.android.com/guide/components/activities/tasks-and-back-stack#ManifestForTasks
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.action == ACTION_SHOW_RUN_SCREEN) {
