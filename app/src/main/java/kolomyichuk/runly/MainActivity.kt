@@ -5,10 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.MainScreen
@@ -16,18 +19,33 @@ import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
 
-const val ACTION_SHOW_RUN_SCREEN = "ACTION_SHOW_RUN_SCREEN"
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val currentScreen = mutableStateOf<Screen>(Screen.Home)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initRootScreen()
+    }
+
+    private fun initRootScreen(initScreen: Screen = Screen.Home){
         setContent {
+            val navController = rememberNavController()
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val currentTheme by themeViewModel.themeFlow.collectAsState(initial = AppTheme.SYSTEM)
+
+            LaunchedEffect(initScreen) {
+                navController.navigate(initScreen)
+            }
+
+            DisposableEffect(Unit) {
+                val listener = Consumer<Intent>{
+                    if (it.extras?.getString(EXTRA_SCREEN) == SCREEN_RUN){
+                        navController.navigate(Screen.Run)
+                    }
+                }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
 
             val isDarkTheme = when (currentTheme) {
                 AppTheme.LIGHT -> false
@@ -36,9 +54,7 @@ class MainActivity : ComponentActivity() {
             }
 
             RunlyTheme(darkTheme = isDarkTheme) {
-                MainScreen(currentScreen.value, onCurrentScreenChange = {
-                    currentScreen.value = Screen.Home
-                })
+                MainScreen(navController)
             }
         }
     }
@@ -48,15 +64,15 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleIntent(intent)
+    private fun handleIntent(intent: Intent) {
+        if (intent.extras?.getString(EXTRA_SCREEN) == SCREEN_RUN) {
+            initRootScreen(initScreen = Screen.Run)
+        }
     }
 
-    private fun handleIntent(intent: Intent) {
-        if (intent.action == ACTION_SHOW_RUN_SCREEN) {
-            currentScreen.value = Screen.Run
-        }
+    companion object {
+        const val EXTRA_SCREEN = "EXTRA_SCREEN"
+        const val SCREEN_RUN = "run"
     }
 }
 
