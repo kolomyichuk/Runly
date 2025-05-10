@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun UserInfo(

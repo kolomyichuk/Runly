@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.ui.viewmodel.HomeViewModel
-import kolomyichuk.runly.ui.viewmodel.RunViewModel
 
 @Composable
 fun HomeScreen(

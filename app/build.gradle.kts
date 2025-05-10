@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -74,6 +75,9 @@ android {
 }
 
 dependencies {
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
     // Logging
     implementation(libs.timber)
 

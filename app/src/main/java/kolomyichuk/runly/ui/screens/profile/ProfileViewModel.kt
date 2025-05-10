@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.viewmodel
+package kolomyichuk.runly.ui.screens.profile
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel

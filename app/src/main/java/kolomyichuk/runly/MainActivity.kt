@@ -5,23 +5,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.navigation.MainScreen
+import kolomyichuk.runly.ui.MainScreen
+import kolomyichuk.runly.ui.navigation.Screen
+import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
-import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 const val ACTION_SHOW_RUN_SCREEN = "ACTION_SHOW_RUN_SCREEN"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val currentScreen = mutableStateOf<Screen>(Screen.Home)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,27 +35,27 @@ class MainActivity : ComponentActivity() {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
             }
 
-            val navController = rememberNavController()
-            val startScreen = remember { mutableStateOf<String?>(null) }
-
-            LaunchedEffect(Unit) {
-                if (intent?.action == ACTION_SHOW_RUN_SCREEN){
-                    startScreen.value = "run"
-                }
-            }
-
             RunlyTheme(darkTheme = isDarkTheme) {
-                MainScreen(navController, startScreen)
+                MainScreen(currentScreen.value, onCurrentScreenChange = {
+                    currentScreen.value = Screen.Home
+                })
             }
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        handleIntent(intent)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.action == ACTION_SHOW_RUN_SCREEN){
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                action = ACTION_SHOW_RUN_SCREEN
-            })
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (intent.action == ACTION_SHOW_RUN_SCREEN) {
+            currentScreen.value = Screen.Run
         }
     }
 }
