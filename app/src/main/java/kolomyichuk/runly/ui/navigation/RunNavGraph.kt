@@ -1,4 +1,4 @@
-package kolomyichuk.runly.navigation
+package kolomyichuk.runly.ui.navigation
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import kolomyichuk.runly.ui.screens.dashboard.DashboardScreen
 import kolomyichuk.runly.ui.screens.run.RunScreen
-import kolomyichuk.runly.ui.viewmodel.RunViewModel
-import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
+import kolomyichuk.runly.ui.screens.run.RunViewModel
+import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 
 fun NavGraphBuilder.runNavGraph(navController: NavController){
     navigation<RunScreens>(startDestination = Screen.Run){

@@ -39,7 +39,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
-import kolomyichuk.runly.navigation.Screen
+import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.ButtonStart
 import kolomyichuk.runly.ui.components.CircleIconButton

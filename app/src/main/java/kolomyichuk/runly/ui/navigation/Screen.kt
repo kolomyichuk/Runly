@@ -1,4 +1,4 @@
-package kolomyichuk.runly.navigation
+package kolomyichuk.runly.ui.navigation
 
 import kotlinx.serialization.Serializable
 

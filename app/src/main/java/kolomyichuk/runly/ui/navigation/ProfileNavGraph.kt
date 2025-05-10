@@ -1,4 +1,4 @@
-package kolomyichuk.runly.navigation
+package kolomyichuk.runly.ui.navigation
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -8,8 +8,8 @@ import androidx.navigation.compose.navigation
 import kolomyichuk.runly.ui.screens.profile.ProfileScreen
 import kolomyichuk.runly.ui.screens.settings.SettingsScreen
 import kolomyichuk.runly.ui.screens.theme.ThemeScreen
-import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
-import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
+import kolomyichuk.runly.ui.screens.profile.ProfileViewModel
+import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 
 fun NavGraphBuilder.profileNavGraph(navController: NavController){
     navigation<ProfileScreens>(startDestination = Screen.Profile){

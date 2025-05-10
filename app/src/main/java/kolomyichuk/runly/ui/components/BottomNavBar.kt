@@ -30,7 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.R
-import kolomyichuk.runly.navigation.Screen
+import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.service.RunTrackingService
 
 private sealed class BottomNavItem(
