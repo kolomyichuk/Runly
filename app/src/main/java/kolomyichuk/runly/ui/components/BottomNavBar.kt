@@ -25,30 +25,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.R
+import kolomyichuk.runly.ui.navigation.Screen
+import kolomyichuk.runly.service.RunTrackingService
 
-sealed class BottomNavItem(
-    val route: String,
+private sealed class BottomNavItem(
+    val screen: Screen,
     @StringRes val labelRes: Int,
     val icon: ImageVector
 ) {
-    data object Home : BottomNavItem("home", R.string.home, Icons.Default.Home)
-    data object Run : BottomNavItem("run", R.string.run, Icons.AutoMirrored.Default.DirectionsRun)
-    data object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.Person)
+    data object Home : BottomNavItem(Screen.Home, R.string.home, Icons.Default.Home)
+    data object Run : BottomNavItem(Screen.Run, R.string.run, Icons.AutoMirrored.Default.DirectionsRun)
+    data object Profile : BottomNavItem(Screen.Profile, R.string.profile, Icons.Default.Person)
 }
 
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
-    isRunActive: Boolean
 ) {
     val items = listOf(BottomNavItem.Home, BottomNavItem.Run, BottomNavItem.Profile)
+    val isRunActive by RunTrackingService.isActiveRun.collectAsStateWithLifecycle(false)
 
     NavigationBar(modifier = Modifier.height(65.dp)) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry?.destination?.route
+        val currentEntry by navController.currentBackStackEntryAsState()
+        val currentScreen = currentEntry?.destination
 
         val transition = rememberInfiniteTransition(label = "BlinkingTransition")
         val alpha by transition.animateFloat(
@@ -61,7 +65,7 @@ fun BottomNavigationBar(
         )
 
         items.forEach { item ->
-            val isRunTab = item.route == BottomNavItem.Run.route
+            val isRunTab = item.screen == Screen.Run
 
             val backgroundColor = when {
                 isRunTab && isRunActive -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = alpha)
@@ -71,8 +75,8 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = stringResource(item.labelRes)) },
                 label = { Text(stringResource(item.labelRes)) },
-                selected = currentRoute == item.route,
-                onClick = { navController.navigate(item.route) },
+                selected = currentScreen?.hasRoute(item.screen::class) == true,
+                onClick = { navController.navigate(item.screen) },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,

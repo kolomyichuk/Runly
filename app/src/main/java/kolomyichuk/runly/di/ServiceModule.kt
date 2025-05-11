@@ -12,7 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
-import kolomyichuk.runly.ACTION_SHOW_RUN_SCREEN
 import kolomyichuk.runly.MainActivity
 import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
@@ -44,7 +43,7 @@ object ServiceModule {
     @Provides
     fun provideActivityPendingIntent(@ApplicationContext context: Context): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            action = ACTION_SHOW_RUN_SCREEN
+            putExtra(MainActivity.EXTRA_SCREEN, MainActivity.SCREEN_RUN)
         }
         return PendingIntent.getActivity(
             context,

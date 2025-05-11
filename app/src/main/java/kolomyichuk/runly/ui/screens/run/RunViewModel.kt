@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.viewmodel
+package kolomyichuk.runly.ui.screens.run
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

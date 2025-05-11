@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(

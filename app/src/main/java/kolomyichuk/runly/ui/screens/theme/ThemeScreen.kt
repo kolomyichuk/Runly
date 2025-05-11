@@ -27,7 +27,6 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.ui.viewmodel.ThemeViewModel
 
 
 @Composable
