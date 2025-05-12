@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO We should avoid using ThemeViewModel on Run Screen and Main Screen
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
     private val repository: ThemeRepository

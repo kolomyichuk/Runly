@@ -40,6 +40,7 @@ fun SettingsScreen(
     }
 }
 
+// TODO This can be private
 @Composable
 fun ContentSettingsScreen(
     onNavigateToTheme: () -> Unit

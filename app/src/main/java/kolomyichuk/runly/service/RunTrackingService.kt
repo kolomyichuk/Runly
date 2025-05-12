@@ -42,6 +42,12 @@ class RunTrackingService : Service() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     companion object {
+        // TODO We should avoid MutableStateFlows that available as singletons
+        // TODO This approach is very error-prone
+        // TODO Let's inject RunRepository here and communicate through it
+        // TODO The communication should be - Service -> Repository <- ViewModel <- View
+        // TODO Service updates a State of the Repository
+        // TODO ViewModel listens to the Repository state and then View listen to the ViewModel
         val timeInMillis = MutableStateFlow<Long>(0)
         val isTracking = MutableStateFlow(false)
         val isActiveRun = MutableStateFlow(false)
