@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.RunState
+import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.utils.NotificationHelper
 import kolomyichuk.runly.utils.TrackingUtility
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -24,10 +26,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
@@ -41,21 +42,10 @@ class RunTrackingService : Service() {
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    companion object {
-        // TODO We should avoid MutableStateFlows that available as singletons
-        // TODO This approach is very error-prone
-        // TODO Let's inject RunRepository here and communicate through it
-        // TODO The communication should be - Service -> Repository <- ViewModel <- View
-        // TODO Service updates a State of the Repository
-        // TODO ViewModel listens to the Repository state and then View listen to the ViewModel
-        val timeInMillis = MutableStateFlow<Long>(0)
-        val isTracking = MutableStateFlow(false)
-        val isActiveRun = MutableStateFlow(false)
-        val isPause = MutableStateFlow(false)
-        val pathPoints = MutableStateFlow<List<List<LatLng>>>(mutableListOf())
-        val distanceInMeters = MutableStateFlow(0.00)
-        var avgSpeed = MutableStateFlow(0.00f)
+    @Inject
+    lateinit var runRepository: RunRepository
 
+    companion object {
         const val ACTION_START_TRACKING = "ACTION_START_SERVICE"
         const val ACTION_RESUME_TRACKING = "ACTION_RESUME_SERVICE"
         const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_SERVICE"
@@ -96,42 +86,17 @@ class RunTrackingService : Service() {
         return START_STICKY
     }
 
-    private fun speedCalculation() {
-        serviceScope.launch {
-            combine(distanceInMeters, timeInMillis, isTracking) { distance, time, tracking ->
-                if (!tracking) return@combine null
-
-                val timeInSeconds = time / 1000.0
-                val distanceInKm = distance / 1000.0
-
-                if (timeInSeconds > 5 && distanceInKm > 0.02) {
-                    val speed = distanceInKm / (timeInSeconds / 3600.0)
-                    if (speed.isFinite()) {
-                        String.format(Locale.US, "%.2f", speed).toFloat()
-                    } else null
-                } else null
-            }
-                .filterNotNull()
-                .catch { e -> Timber.e("Error in speedCalculation: ${e.localizedMessage}") }
-                .collect { calculatedSpeed ->
-                    avgSpeed.value = calculatedSpeed
-                }
-        }
-    }
-
     private fun startTracking() {
-        isTracking.value = true
-        isActiveRun.value = true
-        isPause.value = false
+        runRepository.updateRunState {
+            copy(isTracking = true, isActiveRun = true, isPause = false)
+        }
         timeRun = 0
-        timeInMillis.value = 0L
         startTime = System.currentTimeMillis()
 
         val notification = notificationHelper.getNotification(
             getString(R.string.run),
-            TrackingUtility.formatTime(timeInMillis.value)
+            TrackingUtility.formatTime(runRepository.runState.value.timeInMillis)
         )
-
         startForeground(TRACKING_NOTIFICATION_ID, notification)
         startTimer()
         startLocationTracking()
@@ -143,17 +108,20 @@ class RunTrackingService : Service() {
         timerJob = serviceScope.launch(CoroutineExceptionHandler { _, throwable ->
             Timber.e("Timer error: ${throwable.localizedMessage}")
         }) {
-            while (isTracking.value) {
+            while (runRepository.runState.value.isTracking) {
                 delay(TIMER_INTERVAL)
                 val currentTime = System.currentTimeMillis()
-                timeInMillis.value = timeRun + (currentTime - startTime)
+                val updatedTime = timeRun + (currentTime - startTime)
 
-                val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters.value)
+                runRepository.updateRunState { copy(timeInMillis = updatedTime) }
+
+                val formattedDistance =
+                    TrackingUtility.formatDistanceToKm(runRepository.runState.value.distanceInMeters)
 
                 notificationHelper.updateNotification(
                     TRACKING_NOTIFICATION_ID,
                     getString(R.string.run),
-                    "${TrackingUtility.formatTime(timeInMillis.value)} · $formattedDistance km"
+                    "${TrackingUtility.formatTime(updatedTime)} · $formattedDistance km"
                 )
             }
         }
@@ -194,10 +162,12 @@ class RunTrackingService : Service() {
                     )
                 ) {
                     addLocationPoints(newPoint)
-                    val segmentDistance = pathPoints.value.map { segment ->
+                    val currentPath = runRepository.runState.value.pathPoints
+                    val segmentDistance = currentPath.map { segment ->
                         SphericalUtil.computeLength(segment)
                     }
-                    distanceInMeters.value = segmentDistance.sum()
+                    val totalDistance = segmentDistance.sum()
+                    runRepository.updateRunState { copy(distanceInMeters = totalDistance) }
                     lastValidLocation = newPoint
                 }
             }
@@ -205,7 +175,7 @@ class RunTrackingService : Service() {
     }
 
     private fun addLocationPoints(point: LatLng) {
-        val updatedPath = pathPoints.value.toMutableList()
+        val updatedPath = runRepository.runState.value.pathPoints.toMutableList()
         if (updatedPath.isEmpty()) {
             updatedPath.add(listOf(point))
         } else {
@@ -213,52 +183,35 @@ class RunTrackingService : Service() {
             lastSegment.add(point)
             updatedPath[updatedPath.lastIndex] = lastSegment
         }
-        pathPoints.value = updatedPath.toList()
+        runRepository.updateRunState { copy(pathPoints = updatedPath.toList()) }
     }
 
-    private fun pauseTracking() {
-        isTracking.value = false
-        isPause.value = true
-        timeRun += System.currentTimeMillis() - startTime
-        stopTimer()
-        stopLocationTracking()
-        notificationHelper.updateNotification(
-            TRACKING_NOTIFICATION_ID,
-            getString(R.string.paused),
-            TrackingUtility.formatTime(timeInMillis.value)
-        )
-    }
+    private fun speedCalculation() {
+        serviceScope.launch {
+            runRepository.runState
+                .map { state ->
+                    val distance = state.distanceInMeters
+                    val time = state.timeInMillis
+                    val tracking = state.isTracking
 
-    private fun resumeTracking() {
-        if (!isTracking.value) {
-            isTracking.value = true
-            isPause.value = false
-            startTime = System.currentTimeMillis()
-            startTimer()
-            val updated = pathPoints.value.toMutableList()
-            updated.add(emptyList())
-            pathPoints.value = updated.toList()
-            startLocationTracking()
+                    if (!tracking) return@map null
+
+                    val timeInSeconds = time / 1000.0
+                    val distanceInKm = distance / 1000.0
+
+                    if (timeInSeconds > 5 && distanceInKm > 0.02) {
+                        val speed = distanceInKm / (timeInSeconds / 3600.0)
+                        if (speed.isFinite()) {
+                            String.format(Locale.US, "%.2f", speed).toFloat()
+                        } else null
+                    } else null
+                }
+                .filterNotNull()
+                .catch { e -> Timber.e("Error in speedCalculation: ${e.localizedMessage}") }
+                .collect { calculatedSpeed ->
+                    runRepository.updateRunState { copy(avgSpeed = calculatedSpeed) }
+                }
         }
-    }
-
-    private fun stopLocationTracking() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
-    private fun stopTracking() {
-        isTracking.value = false
-        isPause.value = false
-        timeRun = 0
-        avgSpeed.value = 0.00f
-        isActiveRun.value = false
-        distanceInMeters.value = 0.0
-        timeInMillis.value = 0L
-        pathPoints.value = emptyList()
-        stopTimer()
-        stopLocationTracking()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     private fun isValidLocation(prevPoint: LatLng, newPoint: LatLng, timeDiff: Float): Boolean {
@@ -271,6 +224,45 @@ class RunTrackingService : Service() {
         )
         val maxSpeed = 30 / 3.6
         return distance[0] < 50 && distance[0] / timeDiff < maxSpeed
+    }
+
+    private fun pauseTracking() {
+        runRepository.updateRunState { copy(isTracking = false, isPause = true) }
+        timeRun += System.currentTimeMillis() - startTime
+        stopTimer()
+        stopLocationTracking()
+        val formattedTime = TrackingUtility.formatTime(runRepository.runState.value.timeInMillis)
+        notificationHelper.updateNotification(
+            TRACKING_NOTIFICATION_ID,
+            getString(R.string.paused),
+            formattedTime
+        )
+    }
+
+    private fun resumeTracking() {
+        if (!runRepository.runState.value.isTracking) {
+            runRepository.updateRunState {
+                val updatedPath = runRepository.runState.value.pathPoints.toMutableList()
+                updatedPath.add(emptyList())
+                copy(isTracking = true, isPause = false, pathPoints = updatedPath.toList())
+            }
+            startTime = System.currentTimeMillis()
+            startTimer()
+            startLocationTracking()
+        }
+    }
+
+    private fun stopLocationTracking() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun stopTracking() {
+        runRepository.updateRunState { RunState() }
+        timeRun = 0
+        stopTimer()
+        stopLocationTracking()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun stopTimer() {

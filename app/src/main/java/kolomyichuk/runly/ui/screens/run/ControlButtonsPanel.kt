@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.navigation.Screen
@@ -46,10 +47,10 @@ import kolomyichuk.runly.ui.components.CircleIconButton
 
 @Composable
 fun ControlButtonsPanel(
-    isTracking: Boolean,
-    isPause: Boolean,
+    runViewModel: RunViewModel,
     navController: NavController
 ) {
+    val runState = runViewModel.runState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? android.app.Activity
 
@@ -83,7 +84,7 @@ fun ControlButtonsPanel(
         } else true
     }
 
-    if (!isTracking && !isPause) {
+    if (!runState.value.isTracking && !runState.value.isPause) {
         ButtonStart(
             onClick = {
                 if (isBackgroundGranted) {
@@ -110,8 +111,8 @@ fun ControlButtonsPanel(
         )
     } else {
         OtherButtons(
-            isTracking = isTracking,
-            isPause = isPause,
+            isTracking = runState.value.isTracking,
+            isPause = runState.value.isPause,
             onPause = { sendCommandToRunService(context, RunTrackingService.ACTION_PAUSE_TRACKING) },
             onResume = { sendCommandToRunService(context, RunTrackingService.ACTION_RESUME_TRACKING) },
             onStop = { sendCommandToRunService(context, RunTrackingService.ACTION_STOP_TRACKING) },
@@ -150,7 +151,7 @@ fun ControlButtonsPanel(
 }
 
 @Composable
-fun OtherButtons(
+private fun OtherButtons(
     isTracking: Boolean,
     isPause: Boolean,
     onPause: () -> Unit,

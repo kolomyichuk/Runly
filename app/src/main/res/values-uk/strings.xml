@@ -19,4 +19,8 @@
     <string name="light">Світла</string>
     <string name="dark">Темна</string>
     <string name="system">Системна</string>
+    <string name="avg_speed">Сер. шв.</string>
+    <string name="km_h">Км/год</string>
+    <string name="kilometers">Кілометри</string>
+    <string name="dashboard">Панель</string>
 </resources>

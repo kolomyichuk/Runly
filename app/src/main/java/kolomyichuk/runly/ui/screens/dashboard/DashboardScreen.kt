@@ -20,48 +20,46 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.CircleIconButton
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.screens.run.RunViewModel
 import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
 fun DashboardScreen(
-    navController: NavController
+    navController: NavController,
+    runViewModel: RunViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         TopBarApp(
-            title = "Dashboard",
+            title = stringResource(R.string.dashboard),
             onBackClick = { navController.popBackStack() }
         )
-        ContentDashboardScreen(navController = navController)
+        ContentDashboardScreen(navController = navController, runViewModel = runViewModel)
     }
 }
 
 @Composable
-fun ContentDashboardScreen(
-    navController: NavController
+private fun ContentDashboardScreen(
+    navController: NavController,
+    runViewModel: RunViewModel
 ) {
-    val timeInMillis by RunTrackingService.timeInMillis.collectAsStateWithLifecycle(initialValue = 0L)
-    val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
-    val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
-    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
-    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
-    val formattedTime = TrackingUtility.formatTime(timeInMillis)
-    val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters)
+    val runState = runViewModel.runState.collectAsStateWithLifecycle()
+    val formattedTime = TrackingUtility.formatTime(runState.value.timeInMillis)
+    val formattedDistance = TrackingUtility.formatDistanceToKm(runState.value.distanceInMeters)
+    val avgSpeed = runState.value.avgSpeed.toString()
 
     Column(
         modifier = Modifier
@@ -74,18 +72,12 @@ fun ContentDashboardScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.time),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+            InfoBlock(
+                title = stringResource(R.string.time),
+                value = formattedTime,
+                type = " "
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = formattedTime,
-                fontSize = 50.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
-            )
+
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
@@ -94,24 +86,13 @@ fun ContentDashboardScreen(
                     .background(MaterialTheme.colorScheme.onBackground)
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "Avg Speed",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+
+            InfoBlock(
+                title = stringResource(R.string.avg_speed),
+                value = avgSpeed,
+                type = stringResource(R.string.km_h)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "$avgSpeed",
-                fontSize = 70.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "KM/H",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+
             Spacer(modifier = Modifier.height(5.dp))
             Box(
                 modifier = Modifier
@@ -120,22 +101,11 @@ fun ContentDashboardScreen(
                     .background(MaterialTheme.colorScheme.onBackground)
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = stringResource(R.string.distance),
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = formattedDistance,
-                fontSize = 50.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "KILOMETERS",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurface
+
+            InfoBlock(
+                title = stringResource(R.string.distance),
+                value = formattedDistance,
+                type = stringResource(R.string.kilometers)
             )
         }
         Row(
@@ -148,7 +118,7 @@ fun ContentDashboardScreen(
         {
             val context = LocalContext.current
 
-            if (isTracking || isPause) {
+            if (runState.value.isTracking || runState.value.isPause) {
                 CircleIconButton(
                     onClick = {
                         sendCommandToRunService(
@@ -169,7 +139,7 @@ fun ContentDashboardScreen(
 
             Button(
                 onClick = {
-                    if (isTracking) sendCommandToRunService(
+                    if (runState.value.isTracking) sendCommandToRunService(
                         context = context,
                         route = RunTrackingService.ACTION_PAUSE_TRACKING
                     ) else sendCommandToRunService(
@@ -181,13 +151,14 @@ fun ContentDashboardScreen(
                     .height(40.dp)
                     .wrapContentSize()
             ) {
-                Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
+                Text(
+                    text = if (runState.value.isTracking) stringResource(R.string.pause)
+                    else stringResource(R.string.resume)
+                )
             }
 
             CircleIconButton(
-                onClick = {
-                    navController.popBackStack()
-                },
+                onClick = { navController.popBackStack() },
                 imageVector = Icons.Outlined.Map,
                 iconColor = MaterialTheme.colorScheme.onPrimary,
                 elevation = 10.dp,

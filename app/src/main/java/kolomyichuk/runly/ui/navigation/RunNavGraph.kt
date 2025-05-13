@@ -22,8 +22,10 @@ fun NavGraphBuilder.runNavGraph(navController: NavController){
             )
         }
         composable<Screen.Dashboard> {
+            val runViewModel = hiltViewModel<RunViewModel>()
             DashboardScreen(
-                navController = navController
+                navController = navController,
+                runViewModel = runViewModel
             )
         }
     }

@@ -164,41 +164,32 @@ fun RunScreen(
         )
         ContentRunScreen(
             isDarkTheme = isDarkTheme,
-            navController = navController
+            navController = navController,
+            runViewModel = runViewModel
         )
     }
 }
 
 @Composable
-fun ContentRunScreen(
+private fun ContentRunScreen(
     isDarkTheme: Boolean,
-    navController: NavController
+    navController: NavController,
+    runViewModel: RunViewModel
 ) {
-    val timeInMillis by RunTrackingService.timeInMillis.collectAsStateWithLifecycle(initialValue = 0L)
-    val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
-    val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
-    val pathPoints by RunTrackingService.pathPoints.collectAsStateWithLifecycle()
-    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
-    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
         RunMapView(
-            pathPoints = pathPoints,
             isDarkTheme = isDarkTheme,
             modifier = Modifier.weight(1f),
-            isTracking = isTracking
+            runViewModel = runViewModel
         )
         InfoPanel(
-            distanceInMeters = distanceInMeters,
-            timeInMillis = timeInMillis,
-            avgSpeed = avgSpeed
+            runViewModel = runViewModel
         )
         ControlButtonsPanel(
-            isTracking = isTracking,
-            isPause = isPause,
+            runViewModel = runViewModel,
             navController = navController
         )
     }
