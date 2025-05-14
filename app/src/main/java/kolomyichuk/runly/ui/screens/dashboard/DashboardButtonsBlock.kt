@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
-import kolomyichuk.runly.ui.components.ButtonMapVisibility
-import kolomyichuk.runly.ui.components.ButtonStop
+import kolomyichuk.runly.ui.components.MapVisibilityButton
+import kolomyichuk.runly.ui.components.StopButton
 import kolomyichuk.runly.ui.screens.run.sendCommandToRunService
 
 @Composable
@@ -37,7 +37,7 @@ fun DashboardButtonsBlock(
         val context = LocalContext.current
 
         if (isActiveRun) {
-            ButtonStop {
+            StopButton {
                 sendCommandToRunService(
                     context = context,
                     route = RunTrackingService.ACTION_STOP_TRACKING
@@ -65,6 +65,6 @@ fun DashboardButtonsBlock(
                 else stringResource(R.string.resume)
             )
         }
-        ButtonMapVisibility { navController.popBackStack() }
+        MapVisibilityButton { navController.popBackStack() }
     }
 }

@@ -82,7 +82,7 @@ fun CircleIconButton(
 
 
 @Composable
-fun ButtonStart(
+fun StartButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
@@ -109,11 +109,11 @@ fun ButtonStart(
 }
 
 @Composable
-fun ButtonStop(
+fun StopButton(
     onClick: () -> Unit
 ) {
     CircleIconButton(
-        onClick = { onClick() },
+        onClick =  onClick,
         imageVector = Icons.Filled.Stop,
         iconColor = MaterialTheme.colorScheme.onPrimary,
         elevation = 10.dp,
@@ -125,7 +125,7 @@ fun ButtonStop(
 }
 
 @Composable
-fun ButtonMapVisibility(
+fun MapVisibilityButton(
     onClick: () -> Unit
 ) {
     CircleIconButton(

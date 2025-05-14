@@ -24,7 +24,7 @@ fun ProfileScreen(
             menuIcon = Icons.Outlined.Settings,
             onMenuClick = onNavigateToSettings
         )
-        ContentProfileScreen(
+        ProfileScreenContent(
             profileViewModel = profileViewModel
         )
     }
@@ -32,7 +32,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ContentProfileScreen(
+fun ProfileScreenContent(
     profileViewModel: ProfileViewModel
 ) {
     Column(
@@ -40,7 +40,7 @@ fun ContentProfileScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        UserInfo(
+        ProfileUserInfo(
             profileViewModel = profileViewModel
         )
     }

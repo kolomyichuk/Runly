@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
-fun ContentRunScreen(
+fun RunScreenContent(
     isDarkTheme: Boolean,
     navController: NavController,
     runViewModel: RunViewModel

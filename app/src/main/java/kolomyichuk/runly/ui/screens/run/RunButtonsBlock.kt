@@ -36,9 +36,9 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
-import kolomyichuk.runly.ui.components.ButtonMapVisibility
-import kolomyichuk.runly.ui.components.ButtonStart
-import kolomyichuk.runly.ui.components.ButtonStop
+import kolomyichuk.runly.ui.components.MapVisibilityButton
+import kolomyichuk.runly.ui.components.StartButton
+import kolomyichuk.runly.ui.components.StopButton
 import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
@@ -81,7 +81,7 @@ fun RunButtonsBlock(
     }
 
     if (!isTracking && !isPause) {
-        ButtonStart(
+        StartButton(
             onClick = {
                 if (isBackgroundGranted) {
                     sendCommandToRunService(
@@ -159,7 +159,7 @@ private fun OtherButtons(
     )
     {
         if (isTracking || isPause) {
-            ButtonStop {
+            StopButton {
                 sendCommandToRunService(
                     context = context,
                     route = RunTrackingService.ACTION_STOP_TRACKING
@@ -183,7 +183,7 @@ private fun OtherButtons(
             Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
-        ButtonMapVisibility { navController.navigate(Screen.Dashboard) }
+        MapVisibilityButton { navController.navigate(Screen.Dashboard) }
     }
 }
 

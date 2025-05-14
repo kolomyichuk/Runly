@@ -31,7 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
@@ -161,7 +160,7 @@ fun RunScreen(
             title = stringResource(R.string.run),
             onBackClick = { navController.popBackStack() }
         )
-        ContentRunScreen(
+        RunScreenContent(
             isDarkTheme = isDarkTheme,
             navController = navController,
             runViewModel = runViewModel

@@ -36,12 +36,12 @@ fun SettingsScreen(
             title = stringResource(R.string.settings),
             onBackClick = onBack
         )
-        ContentSettingsScreen(onNavigateToTheme = onNavigateToTheme)
+        SettingsScreenContent(onNavigateToTheme = onNavigateToTheme)
     }
 }
 
 @Composable
-private fun ContentSettingsScreen(
+private fun SettingsScreenContent(
     onNavigateToTheme: () -> Unit
 ) {
     Column(

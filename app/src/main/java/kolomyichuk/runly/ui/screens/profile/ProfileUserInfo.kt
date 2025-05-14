@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 
 @Composable
-fun UserInfo(
+fun ProfileUserInfo(
     profileViewModel: ProfileViewModel
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -46,7 +46,7 @@ fun UserInfo(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UserImage(
+        ProfileUserImage(
             imageFilePath = imageFile,
             onEditClick = { launcher.launch("image/*") }
         )
