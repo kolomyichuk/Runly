@@ -9,12 +9,45 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kolomyichuk.runly.R
+import kolomyichuk.runly.ui.components.HorizontalLineDivider
 
 @Composable
-fun InfoBlock(
+fun DashboardInfoBlock(
+    distance: String,
+    time: String,
+    avgSpeed: String
+) {
+    Column (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        DashboardInfoColumn(
+            title = stringResource(R.string.time),
+            value = time,
+            type = " "
+        )
+        HorizontalLineDivider()
+        DashboardInfoColumn(
+            title = stringResource(R.string.avg_speed),
+            value = avgSpeed,
+            type = stringResource(R.string.km_h)
+        )
+        HorizontalLineDivider()
+        DashboardInfoColumn(
+            title = stringResource(R.string.distance),
+            value = distance,
+            type = stringResource(R.string.kilometers)
+        )
+    }
+}
+
+@Composable
+private fun DashboardInfoColumn(
     title: String,
     value: String,
     type: String

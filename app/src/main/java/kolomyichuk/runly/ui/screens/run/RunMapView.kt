@@ -25,7 +25,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -48,24 +47,24 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.currentLocationMarker
 
-const val POLYLINE_WIDTH = 12f
-const val MAP_ZOOM = 15f
+private const val POLYLINE_WIDTH = 12f
+private const val MAP_ZOOM = 15f
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun RunMapView(
-    runViewModel: RunViewModel,
+    isTracking:Boolean,
+    pathPoints:List<List<LatLng>>,
     isDarkTheme: Boolean,
     modifier: Modifier
 ) {
-    val runState = runViewModel.runState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     var currentLocation by remember { mutableStateOf<LatLng?>(null) }
     var locationCallback by remember { mutableStateOf<LocationCallback?>(null) }
 
-    LaunchedEffect(!runState.value.isTracking) {
+    LaunchedEffect(!isTracking) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -103,16 +102,16 @@ fun RunMapView(
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            if (runState.value.pathPoints.isNotEmpty() && runState.value.pathPoints.first().isNotEmpty()
-            ) runState.value.pathPoints.first().first()
+            if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()
+            ) pathPoints.first().first()
             else LatLng(49.010708, 25.796191), MAP_ZOOM
         )
     }
 
-    LaunchedEffect(runState.value.isTracking, currentLocation, runState.value.pathPoints) {
+    LaunchedEffect(isTracking, currentLocation, pathPoints) {
         if (currentLocation != null) {
-            if (runState.value.isTracking) {
-                runState.value.pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
+            if (isTracking) {
+                pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(latestLocation, MAP_ZOOM),
                         1000
@@ -149,14 +148,14 @@ fun RunMapView(
                 val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                 map.setMapStyle(mapStyle)
             }
-            if (!runState.value.isTracking && currentLocation != null) {
+            if (!isTracking && currentLocation != null) {
                 Marker(
                     state = MarkerState(currentLocation!!),
                     icon = currentLocationMarker,
                     anchor = Offset(0.5f, 0.5f)
                 )
             }
-            runState.value.pathPoints.forEach { segment ->
+            pathPoints.forEach { segment ->
                 if (segment.isNotEmpty()) {
                     Polyline(
                         points = segment,
@@ -165,8 +164,8 @@ fun RunMapView(
                     )
                 }
             }
-            if (runState.value.isTracking) {
-                val lastSegment = runState.value.pathPoints.lastOrNull()
+            if (isTracking) {
+                val lastSegment = pathPoints.lastOrNull()
                 if (!lastSegment.isNullOrEmpty()) {
                     Marker(
                         state = MarkerState(lastSegment.last()),

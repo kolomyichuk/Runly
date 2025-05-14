@@ -16,12 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,20 +33,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
-import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.service.RunTrackingService
+import kolomyichuk.runly.ui.components.ButtonMapVisibility
 import kolomyichuk.runly.ui.components.ButtonStart
-import kolomyichuk.runly.ui.components.CircleIconButton
+import kolomyichuk.runly.ui.components.ButtonStop
+import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
-fun ControlButtonsPanel(
-    runViewModel: RunViewModel,
+fun RunButtonsBlock(
+    isTracking: Boolean,
+    isPause: Boolean,
     navController: NavController
 ) {
-    val runState = runViewModel.runState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? android.app.Activity
 
@@ -84,7 +80,7 @@ fun ControlButtonsPanel(
         } else true
     }
 
-    if (!runState.value.isTracking && !runState.value.isPause) {
+    if (!isTracking && !isPause) {
         ButtonStart(
             onClick = {
                 if (isBackgroundGranted) {
@@ -111,11 +107,8 @@ fun ControlButtonsPanel(
         )
     } else {
         OtherButtons(
-            isTracking = runState.value.isTracking,
-            isPause = runState.value.isPause,
-            onPause = { sendCommandToRunService(context, RunTrackingService.ACTION_PAUSE_TRACKING) },
-            onResume = { sendCommandToRunService(context, RunTrackingService.ACTION_RESUME_TRACKING) },
-            onStop = { sendCommandToRunService(context, RunTrackingService.ACTION_STOP_TRACKING) },
+            isTracking = isTracking,
+            isPause = isPause,
             navController = navController
         )
     }
@@ -154,11 +147,9 @@ fun ControlButtonsPanel(
 private fun OtherButtons(
     isTracking: Boolean,
     isPause: Boolean,
-    onPause: () -> Unit,
-    onResume: () -> Unit,
-    onStop: () -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,20 +159,23 @@ private fun OtherButtons(
     )
     {
         if (isTracking || isPause) {
-            CircleIconButton(
-                onClick = { onStop() },
-                imageVector = Icons.Filled.Stop,
-                iconColor = MaterialTheme.colorScheme.onPrimary,
-                elevation = 10.dp,
-                iconSize = 28.dp,
-                buttonSize = 40.dp,
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                contentDescription = stringResource(R.string.stop)
-            )
+            ButtonStop {
+                sendCommandToRunService(
+                    context = context,
+                    route = RunTrackingService.ACTION_STOP_TRACKING
+                )
+            }
         }
 
         Button(
-            onClick = { if (isTracking) onPause() else onResume() },
+            onClick = {
+                if (isTracking) sendCommandToRunService(
+                    context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
+                ) else sendCommandToRunService(
+                    context = context,
+                    route = RunTrackingService.ACTION_RESUME_TRACKING
+                )
+            },
             modifier = Modifier
                 .height(40.dp)
                 .wrapContentSize()
@@ -189,22 +183,11 @@ private fun OtherButtons(
             Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
-        CircleIconButton(
-            onClick = {
-                navController.navigate(Screen.Dashboard)
-            },
-            imageVector = Icons.Outlined.Map,
-            iconColor = MaterialTheme.colorScheme.onPrimary,
-            elevation = 10.dp,
-            iconSize = 28.dp,
-            buttonSize = 40.dp,
-            backgroundColor = MaterialTheme.colorScheme.primary,
-            contentDescription = "Map hide"
-        )
+        ButtonMapVisibility { navController.navigate(Screen.Dashboard) }
     }
 }
 
-private fun sendCommandToRunService(context: Context, route: String) {
+fun sendCommandToRunService(context: Context, route: String) {
     val intent = Intent(context, RunTrackingService::class.java).apply {
         action = route
     }

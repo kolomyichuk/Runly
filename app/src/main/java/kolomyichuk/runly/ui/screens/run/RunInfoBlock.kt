@@ -8,26 +8,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
-import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
-fun InfoPanel(
-    runViewModel: RunViewModel
+fun RunInfoBlock(
+    distance:String,
+    time:String,
+    avgSpeed:String
 ) {
-    val runState by runViewModel.runState.collectAsStateWithLifecycle()
-    val formattedDistance = TrackingUtility.formatDistanceToKm(runState.distanceInMeters)
-    val formattedTime = TrackingUtility.formatTime(runState.timeInMillis)
-    val avgSpeed = runState.avgSpeed.toString()
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,14 +29,14 @@ fun InfoPanel(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        InfoColumn(formattedDistance, stringResource(R.string.distance))
+        InfoColumn(distance, stringResource(R.string.distance))
         InfoColumn(avgSpeed, stringResource(R.string.avg_speed))
-        InfoColumn(formattedTime, stringResource(R.string.time))
+        InfoColumn(time, stringResource(R.string.time))
     }
 }
 
 @Composable
-fun InfoColumn(value: String, label: String) {
+private fun InfoColumn(value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,

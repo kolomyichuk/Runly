@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui
+package kolomyichuk.runly.ui.screens.main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -18,14 +18,14 @@ import kolomyichuk.runly.ui.navigation.profileNavGraph
 import kolomyichuk.runly.ui.navigation.runNavGraph
 import kolomyichuk.runly.ui.screens.home.HomeScreen
 import kolomyichuk.runly.ui.screens.home.HomeViewModel
-import kolomyichuk.runly.ui.screens.run.RunViewModel
 
 @Composable
 fun MainScreen(
     navController: NavHostController
 ) {
-    val runViewModel: RunViewModel = hiltViewModel()
-    val runState by runViewModel.runState.collectAsStateWithLifecycle()
+    val mainViewModel: MainViewModel = hiltViewModel()
+    val runState by mainViewModel.runState.collectAsStateWithLifecycle()
+
     Scaffold(
         bottomBar = {
             val currentEntry by navController.currentBackStackEntryAsState()

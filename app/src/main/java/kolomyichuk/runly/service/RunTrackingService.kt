@@ -45,20 +45,6 @@ class RunTrackingService : Service() {
     @Inject
     lateinit var runRepository: RunRepository
 
-    companion object {
-        const val ACTION_START_TRACKING = "ACTION_START_SERVICE"
-        const val ACTION_RESUME_TRACKING = "ACTION_RESUME_SERVICE"
-        const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_SERVICE"
-        const val ACTION_STOP_TRACKING = "ACTION_STOP_SERVICE"
-
-        const val TRACKING_CHANNEL_ID = "ch-1"
-        private const val TRACKING_CHANNEL_NAME = "run"
-        private const val TRACKING_NOTIFICATION_ID = 1
-
-        private const val LOCATION_UPDATE_INTERVAL = 5000L
-        private const val TIMER_INTERVAL = 1000L
-    }
-
     private var lastValidLocation: LatLng? = null
     private var startTime = 0L
     private var timeRun = 0L
@@ -279,6 +265,20 @@ class RunTrackingService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+    companion object {
+        const val ACTION_START_TRACKING = "ACTION_START_SERVICE"
+        const val ACTION_RESUME_TRACKING = "ACTION_RESUME_SERVICE"
+        const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_SERVICE"
+        const val ACTION_STOP_TRACKING = "ACTION_STOP_SERVICE"
+
+        const val TRACKING_CHANNEL_ID = "ch-1"
+        private const val TRACKING_CHANNEL_NAME = "run"
+        private const val TRACKING_NOTIFICATION_ID = 1
+
+        private const val LOCATION_UPDATE_INTERVAL = 5000L
+        private const val TIMER_INTERVAL = 1000L
     }
 }
 

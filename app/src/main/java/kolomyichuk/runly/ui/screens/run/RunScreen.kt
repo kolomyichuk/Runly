@@ -35,7 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 
@@ -166,31 +165,6 @@ fun RunScreen(
             isDarkTheme = isDarkTheme,
             navController = navController,
             runViewModel = runViewModel
-        )
-    }
-}
-
-@Composable
-private fun ContentRunScreen(
-    isDarkTheme: Boolean,
-    navController: NavController,
-    runViewModel: RunViewModel
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        RunMapView(
-            isDarkTheme = isDarkTheme,
-            modifier = Modifier.weight(1f),
-            runViewModel = runViewModel
-        )
-        InfoPanel(
-            runViewModel = runViewModel
-        )
-        ControlButtonsPanel(
-            runViewModel = runViewModel,
-            navController = navController
         )
     }
 }

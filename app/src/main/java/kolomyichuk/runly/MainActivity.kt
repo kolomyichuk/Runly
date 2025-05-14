@@ -14,7 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.ui.MainScreen
+import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         initRootScreen()
     }
 
-    private fun initRootScreen(initScreen: Screen = Screen.Home){
+    private fun initRootScreen(initScreen: Screen = Screen.Home) {
         setContent {
             val navController = rememberNavController()
             val themeViewModel: ThemeViewModel = hiltViewModel()
@@ -38,8 +38,8 @@ class MainActivity : ComponentActivity() {
             }
 
             DisposableEffect(Unit) {
-                val listener = Consumer<Intent>{
-                    if (it.extras?.getString(EXTRA_SCREEN) == SCREEN_RUN){
+                val listener = Consumer<Intent> {
+                    if (it.extras?.getString(EXTRA_SCREEN) == SCREEN_RUN) {
                         navController.navigate(Screen.Run)
                     }
                 }
