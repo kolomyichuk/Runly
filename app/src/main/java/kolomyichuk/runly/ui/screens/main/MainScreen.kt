@@ -21,9 +21,9 @@ import kolomyichuk.runly.ui.screens.home.HomeViewModel
 
 @Composable
 fun MainScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    mainViewModel: MainViewModel
 ) {
-    val mainViewModel: MainViewModel = hiltViewModel()
     val runState by mainViewModel.runState.collectAsStateWithLifecycle()
 
     Scaffold(

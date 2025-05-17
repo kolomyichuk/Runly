@@ -17,7 +17,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,20 +31,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 
 @Composable
 fun RunScreen(
     navController: NavController,
-    themeViewModel: ThemeViewModel = hiltViewModel(),
     runViewModel: RunViewModel = hiltViewModel(),
 ) {
-    val theme by themeViewModel.themeFlow.collectAsState()
+    val appTheme = LocalAppTheme.current
 
-    val isDarkTheme = when (theme) {
+    val isDarkTheme = when (appTheme) {
         AppTheme.DARK -> true
         AppTheme.LIGHT -> false
         AppTheme.SYSTEM -> isSystemInDarkTheme()

@@ -5,19 +5,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.navigation.Screen
-import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
+import kolomyichuk.runly.ui.screens.main.MainScreen
+import kolomyichuk.runly.ui.screens.main.MainViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
+
+val LocalAppTheme = compositionLocalOf { AppTheme.SYSTEM }
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -30,8 +34,8 @@ class MainActivity : ComponentActivity() {
     private fun initRootScreen(initScreen: Screen = Screen.Home) {
         setContent {
             val navController = rememberNavController()
-            val themeViewModel: ThemeViewModel = hiltViewModel()
-            val currentTheme by themeViewModel.themeFlow.collectAsState(initial = AppTheme.SYSTEM)
+            val mainViewModel: MainViewModel = hiltViewModel()
+            val currentTheme by mainViewModel.themeState.collectAsState(initial = AppTheme.SYSTEM)
 
             LaunchedEffect(initScreen) {
                 navController.navigate(initScreen)
@@ -54,7 +58,12 @@ class MainActivity : ComponentActivity() {
             }
 
             RunlyTheme(darkTheme = isDarkTheme) {
-                MainScreen(navController)
+                CompositionLocalProvider(LocalAppTheme provides currentTheme) {
+                    MainScreen(
+                        navController = navController,
+                        mainViewModel = mainViewModel
+                    )
+                }
             }
         }
     }

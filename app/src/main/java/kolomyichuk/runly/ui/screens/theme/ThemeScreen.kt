@@ -32,7 +32,7 @@ fun ThemeScreen(
 fun ThemeScreenContent(
     viewModel: ThemeViewModel
 ) {
-    val currentTheme by viewModel.themeFlow.collectAsState()
+    val currentTheme by viewModel.themeState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
