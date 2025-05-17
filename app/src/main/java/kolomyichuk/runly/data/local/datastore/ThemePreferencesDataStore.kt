@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 class ThemePreferencesDataStore (
     @ThemePreferences private val dataStore: DataStore<Preferences>
 ) {
-    val themeFlow: Flow<AppTheme> = dataStore.data
+    val themeState: Flow<AppTheme> = dataStore.data
         .map { preferences ->
             val themeName = preferences[THEME_KEY] ?: AppTheme.SYSTEM.name
             AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM

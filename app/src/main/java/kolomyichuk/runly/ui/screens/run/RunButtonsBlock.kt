@@ -16,12 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -39,13 +35,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
-import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.service.RunTrackingService
-import kolomyichuk.runly.ui.components.ButtonStart
-import kolomyichuk.runly.ui.components.CircleIconButton
+import kolomyichuk.runly.ui.components.MapVisibilityButton
+import kolomyichuk.runly.ui.components.StartButton
+import kolomyichuk.runly.ui.components.StopButton
+import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
-fun ControlButtonsPanel(
+fun RunButtonsBlock(
     isTracking: Boolean,
     isPause: Boolean,
     navController: NavController
@@ -84,7 +81,7 @@ fun ControlButtonsPanel(
     }
 
     if (!isTracking && !isPause) {
-        ButtonStart(
+        StartButton(
             onClick = {
                 if (isBackgroundGranted) {
                     sendCommandToRunService(
@@ -112,9 +109,6 @@ fun ControlButtonsPanel(
         OtherButtons(
             isTracking = isTracking,
             isPause = isPause,
-            onPause = { sendCommandToRunService(context, RunTrackingService.ACTION_PAUSE_TRACKING) },
-            onResume = { sendCommandToRunService(context, RunTrackingService.ACTION_RESUME_TRACKING) },
-            onStop = { sendCommandToRunService(context, RunTrackingService.ACTION_STOP_TRACKING) },
             navController = navController
         )
     }
@@ -150,14 +144,12 @@ fun ControlButtonsPanel(
 }
 
 @Composable
-fun OtherButtons(
+private fun OtherButtons(
     isTracking: Boolean,
     isPause: Boolean,
-    onPause: () -> Unit,
-    onResume: () -> Unit,
-    onStop: () -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -167,20 +159,23 @@ fun OtherButtons(
     )
     {
         if (isTracking || isPause) {
-            CircleIconButton(
-                onClick = { onStop() },
-                imageVector = Icons.Filled.Stop,
-                iconColor = MaterialTheme.colorScheme.onPrimary,
-                elevation = 10.dp,
-                iconSize = 28.dp,
-                buttonSize = 40.dp,
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                contentDescription = stringResource(R.string.stop)
-            )
+            StopButton {
+                sendCommandToRunService(
+                    context = context,
+                    route = RunTrackingService.ACTION_STOP_TRACKING
+                )
+            }
         }
 
         Button(
-            onClick = { if (isTracking) onPause() else onResume() },
+            onClick = {
+                if (isTracking) sendCommandToRunService(
+                    context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
+                ) else sendCommandToRunService(
+                    context = context,
+                    route = RunTrackingService.ACTION_RESUME_TRACKING
+                )
+            },
             modifier = Modifier
                 .height(40.dp)
                 .wrapContentSize()
@@ -188,22 +183,11 @@ fun OtherButtons(
             Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
-        CircleIconButton(
-            onClick = {
-                navController.navigate(Screen.Dashboard)
-            },
-            imageVector = Icons.Outlined.Map,
-            iconColor = MaterialTheme.colorScheme.onPrimary,
-            elevation = 10.dp,
-            iconSize = 28.dp,
-            buttonSize = 40.dp,
-            backgroundColor = MaterialTheme.colorScheme.primary,
-            contentDescription = "Map hide"
-        )
+        MapVisibilityButton { navController.navigate(Screen.Dashboard) }
     }
 }
 
-private fun sendCommandToRunService(context: Context, route: String) {
+fun sendCommandToRunService(context: Context, route: String) {
     val intent = Intent(context, RunTrackingService::class.java).apply {
         action = route
     }

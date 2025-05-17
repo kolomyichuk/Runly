@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -23,15 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kolomyichuk.runly.R
 
 @Composable
 fun CircleIconButton(
     onClick: (() -> Unit)? = null,
     imageVector: ImageVector? = null,
     iconResId: Int? = null,
-    contentDescription: String,
+    contentDescription: String? = null,
     backgroundColor: Color = Color.White,
     iconColor: Color = Color.Black,
     buttonSize: Dp = 40.dp,
@@ -77,7 +82,7 @@ fun CircleIconButton(
 
 
 @Composable
-fun ButtonStart(
+fun StartButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
@@ -102,3 +107,36 @@ fun ButtonStart(
         }
     }
 }
+
+@Composable
+fun StopButton(
+    onClick: () -> Unit
+) {
+    CircleIconButton(
+        onClick =  onClick,
+        imageVector = Icons.Filled.Stop,
+        iconColor = MaterialTheme.colorScheme.onPrimary,
+        elevation = 10.dp,
+        iconSize = 28.dp,
+        buttonSize = 40.dp,
+        backgroundColor = MaterialTheme.colorScheme.primary,
+        contentDescription = stringResource(R.string.stop)
+    )
+}
+
+@Composable
+fun MapVisibilityButton(
+    onClick: () -> Unit
+) {
+    CircleIconButton(
+        onClick = onClick,
+        imageVector = Icons.Outlined.Map,
+        iconColor = MaterialTheme.colorScheme.onPrimary,
+        elevation = 10.dp,
+        iconSize = 28.dp,
+        buttonSize = 40.dp,
+        backgroundColor = MaterialTheme.colorScheme.primary,
+        contentDescription = null
+    )
+}
+

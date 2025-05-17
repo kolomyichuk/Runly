@@ -15,7 +15,7 @@ class ThemeViewModel @Inject constructor(
     private val repository: ThemeRepository
 ) : ViewModel() {
 
-    val themeFlow = repository.themeFlow.stateIn(
+    val themeState = repository.themeState.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         AppTheme.SYSTEM

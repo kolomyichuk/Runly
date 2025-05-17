@@ -21,7 +21,7 @@ fun HomeScreen(
         TopBarApp(
             title = stringResource(R.string.home)
         )
-        ContentHomeScreen(
+        HomeScreenContent(
             homeViewModel = homeViewModel
         )
     }
@@ -29,7 +29,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun ContentHomeScreen(
+fun HomeScreenContent(
     homeViewModel: HomeViewModel
 ) {
     val runs = homeViewModel.runs.collectAsStateWithLifecycle(initialValue = emptyList())

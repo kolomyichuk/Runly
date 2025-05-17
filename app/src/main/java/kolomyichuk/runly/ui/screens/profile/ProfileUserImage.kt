@@ -23,7 +23,7 @@ import coil3.compose.AsyncImage
 import kolomyichuk.runly.R
 
 @Composable
-fun UserImage(
+fun ProfileUserImage(
     imageFilePath: String?,
     onEditClick: () -> Unit
 ) {
