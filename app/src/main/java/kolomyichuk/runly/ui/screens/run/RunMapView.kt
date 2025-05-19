@@ -47,15 +47,15 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.currentLocationMarker
 
-const val POLYLINE_WIDTH = 12f
-const val MAP_ZOOM = 15f
+private const val POLYLINE_WIDTH = 12f
+private const val MAP_ZOOM = 15f
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun RunMapView(
-    pathPoints: List<List<LatLng>>,
+    isTracking:Boolean,
+    pathPoints:List<List<LatLng>>,
     isDarkTheme: Boolean,
-    isTracking: Boolean,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -102,8 +102,8 @@ fun RunMapView(
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()) pathPoints.first()
-                .first()
+            if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()
+            ) pathPoints.first().first()
             else LatLng(49.010708, 25.796191), MAP_ZOOM
         )
     }

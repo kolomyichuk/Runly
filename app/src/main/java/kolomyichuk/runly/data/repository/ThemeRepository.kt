@@ -11,7 +11,7 @@ class ThemeRepository (
         preferencesDataStore.saveTheme(theme)
     }
 
-    val themeFlow: Flow<AppTheme> = preferencesDataStore.themeFlow
+    val themeState: Flow<AppTheme> = preferencesDataStore.themeState
 }
 
 

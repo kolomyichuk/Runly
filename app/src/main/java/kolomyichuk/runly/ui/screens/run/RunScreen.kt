@@ -17,7 +17,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,23 +30,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 
 @Composable
 fun RunScreen(
     navController: NavController,
-    themeViewModel: ThemeViewModel = hiltViewModel(),
     runViewModel: RunViewModel = hiltViewModel(),
 ) {
-    val theme by themeViewModel.themeFlow.collectAsState()
+    val appTheme = LocalAppTheme.current
 
-    val isDarkTheme = when (theme) {
+    val isDarkTheme = when (appTheme) {
         AppTheme.DARK -> true
         AppTheme.LIGHT -> false
         AppTheme.SYSTEM -> isSystemInDarkTheme()
@@ -162,44 +158,10 @@ fun RunScreen(
             title = stringResource(R.string.run),
             onBackClick = { navController.popBackStack() }
         )
-        ContentRunScreen(
+        RunScreenContent(
             isDarkTheme = isDarkTheme,
-            navController = navController
-        )
-    }
-}
-
-@Composable
-fun ContentRunScreen(
-    isDarkTheme: Boolean,
-    navController: NavController
-) {
-    val timeInMillis by RunTrackingService.timeInMillis.collectAsStateWithLifecycle(initialValue = 0L)
-    val isTracking by RunTrackingService.isTracking.collectAsStateWithLifecycle(initialValue = false)
-    val isPause by RunTrackingService.isPause.collectAsStateWithLifecycle(initialValue = false)
-    val pathPoints by RunTrackingService.pathPoints.collectAsStateWithLifecycle()
-    val distanceInMeters by RunTrackingService.distanceInMeters.collectAsStateWithLifecycle(0.0)
-    val avgSpeed by RunTrackingService.avgSpeed.collectAsStateWithLifecycle(0.00f)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        RunMapView(
-            pathPoints = pathPoints,
-            isDarkTheme = isDarkTheme,
-            modifier = Modifier.weight(1f),
-            isTracking = isTracking
-        )
-        InfoPanel(
-            distanceInMeters = distanceInMeters,
-            timeInMillis = timeInMillis,
-            avgSpeed = avgSpeed
-        )
-        ControlButtonsPanel(
-            isTracking = isTracking,
-            isPause = isPause,
-            navController = navController
+            navController = navController,
+            runViewModel = runViewModel
         )
     }
 }

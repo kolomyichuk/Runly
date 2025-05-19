@@ -18,4 +18,9 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">System</string>
+    <string name="avg_speed">Avg. Speed</string>
+    <string name="km_h">KM/H</string>
+    <string name="kilometers">Kilometers</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="map_visibility">Map visibility</string>
 </resources>

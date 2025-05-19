@@ -15,17 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.utils.TrackingUtility
 
 @Composable
-fun InfoPanel(
-    distanceInMeters: Double,
-    timeInMillis: Long,
-    avgSpeed:Float
+fun RunInfoBlock(
+    distance:String,
+    time:String,
+    avgSpeed:String
 ) {
-    val formattedDistance = TrackingUtility.formatDistanceToKm(distanceInMeters)
-    val formattedTime = TrackingUtility.formatTime(timeInMillis)
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,14 +29,14 @@ fun InfoPanel(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        InfoColumn(formattedDistance, stringResource(R.string.distance))
-        InfoColumn("$avgSpeed", "Avg Speed")
-        InfoColumn(formattedTime, stringResource(R.string.time))
+        InfoColumn(distance, stringResource(R.string.distance))
+        InfoColumn(avgSpeed, stringResource(R.string.avg_speed))
+        InfoColumn(time, stringResource(R.string.time))
     }
 }
 
 @Composable
-fun InfoColumn(value: String, label: String) {
+private fun InfoColumn(value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
