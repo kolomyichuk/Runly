@@ -48,6 +48,7 @@ fun DashboardButtonsBlock(
 
         Button(
             onClick = {
+                // TODO Let's add parentheses after if and else statements to improve readability
                 if (isTracking) sendCommandToRunService(
                     context = context,
                     route = RunTrackingService.ACTION_PAUSE_TRACKING

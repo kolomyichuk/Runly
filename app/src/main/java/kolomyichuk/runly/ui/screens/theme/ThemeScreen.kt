@@ -28,10 +28,12 @@ fun ThemeScreen(
     }
 }
 
+// TODO Can be private
 @Composable
 fun ThemeScreenContent(
     viewModel: ThemeViewModel
 ) {
+    // TODO Let's collect in in lifecycle-aware manner
     val currentTheme by viewModel.themeState.collectAsState()
     Column(
         modifier = Modifier
@@ -42,6 +44,7 @@ fun ThemeScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            // TODO Let's iterate thought the enum entries instead of duplicating the code
             ThemeOption(AppTheme.LIGHT, currentTheme) { viewModel.saveTheme(it) }
             ThemeOption(AppTheme.DARK, currentTheme) { viewModel.saveTheme(it) }
             ThemeOption(AppTheme.SYSTEM, currentTheme) { viewModel.saveTheme(it) }

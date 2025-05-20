@@ -41,6 +41,7 @@ import kolomyichuk.runly.ui.components.StartButton
 import kolomyichuk.runly.ui.components.StopButton
 import kolomyichuk.runly.ui.navigation.Screen
 
+// TODO Let's divide this Composable to improve readability
 @Composable
 fun RunButtonsBlock(
     isTracking: Boolean,
@@ -50,9 +51,11 @@ fun RunButtonsBlock(
     val context = LocalContext.current
     val activity = context as? android.app.Activity
 
+    // TODO It's better to rename it to isBackgroundLocationGranted
     var isBackgroundGranted by remember { mutableStateOf(false) }
     var showBackgroundLocationDialog by remember { mutableStateOf(false) }
 
+    // TODO Let's request all permissions in RunScreen to avoid duplicates
     val backgroundLocationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -66,6 +69,7 @@ fun RunButtonsBlock(
             if (!shouldShowRationale) {
                 showBackgroundLocationDialog = true
             } else {
+                // TODO Let's extract it to the strings.xml file and add an English alternative
                 Toast.makeText(context, "Беграунд дозвіл відхилено", Toast.LENGTH_SHORT).show()
             }
         }
@@ -77,6 +81,7 @@ fun RunButtonsBlock(
                 context,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
+            // TODO I would guess that 'else' should be false
         } else true
     }
 
@@ -114,6 +119,7 @@ fun RunButtonsBlock(
     }
 
     if (showBackgroundLocationDialog) {
+        // TODO Let's extract this code to the separate Composable
         AlertDialog(
             onDismissRequest = { showBackgroundLocationDialog = false },
             confirmButton = {
@@ -125,6 +131,7 @@ fun RunButtonsBlock(
                     context.startActivity(intent)
                 }
                 ) {
+                    // TODO Let's extract it to the strings.xml file and add an English alternative
                     Text(text = "Перейти до налаштувань")
                 }
             },
@@ -134,15 +141,18 @@ fun RunButtonsBlock(
                         showBackgroundLocationDialog = false
                     }
                 ) {
+                    // TODO Let's extract it to the strings.xml file and add an English alternative
                     Text(text = "Скасувати")
                 }
             },
+            // TODO Let's extract it to the strings.xml file and add an English alternative
             title = { Text(text = "Дозвіл на фонову локацію") },
             text = { Text(text = "Для запису пробіжки у фоновому режимі потрібен додатковий дозвіл на локацію, а саме потрібно - дозволити локацію завжди") }
         )
     }
 }
 
+// TODO Let's rename it to be more Run-specific
 @Composable
 private fun OtherButtons(
     isTracking: Boolean,

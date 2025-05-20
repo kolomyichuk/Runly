@@ -50,6 +50,7 @@ import kolomyichuk.runly.ui.components.currentLocationMarker
 private const val POLYLINE_WIDTH = 12f
 private const val MAP_ZOOM = 15f
 
+// TODO Let's divide this composable to improve readability
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun RunMapView(
@@ -64,6 +65,7 @@ fun RunMapView(
     var currentLocation by remember { mutableStateOf<LatLng?>(null) }
     var locationCallback by remember { mutableStateOf<LocationCallback?>(null) }
 
+    // TODO I think that it should be refactored to DisposableEffect before it contains some cleanups
     LaunchedEffect(!isTracking) {
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -72,6 +74,7 @@ fun RunMapView(
         ) {
             val request = LocationRequest.Builder(
                 Priority.PRIORITY_HIGH_ACCURACY,
+                // TODO Let's extract it to the constants
                 5000L
             ).build()
 
@@ -114,6 +117,7 @@ fun RunMapView(
                 pathPoints.lastOrNull()?.lastOrNull()?.let { latestLocation ->
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(latestLocation, MAP_ZOOM),
+                        // TODO Let's extract it to the constants
                         1000
                     )
                 }
@@ -121,8 +125,10 @@ fun RunMapView(
                 currentLocation?.let {
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(
+                            // TODO you can use 'it' instead of 'currentLocation!!'
                             currentLocation!!,
                             MAP_ZOOM
+                            // TODO Let's extract it to the constants
                         ), 1000
                     )
                 }
@@ -168,6 +174,7 @@ fun RunMapView(
                 val lastSegment = pathPoints.lastOrNull()
                 if (!lastSegment.isNullOrEmpty()) {
                     Marker(
+                        // TODO last() can throw NoSuchElementsException. Be are of it
                         state = MarkerState(lastSegment.last()),
                         icon = currentLocationMarker,
                         anchor = Offset(0.5f, 0.5f)

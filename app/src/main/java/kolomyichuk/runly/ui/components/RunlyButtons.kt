@@ -49,6 +49,7 @@ fun CircleIconButton(
         shadowElevation = elevation,
         modifier = Modifier
             .size(buttonSize)
+            // TODO Let's extract it to the separate variable instead of adding it in place
             .then(if (onClick != null) {
                 Modifier.clickable { onClick() }
             } else Modifier

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.data.local.room.entity.Run
 import kolomyichuk.runly.utils.TrackingUtility
 
+// TODO Let's divide this composable to improve readability
 @Composable
 fun RunCard(
     run: Run
@@ -39,6 +40,7 @@ fun RunCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                // TODO Can be just .padding(8.dp)
                 .padding(horizontal = 8.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -54,6 +56,7 @@ fun RunCard(
                         text = run.timestamp.toString(),
                         fontWeight = FontWeight.Bold
                     )
+                    // TODO Let's extract it to strings.xml file
                     Text(text = "Date")
                 }
             }
@@ -72,6 +75,7 @@ fun RunCard(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
+                        // TODO Let's extract it to strings.xml file
                         text = "Km",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -85,6 +89,7 @@ fun RunCard(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
+                        // TODO Let's extract it to strings.xml file
                         text = "Avg. Speed",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -99,6 +104,7 @@ fun RunCard(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
+                        // TODO Let's extract it to strings.xml file
                         text = "Time",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface

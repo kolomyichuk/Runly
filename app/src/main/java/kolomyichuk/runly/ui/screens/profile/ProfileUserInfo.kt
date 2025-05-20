@@ -27,13 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 
+// TODO Let's divide it to improve readability
 @Composable
 fun ProfileUserInfo(
     profileViewModel: ProfileViewModel
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    // TODO Let's make it lifecycle-aware - collectAsStateWithLifecycle
     val username by profileViewModel.username.collectAsState()
     var newName by remember { mutableStateOf("") }
+    // TODO Let's make it lifecycle-aware - collectAsStateWithLifecycle
     val imageFile by profileViewModel.imageFilePath.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -62,8 +65,10 @@ fun ProfileUserInfo(
             )
         }
         if (showDialog) {
+            // TODO It can be extracted to the separate Composable
             AlertDialog(
                 onDismissRequest = { showDialog = false },
+                // TODO Let's extract it to strings.xml file
                 title = { Text(text = "Add username") },
                 text = {
                     TextField(

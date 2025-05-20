@@ -36,6 +36,7 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.TopBarApp
 
+// TODO Let's divide this screen to improve readability
 @Composable
 fun RunScreen(
     navController: NavController,
@@ -59,6 +60,7 @@ fun RunScreen(
     var isLocationGranted by remember { mutableStateOf(false) }
     var alreadyRequestedPermission by remember { mutableStateOf(false) }
 
+    // TODO Let's also request ACCESS_BACKGROUND_LOCATION permission here to get rid of it in RunButtonsBlock.kt
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -122,6 +124,8 @@ fun RunScreen(
         }
     }
 
+    // TODO Extract it to the separate Composable
+    // TODO Use values from strings.xml file
     if (showSettingsDialog) {
         AlertDialog(
             onDismissRequest = {

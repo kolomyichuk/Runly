@@ -31,6 +31,7 @@ fun ProfileScreen(
 
 }
 
+// TODO Can be private
 @Composable
 fun ProfileScreenContent(
     profileViewModel: ProfileViewModel
