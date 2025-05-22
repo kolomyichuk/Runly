@@ -23,4 +23,22 @@
     <string name="kilometers">Kilometers</string>
     <string name="dashboard">Dashboard</string>
     <string name="map_visibility">Map visibility</string>
+    <string name="add_username">Add username</string>
+    <string name="km">Km</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="location_permission_title">Location Permission Required</string>
+    <string name="background_location_permission_text">
+        To be able to record your run, please allow background location access\n
+        in your device settings.\n
+        Without this permission, the app cannot track your route\n
+        while running in the background.
+    </string>
+    <string name="foreground_location_permission_text">
+        To show your current location on the map,\n
+        the app needs access to your location.\n
+        Please grant this permission in the settings.
+    </string>
+    <string name="date">Date</string>
+    <string name="background_location_permission_denied">Background location permission denied.</string>
+    <string name="foreground_location_permission_denied">Location permission denied.</string>
 </resources>

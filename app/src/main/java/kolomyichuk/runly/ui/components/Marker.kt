@@ -26,7 +26,6 @@ val currentLocationMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
     canvas.drawCircle(centerX, centerY, innerRadius, paint)
 }
 
-// TODO Do we need it? Or it will be used in the future?
 @Suppress("NAME_SHADOWING")
 val finishMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
     val centerX = 25f
@@ -59,7 +58,6 @@ val finishMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
     canvas.drawCircle(centerX, centerY, radius, paint)
 }
 
-// TODO Do we need it? Or it will be used in the future?
 val startMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
     val centerX = 25f
     val centerY = 25f

@@ -28,14 +28,11 @@ fun HomeScreen(
 
 }
 
-// TODO Can be private
 @Composable
-fun HomeScreenContent(
+private fun HomeScreenContent(
     homeViewModel: HomeViewModel
 ) {
-    // TODO I guess the initial values is already an empty list as define in ViewModel
-    // TODO There is not need to pass initialValue
-    val runs = homeViewModel.runs.collectAsStateWithLifecycle(initialValue = emptyList())
+    val runs = homeViewModel.runs.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,9 +41,13 @@ fun HomeScreenContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            // TODO Let's pass 'key' to improve the performance
-            items(runs.value) { run ->
-                RunCard(run)
+            items(
+                items = runs.value,
+                key = { run ->
+                    run.id
+                }
+            ) { run ->
+                HomeRunItem(run)
             }
         }
     }

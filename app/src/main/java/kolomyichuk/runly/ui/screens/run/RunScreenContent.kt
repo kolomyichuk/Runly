@@ -42,7 +42,7 @@ fun RunScreenContent(
             time = time,
             avgSpeed = avgSpeed
         )
-        RunButtonsBlock(
+        RunStartBlock(
             isTracking = runState.isTracking,
             isPause = runState.isPause,
             navController = navController

@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.TopBarApp
@@ -28,13 +28,11 @@ fun ThemeScreen(
     }
 }
 
-// TODO Can be private
 @Composable
-fun ThemeScreenContent(
+private fun ThemeScreenContent(
     viewModel: ThemeViewModel
 ) {
-    // TODO Let's collect in in lifecycle-aware manner
-    val currentTheme by viewModel.themeState.collectAsState()
+    val currentTheme by viewModel.themeState.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,10 +42,9 @@ fun ThemeScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // TODO Let's iterate thought the enum entries instead of duplicating the code
-            ThemeOption(AppTheme.LIGHT, currentTheme) { viewModel.saveTheme(it) }
-            ThemeOption(AppTheme.DARK, currentTheme) { viewModel.saveTheme(it) }
-            ThemeOption(AppTheme.SYSTEM, currentTheme) { viewModel.saveTheme(it) }
+            AppTheme.entries.forEach { theme ->
+                ThemeOption(theme, currentTheme) {viewModel.saveTheme(it)}
+            }
         }
     }
 }
