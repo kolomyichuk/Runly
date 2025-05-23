@@ -17,6 +17,7 @@ const val MAP_ZOOM = 15f
 
 @Composable
 fun RunMapView(
+    hasForegroundLocationPermission: Boolean,
     isTracking: Boolean,
     pathPoints: List<List<LatLng>>,
     isDarkTheme: Boolean,
@@ -33,7 +34,8 @@ fun RunMapView(
         fusedLocationClient = fusedLocationClient,
         onLocationUpdate = { currentLocation = it },
         onCallbackChanged = { locationCallback = it },
-        locationCallback = locationCallback
+        locationCallback = locationCallback,
+        hasForegroundLocationPermission = hasForegroundLocationPermission
     )
 
     val cameraPositionState = rememberCameraPositionState {

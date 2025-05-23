@@ -49,9 +49,9 @@ fun MapContent(
 ) {
     val context = LocalContext.current
     var isSatellite by remember { mutableStateOf(false) }
-    val mapProperties =
+    val mapProperties = remember (isSatellite){
         MapProperties(mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL)
-
+    }
     val mapStyleRes = if (isDarkTheme) {
         R.raw.map_night_style
     } else {

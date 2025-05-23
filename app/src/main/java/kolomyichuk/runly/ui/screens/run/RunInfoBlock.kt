@@ -18,9 +18,9 @@ import kolomyichuk.runly.R
 
 @Composable
 fun RunInfoBlock(
-    distance:String,
-    time:String,
-    avgSpeed:String
+    distance: String,
+    time: String,
+    avgSpeed: String
 ) {
     Row(
         modifier = Modifier

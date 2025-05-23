@@ -12,6 +12,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -58,9 +61,15 @@ fun HomeRunItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val distance = TrackingUtility.formatDistanceToKm(run.distanceInMeters)
-                val avgSpeed = run.avgSpeed.toString()
-                val time = TrackingUtility.formatTime(run.durationInMillis)
+                val distance by remember {
+                    derivedStateOf { TrackingUtility.formatDistanceToKm(run.distanceInMeters) }
+                }
+                val avgSpeed by remember {
+                    derivedStateOf { run.avgSpeed.toString() }
+                }
+                val time by remember {
+                    derivedStateOf { TrackingUtility.formatTime(run.durationInMillis) }
+                }
 
                 HomeMetricItem(distance, stringResource(R.string.km))
                 HomeMetricItem(avgSpeed, stringResource(R.string.avg_speed))

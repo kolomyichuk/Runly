@@ -1,16 +1,24 @@
 package kolomyichuk.runly.ui.screens.run
 
+import android.Manifest
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kolomyichuk.runly.utils.TrackingUtility
+import timber.log.Timber
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RunScreenContent(
     isDarkTheme: Boolean,
@@ -27,6 +35,39 @@ fun RunScreenContent(
     val avgSpeed by remember(runState.avgSpeed) {
         derivedStateOf { runState.avgSpeed.toString() }
     }
+
+    val foregroundPermissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
+
+    var showForegroundLocationDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        when {
+            foregroundPermissionState.allPermissionsGranted -> {
+                Timber.d("Foreground permissions granted successfully")
+            }
+
+            foregroundPermissionState.shouldShowRationale -> {
+                showForegroundLocationDialog = true
+            }
+
+            else -> {
+                foregroundPermissionState.launchMultiplePermissionRequest()
+            }
+        }
+
+    }
+
+    if (showForegroundLocationDialog) {
+        ForegroundLocationDialog(onDismiss = { showForegroundLocationDialog = false })
+    }
+
+    val hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +76,8 @@ fun RunScreenContent(
             isDarkTheme = isDarkTheme,
             modifier = Modifier.weight(1f),
             isTracking = runState.isTracking,
-            pathPoints = runState.pathPoints
+            pathPoints = runState.pathPoints,
+            hasForegroundLocationPermission = hasForegroundLocationPermission
         )
         RunInfoBlock(
             distance = distance,
@@ -45,7 +87,8 @@ fun RunScreenContent(
         RunStartBlock(
             isTracking = runState.isTracking,
             isPause = runState.isPause,
-            navController = navController
+            navController = navController,
+            hasForegroundLocationPermission = hasForegroundLocationPermission
         )
     }
 }

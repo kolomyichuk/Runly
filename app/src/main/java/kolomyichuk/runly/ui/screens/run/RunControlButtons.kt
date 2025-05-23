@@ -47,12 +47,16 @@ fun RunControlButtons(
 
         Button(
             onClick = {
-                if (isTracking) sendCommandToRunService(
-                    context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
-                ) else sendCommandToRunService(
-                    context = context,
-                    route = RunTrackingService.ACTION_RESUME_TRACKING
-                )
+                if (isTracking) {
+                    sendCommandToRunService(
+                        context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
+                    )
+                } else {
+                    sendCommandToRunService(
+                        context = context,
+                        route = RunTrackingService.ACTION_RESUME_TRACKING
+                    )
+                }
             },
             modifier = Modifier
                 .height(40.dp)

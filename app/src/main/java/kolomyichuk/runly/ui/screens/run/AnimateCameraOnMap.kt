@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
+
 private const val CAMERA_ANIMATION_DURATION = 1000
 
 @Composable
@@ -24,7 +25,7 @@ fun AnimateCameraOnMap(
                     )
                 }
             } else {
-                currentLocation?.let {
+                currentLocation.let {
                     cameraPositionState.animate(
                         CameraUpdateFactory.newLatLngZoom(
                             it,
