@@ -43,16 +43,17 @@ fun CircleIconButton(
     iconSize: Dp = 28.dp,
     elevation: Dp = 8.dp,
 ) {
+    val clickableModifier = if (onClick != null) {
+        Modifier.clickable { onClick() }
+    } else Modifier
+
     Surface(
         shape = CircleShape,
         color = backgroundColor,
         shadowElevation = elevation,
         modifier = Modifier
             .size(buttonSize)
-            .then(if (onClick != null) {
-                Modifier.clickable { onClick() }
-            } else Modifier
-            )
+            .then(clickableModifier)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -113,7 +114,7 @@ fun StopButton(
     onClick: () -> Unit
 ) {
     CircleIconButton(
-        onClick =  onClick,
+        onClick = onClick,
         imageVector = Icons.Filled.Stop,
         iconColor = MaterialTheme.colorScheme.onPrimary,
         elevation = 10.dp,

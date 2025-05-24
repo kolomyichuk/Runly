@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.screens.dashboard
+package kolomyichuk.runly.ui.screens.run
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -19,30 +19,29 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.MapVisibilityButton
 import kolomyichuk.runly.ui.components.StopButton
-import kolomyichuk.runly.ui.screens.run.sendCommandToRunService
+import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
-fun DashboardButtonsBlock(
-    navController: NavController,
+fun RunControlButtons(
     isTracking: Boolean,
-    isActiveRun: Boolean
+    isPause: Boolean,
+    navController: NavController,
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
-    ) {
-        val context = LocalContext.current
-
-        if (isActiveRun) {
+    )
+    {
+        if (isTracking || isPause) {
             StopButton {
                 sendCommandToRunService(
                     context = context,
                     route = RunTrackingService.ACTION_STOP_TRACKING
                 )
-                navController.popBackStack()
             }
         }
 
@@ -50,8 +49,7 @@ fun DashboardButtonsBlock(
             onClick = {
                 if (isTracking) {
                     sendCommandToRunService(
-                        context = context,
-                        route = RunTrackingService.ACTION_PAUSE_TRACKING
+                        context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
                     )
                 } else {
                     sendCommandToRunService(
@@ -64,11 +62,9 @@ fun DashboardButtonsBlock(
                 .height(40.dp)
                 .wrapContentSize()
         ) {
-            Text(
-                text = if (isTracking) stringResource(R.string.pause)
-                else stringResource(R.string.resume)
-            )
+            Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
-        MapVisibilityButton { navController.popBackStack() }
+
+        MapVisibilityButton { navController.navigate(Screen.Dashboard) }
     }
 }

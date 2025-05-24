@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 
@@ -32,16 +34,22 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileScreenContent(
+private fun ProfileScreenContent(
     profileViewModel: ProfileViewModel
 ) {
+    val username by profileViewModel.username.collectAsStateWithLifecycle()
+    val imageFilePath by profileViewModel.imageFilePath.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         ProfileUserInfo(
-            profileViewModel = profileViewModel
+            username = username,
+            imageFilePath = imageFilePath,
+            onSaveUsername = { profileViewModel.saveUsername(it) },
+            onPickImage = { profileViewModel.saveProfileImage(it) }
         )
     }
 }
