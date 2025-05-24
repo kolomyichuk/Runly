@@ -40,4 +40,5 @@
         Please grant this permission in the settings.
     </string>
     <string name="date">Date</string>
+    <string name="location_permission_not_granted">Location permission not granted</string>
 </resources>

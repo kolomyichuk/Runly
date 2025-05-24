@@ -23,7 +23,7 @@ fun HandlePassiveLocationUpdates(
     locationCallback: LocationCallback?,
     hasForegroundLocationPermission: Boolean
 ) {
-    DisposableEffect(key1 = !isTracking to hasForegroundLocationPermission) {
+    DisposableEffect(key1 = !isTracking, key2 = hasForegroundLocationPermission) {
         if (hasForegroundLocationPermission) {
             val request = LocationRequest.Builder(
                 Priority.PRIORITY_HIGH_ACCURACY,

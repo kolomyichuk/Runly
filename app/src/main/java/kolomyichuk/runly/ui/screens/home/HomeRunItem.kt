@@ -61,13 +61,13 @@ fun HomeRunItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val distance by remember {
+                val distance by remember(run.distanceInMeters) {
                     derivedStateOf { TrackingUtility.formatDistanceToKm(run.distanceInMeters) }
                 }
-                val avgSpeed by remember {
+                val avgSpeed by remember(run.avgSpeed) {
                     derivedStateOf { run.avgSpeed.toString() }
                 }
-                val time by remember {
+                val time by remember(run.durationInMillis) {
                     derivedStateOf { TrackingUtility.formatTime(run.durationInMillis) }
                 }
 

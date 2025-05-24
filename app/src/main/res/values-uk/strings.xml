@@ -40,4 +40,5 @@
         Будь ласка, надайте цей дозвіл в налаштуваннях.
     </string>
     <string name="date">Дата</string>
+    <string name="location_permission_not_granted">Дозвіл на локацію не надано</string>
 </resources>
