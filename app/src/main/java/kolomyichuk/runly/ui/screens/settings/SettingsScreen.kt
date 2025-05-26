@@ -61,7 +61,7 @@ private fun SettingsScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CircleIconButton(
-                    iconResId = R.drawable.brush,
+                    iconResId = R.drawable.theme_mode,
                     contentDescription = "",
                     iconColor = MaterialTheme.colorScheme.primary,
                     backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
