@@ -41,4 +41,10 @@
     </string>
     <string name="date">Date</string>
     <string name="location_permission_not_granted">Location permission not granted</string>
+    <string name="run_saved">Run saved</string>
+    <string name="empty_run_not_saved">Empty run not saved</string>
+    <string name="finish_the_run">" Finish the run?"</string>
+    <string name="do_you_want_to_finish">Do you want to finish and save the run</string>
+    <string name="finish">Finish</string>
+    <string name="resume_run">Resume</string>
 </resources>

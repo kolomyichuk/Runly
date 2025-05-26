@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,9 +29,23 @@ import kolomyichuk.runly.ui.navigation.Screen
 fun RunControlButtons(
     isTracking: Boolean,
     isPause: Boolean,
+    distance: Double,
     navController: NavController,
+    onSaveRun: () -> Unit
 ) {
     val context = LocalContext.current
+
+    var showSaveRunDialog by remember { mutableStateOf(false) }
+
+    if (showSaveRunDialog) {
+        SaveRunDialog(
+            distance = distance,
+            onSaveRun = onSaveRun,
+            onDismiss = { showSaveRunDialog = false },
+            navController = navController
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,9 +57,9 @@ fun RunControlButtons(
         if (isTracking || isPause) {
             StopButton {
                 sendCommandToRunService(
-                    context = context,
-                    route = RunTrackingService.ACTION_STOP_TRACKING
+                    context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
                 )
+                showSaveRunDialog = true
             }
         }
 

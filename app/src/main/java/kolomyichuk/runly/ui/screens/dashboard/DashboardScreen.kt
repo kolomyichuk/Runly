@@ -65,7 +65,9 @@ private fun ContentDashboardScreen(
         DashboardButtonsBlock(
             navController = navController,
             isTracking = runState.isTracking,
-            isActiveRun = runState.isActiveRun
+            isActiveRun = runState.isActiveRun,
+            distance = runState.distanceInMeters,
+            onSaveRun = { runViewModel.saveRun() }
         )
     }
 }

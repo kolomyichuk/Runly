@@ -32,7 +32,9 @@ fun RunStartBlock(
     hasForegroundLocationPermission: Boolean,
     isTracking: Boolean,
     isPause: Boolean,
-    navController: NavController
+    distance: Double,
+    navController: NavController,
+    onSaveRun: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -67,7 +69,9 @@ fun RunStartBlock(
         RunControlButtons(
             isTracking = isTracking,
             isPause = isPause,
-            navController = navController
+            distance = distance,
+            navController = navController,
+            onSaveRun = onSaveRun
         )
     }
 }
