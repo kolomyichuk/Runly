@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,14 +23,28 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.MapVisibilityButton
 import kolomyichuk.runly.ui.components.StopButton
+import kolomyichuk.runly.ui.screens.run.SaveRunDialog
 import kolomyichuk.runly.ui.screens.run.sendCommandToRunService
 
 @Composable
 fun DashboardButtonsBlock(
     navController: NavController,
     isTracking: Boolean,
-    isActiveRun: Boolean
+    isActiveRun: Boolean,
+    distance: Double,
+    onSaveRun: () -> Unit
 ) {
+    var showSaveRunDialog by remember { mutableStateOf(false) }
+
+    if (showSaveRunDialog) {
+        SaveRunDialog(
+            distance = distance,
+            onSaveRun = onSaveRun,
+            onDismiss = { showSaveRunDialog = false },
+            navController = navController
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,10 +57,9 @@ fun DashboardButtonsBlock(
         if (isActiveRun) {
             StopButton {
                 sendCommandToRunService(
-                    context = context,
-                    route = RunTrackingService.ACTION_STOP_TRACKING
+                    context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
                 )
-                navController.popBackStack()
+                showSaveRunDialog = true
             }
         }
 

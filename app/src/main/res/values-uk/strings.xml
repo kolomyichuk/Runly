@@ -41,4 +41,10 @@
     </string>
     <string name="date">Дата</string>
     <string name="location_permission_not_granted">Дозвіл на локацію не надано</string>
+    <string name="run_saved">Пробіжку збережено</string>
+    <string name="empty_run_not_saved">Пусту пробіжку не збережено</string>
+    <string name="finish_the_run">"Завершити пробіжку?"</string>
+    <string name="do_you_want_to_finish_and_save_the_run">Ви хочете завершити пробіжку та зберегти її?</string>
+    <string name="finish_and_save">Завершити і зберегти</string>
+    <string name="resume_run">Продовжити пробіжку</string>
 </resources>

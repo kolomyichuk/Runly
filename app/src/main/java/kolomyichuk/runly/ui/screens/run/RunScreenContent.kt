@@ -40,7 +40,7 @@ fun RunScreenContent(
     )
 
     HandleForegroundPermissions(foregroundPermissionState = foregroundPermissionState)
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +61,9 @@ fun RunScreenContent(
             isTracking = runState.isTracking,
             isPause = runState.isPause,
             navController = navController,
-            hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted
+            hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
+            onSaveRun = { runViewModel.saveRun() },
+            distance = runState.distanceInMeters
         )
     }
 }
