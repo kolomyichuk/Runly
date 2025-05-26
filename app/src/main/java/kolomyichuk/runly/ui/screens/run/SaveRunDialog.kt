@@ -48,7 +48,7 @@ fun SaveRunDialog(
                 onDismiss()
                 navController.popBackStack()
             }) {
-                Text(text = stringResource(R.string.finish_and_save))
+                Text(text = stringResource(R.string.finish))
             }
         },
         dismissButton = {
@@ -60,6 +60,6 @@ fun SaveRunDialog(
             }
         },
         title = { Text(text = stringResource(R.string.finish_the_run)) },
-        text = { Text(text = stringResource(R.string.do_you_want_to_finish_and_save_the_run)) }
+        text = { Text(text = stringResource(R.string.do_you_want_to_finish)) }
     )
 }
