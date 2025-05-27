@@ -30,7 +30,9 @@ import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
 fun HomeRunItem(
     run: Run
 ) {
-    val formattedDate = run.timestamp.toFormattedDateTime()
+    val formattedDate = remember(run.timestamp) {
+        run.timestamp.toFormattedDateTime()
+    }
 
     Card(
         shape = RoundedCornerShape(10.dp),
