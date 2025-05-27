@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.screens.run.RunViewModel
-import kolomyichuk.runly.utils.TrackingUtility
+import kolomyichuk.runly.utils.FormatterUtils
 
 @Composable
 fun DashboardScreen(
@@ -42,10 +42,10 @@ private fun ContentDashboardScreen(
 ) {
     val runState by runViewModel.runState.collectAsStateWithLifecycle()
     val time by remember(runState.timeInMillis) {
-        derivedStateOf { TrackingUtility.formatTime(runState.timeInMillis) }
+        derivedStateOf { FormatterUtils.formatTime(runState.timeInMillis) }
     }
     val distance by remember(runState.distanceInMeters) {
-        derivedStateOf { TrackingUtility.formatDistanceToKm(runState.distanceInMeters) }
+        derivedStateOf { FormatterUtils.formatDistanceToKm(runState.distanceInMeters) }
     }
     val avgSpeed by remember(runState.avgSpeed) {
         derivedStateOf { runState.avgSpeed.toString() }

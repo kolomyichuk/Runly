@@ -18,7 +18,7 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.RunState
 import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.utils.NotificationHelper
-import kolomyichuk.runly.utils.TrackingUtility
+import kolomyichuk.runly.utils.FormatterUtils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +81,7 @@ class RunTrackingService : Service() {
 
         val notification = notificationHelper.getNotification(
             getString(R.string.run),
-            TrackingUtility.formatTime(runRepository.runState.value.timeInMillis)
+            FormatterUtils.formatTime(runRepository.runState.value.timeInMillis)
         )
         startForeground(TRACKING_NOTIFICATION_ID, notification)
         startTimer()
@@ -102,12 +102,12 @@ class RunTrackingService : Service() {
                 runRepository.updateRunState { copy(timeInMillis = updatedTime) }
 
                 val formattedDistance =
-                    TrackingUtility.formatDistanceToKm(runRepository.runState.value.distanceInMeters)
+                    FormatterUtils.formatDistanceToKm(runRepository.runState.value.distanceInMeters)
 
                 notificationHelper.updateNotification(
                     TRACKING_NOTIFICATION_ID,
                     getString(R.string.run),
-                    "${TrackingUtility.formatTime(updatedTime)} · $formattedDistance km"
+                    "${FormatterUtils.formatTime(updatedTime)} · $formattedDistance km"
                 )
             }
         }
@@ -217,7 +217,7 @@ class RunTrackingService : Service() {
         timeRun += System.currentTimeMillis() - startTime
         stopTimer()
         stopLocationTracking()
-        val formattedTime = TrackingUtility.formatTime(runRepository.runState.value.timeInMillis)
+        val formattedTime = FormatterUtils.formatTime(runRepository.runState.value.timeInMillis)
         notificationHelper.updateNotification(
             TRACKING_NOTIFICATION_ID,
             getString(R.string.paused),

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,16 +19,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.room.entity.Run
-import kolomyichuk.runly.utils.TrackingUtility
+import kolomyichuk.runly.utils.FormatterUtils
+import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
 
 @Composable
 fun HomeRunItem(
     run: Run
 ) {
+    val formattedDate = remember(run.timestamp) {
+        run.timestamp.toFormattedDateTime()
+    }
+
     Card(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(5.dp),
@@ -43,18 +49,18 @@ fun HomeRunItem(
             verticalArrangement = Arrangement.Center
         ) {
             Row {
-                Column(
-                    modifier = Modifier.padding(start = 10.dp)
-                ) {
-                    Text(
-                        text = run.timestamp.toString(),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(text = stringResource(R.string.date))
-                }
+                Text(
+                    text = stringResource(R.string.date),
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = formattedDate,
+                    fontSize = 14.sp
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -62,13 +68,13 @@ fun HomeRunItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 val distance by remember(run.distanceInMeters) {
-                    derivedStateOf { TrackingUtility.formatDistanceToKm(run.distanceInMeters) }
+                    derivedStateOf { FormatterUtils.formatDistanceToKm(run.distanceInMeters) }
                 }
                 val avgSpeed by remember(run.avgSpeed) {
                     derivedStateOf { run.avgSpeed.toString() }
                 }
                 val time by remember(run.durationInMillis) {
-                    derivedStateOf { TrackingUtility.formatTime(run.durationInMillis) }
+                    derivedStateOf { FormatterUtils.formatTime(run.durationInMillis) }
                 }
 
                 HomeMetricItem(distance, stringResource(R.string.km))

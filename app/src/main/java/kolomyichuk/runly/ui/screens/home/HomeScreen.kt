@@ -25,7 +25,6 @@ fun HomeScreen(
             homeViewModel = homeViewModel
         )
     }
-
 }
 
 @Composable
@@ -33,22 +32,27 @@ private fun HomeScreenContent(
     homeViewModel: HomeViewModel
 ) {
     val runs = homeViewModel.runs.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(
-                items = runs.value,
-                key = { run ->
-                    run.id
+        if (runs.value.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(
+                    items = runs.value,
+                    key = { run ->
+                        run.id
+                    }
+                ) { run ->
+                    HomeRunItem(run)
                 }
-            ) { run ->
-                HomeRunItem(run)
             }
+        } else {
+            HomeEmptyList()
         }
     }
 }
