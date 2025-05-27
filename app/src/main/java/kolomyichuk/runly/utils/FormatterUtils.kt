@@ -1,8 +1,12 @@
 package kolomyichuk.runly.utils
 
 import android.annotation.SuppressLint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-object TrackingUtility {
+object FormatterUtils {
+
     @SuppressLint("DefaultLocale")
     fun formatTime(millis: Long, includeMillis: Boolean = false): String {
         var milliseconds = millis
@@ -21,7 +25,13 @@ object TrackingUtility {
         }
     }
 
-    fun formatDistanceToKm(distanceInMeters:Double):String{
+    fun formatDistanceToKm(distanceInMeters: Double): String {
         return "%.2f".format(distanceInMeters / 1000)
+    }
+
+    fun Long.toFormattedDateTime(): String {
+        val date = Date(this)
+        val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        return formatter.format(date)
     }
 }

@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import kolomyichuk.runly.utils.TrackingUtility
+import kolomyichuk.runly.utils.FormatterUtils
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -23,10 +23,10 @@ fun RunScreenContent(
 ) {
     val runState by runViewModel.runState.collectAsStateWithLifecycle()
     val distance by remember(runState.distanceInMeters) {
-        derivedStateOf { TrackingUtility.formatDistanceToKm(runState.distanceInMeters) }
+        derivedStateOf { FormatterUtils.formatDistanceToKm(runState.distanceInMeters) }
     }
     val time by remember(runState.timeInMillis) {
-        derivedStateOf { TrackingUtility.formatTime(runState.timeInMillis) }
+        derivedStateOf { FormatterUtils.formatTime(runState.timeInMillis) }
     }
     val avgSpeed by remember(runState.avgSpeed) {
         derivedStateOf { runState.avgSpeed.toString() }

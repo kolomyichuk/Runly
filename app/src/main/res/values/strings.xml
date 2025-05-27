@@ -47,4 +47,6 @@
     <string name="do_you_want_to_finish">Do you want to finish and save the run</string>
     <string name="finish">Finish</string>
     <string name="resume_run">Resume</string>
+    <string name="no_runs">No runs to show.</string>
+    <string name="record_at_least_one">Record at least one</string>
 </resources>

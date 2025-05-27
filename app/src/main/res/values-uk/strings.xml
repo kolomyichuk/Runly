@@ -47,4 +47,6 @@
     <string name="do_you_want_to_finish">Ви хочете завершити пробіжку та зберегти її?</string>
     <string name="finish">Завершити</string>
     <string name="resume_run">Продовжити</string>
+    <string name="no_runs">Пробіжки відсутні.</string>
+    <string name="record_at_least_one">Запишіть хоча б одну.</string>
 </resources>
