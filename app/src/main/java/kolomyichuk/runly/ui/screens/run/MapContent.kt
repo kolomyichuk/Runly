@@ -1,5 +1,6 @@
 package kolomyichuk.runly.ui.screens.run
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +25,10 @@ import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
+import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.MapTypeToggleButton
+import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.currentLocationMarker
 
 const val POLYLINE_WIDTH = 12f
@@ -35,7 +38,6 @@ const val POLYLINE_WIDTH = 12f
 fun MapContent(
     modifier: Modifier,
     isTracking: Boolean,
-    isDarkTheme: Boolean,
     pathPoints: List<List<LatLng>>,
     currentLocation: LatLng?,
     cameraPositionState: CameraPositionState
@@ -44,6 +46,13 @@ fun MapContent(
     var isSatellite by remember { mutableStateOf(false) }
     val mapProperties = remember(isSatellite) {
         MapProperties(mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL)
+    }
+
+    val appTheme = LocalAppTheme.current
+    val isDarkTheme = when (appTheme) {
+        AppTheme.DARK -> true
+        AppTheme.LIGHT -> false
+        AppTheme.SYSTEM -> isSystemInDarkTheme()
     }
     val mapStyleRes = if (isDarkTheme) {
         R.raw.map_night_style
