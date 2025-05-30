@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.screens.details
+package kolomyichuk.runly.ui.screens.rundetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,10 +14,10 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.MetricItem
 
 @Composable
-fun DetailsInfoBlock(
+fun RunDetailsInfoBlock(
     distance: String,
-    time: String,
-    avgSpeed: Float
+    duration: String,
+    avgSpeed: String
 ) {
     Column(
         modifier = Modifier
@@ -30,8 +30,8 @@ fun DetailsInfoBlock(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             MetricItem(distance, stringResource(R.string.km))
-            MetricItem(avgSpeed.toString(), stringResource(R.string.avg_speed))
-            MetricItem(time, stringResource(R.string.time))
+            MetricItem(avgSpeed, stringResource(R.string.avg_speed))
+            MetricItem(duration, stringResource(R.string.time))
         }
     }
 }

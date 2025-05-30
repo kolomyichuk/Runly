@@ -1,9 +1,8 @@
-package kolomyichuk.runly.ui.screens.details
+package kolomyichuk.runly.ui.screens.rundetails
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -15,8 +14,8 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 
 @Composable
-fun DetailsHeaderBlock(
-    timestamp: String
+fun RunDetailsHeaderBlock(
+    dateTime: String
 ) {
     Row(
         modifier = Modifier
@@ -29,7 +28,7 @@ fun DetailsHeaderBlock(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = timestamp,
+            text = dateTime,
             fontSize = 14.sp
         )
     }
