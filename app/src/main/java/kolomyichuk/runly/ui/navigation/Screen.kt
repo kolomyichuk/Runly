@@ -21,6 +21,9 @@ sealed interface Screen {
 
     @Serializable
     object Dashboard : Screen
+
+    @Serializable
+    data class Details(val runId: Int) : Screen
 }
 
 @Serializable
@@ -28,4 +31,7 @@ object RunScreens
 
 @Serializable
 object ProfileScreens
+
+@Serializable
+object HomeScreens
 

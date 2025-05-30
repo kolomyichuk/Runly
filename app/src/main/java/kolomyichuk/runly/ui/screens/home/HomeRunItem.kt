@@ -1,5 +1,6 @@
 package kolomyichuk.runly.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.local.room.entity.Run
+import kolomyichuk.runly.ui.components.MetricItem
 import kolomyichuk.runly.utils.FormatterUtils
 import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
 
 @Composable
 fun HomeRunItem(
-    run: Run
+    run: Run,
+    onClick: () -> Unit
 ) {
     val formattedDate = remember(run.timestamp) {
         run.timestamp.toFormattedDateTime()
@@ -40,6 +43,7 @@ fun HomeRunItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp, vertical = 8.dp)
+            .clickable { onClick() }
 
     ) {
         Column(
@@ -77,9 +81,9 @@ fun HomeRunItem(
                     derivedStateOf { FormatterUtils.formatTime(run.durationInMillis) }
                 }
 
-                HomeMetricItem(distance, stringResource(R.string.km))
-                HomeMetricItem(avgSpeed, stringResource(R.string.avg_speed))
-                HomeMetricItem(time, stringResource(R.string.time))
+                MetricItem(distance, stringResource(R.string.km))
+                MetricItem(avgSpeed, stringResource(R.string.avg_speed))
+                MetricItem(time, stringResource(R.string.time))
             }
         }
     }

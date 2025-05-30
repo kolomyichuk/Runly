@@ -5,19 +5,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.ui.components.BottomNavigationBar
+import kolomyichuk.runly.ui.navigation.HomeScreens
 import kolomyichuk.runly.ui.navigation.Screen
+import kolomyichuk.runly.ui.navigation.homeNavGraph
 import kolomyichuk.runly.ui.navigation.profileNavGraph
 import kolomyichuk.runly.ui.navigation.runNavGraph
-import kolomyichuk.runly.ui.screens.home.HomeScreen
-import kolomyichuk.runly.ui.screens.home.HomeViewModel
 
 @Composable
 fun MainScreen(
@@ -38,15 +36,10 @@ fun MainScreen(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home,
+            startDestination = HomeScreens,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable<Screen.Home> {
-                val homeViewModel: HomeViewModel = hiltViewModel<HomeViewModel>()
-                HomeScreen(
-                    homeViewModel = homeViewModel
-                )
-            }
+            homeNavGraph(navController)
             runNavGraph(navController)
             profileNavGraph(navController)
         }

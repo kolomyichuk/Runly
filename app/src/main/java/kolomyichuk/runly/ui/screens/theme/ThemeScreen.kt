@@ -43,7 +43,7 @@ private fun ThemeScreenContent(
                 .fillMaxSize()
         ) {
             AppTheme.entries.forEach { theme ->
-                ThemeOption(theme, currentTheme) {viewModel.saveTheme(it)}
+                ThemeOption(theme, currentTheme) { viewModel.saveTheme(it) }
             }
         }
     }

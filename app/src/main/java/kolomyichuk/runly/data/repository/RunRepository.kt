@@ -15,7 +15,7 @@ class RunRepository(
     private val _runState = MutableStateFlow(RunState())
     val runState: StateFlow<RunState> = _runState.asStateFlow()
 
-    fun updateRunState(update: RunState.() -> RunState){
+    fun updateRunState(update: RunState.() -> RunState) {
         _runState.update { it.update() }
     }
 
@@ -29,6 +29,10 @@ class RunRepository(
 
     suspend fun deleteRun(run: Run) {
         runDao.deleteRun(run)
+    }
+
+    suspend fun getRunById(runId: Int): Run {
+        return runDao.getRunById(runId)
     }
 }
 

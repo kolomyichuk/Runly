@@ -15,6 +15,9 @@ interface RunDao {
     @Query("SELECT * FROM runs ORDER BY timestamp DESC")
     fun getAllRuns(): Flow<List<Run>>
 
+    @Query("SELECT * FROM runs WHERE id = :runId")
+    suspend fun getRunById(runId: Int): Run
+
     @Delete
     suspend fun deleteRun(run: Run)
 }
