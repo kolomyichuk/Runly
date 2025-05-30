@@ -17,7 +17,6 @@ import kolomyichuk.runly.utils.FormatterUtils
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RunScreenContent(
-    isDarkTheme: Boolean,
     navController: NavController,
     runViewModel: RunViewModel
 ) {
@@ -46,7 +45,6 @@ fun RunScreenContent(
             .fillMaxSize()
     ) {
         RunMapView(
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.weight(1f),
             isTracking = runState.isTracking,
             pathPoints = runState.pathPoints,

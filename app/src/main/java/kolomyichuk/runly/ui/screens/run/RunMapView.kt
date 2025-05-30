@@ -20,7 +20,6 @@ fun RunMapView(
     hasForegroundLocationPermission: Boolean,
     isTracking: Boolean,
     pathPoints: List<List<LatLng>>,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -56,7 +55,6 @@ fun RunMapView(
     MapContent(
         modifier = modifier,
         isTracking = isTracking,
-        isDarkTheme = isDarkTheme,
         pathPoints = pathPoints,
         currentLocation = currentLocation,
         cameraPositionState = cameraPositionState
