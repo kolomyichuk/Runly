@@ -15,21 +15,24 @@ import kolomyichuk.runly.ui.components.TopBarApp
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    onRunClick: (Int) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
             title = stringResource(R.string.home)
         )
         HomeScreenContent(
-            homeViewModel = homeViewModel
+            homeViewModel = homeViewModel,
+            onRunClick = onRunClick
         )
     }
 }
 
 @Composable
 private fun HomeScreenContent(
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    onRunClick: (Int) -> Unit
 ) {
     val runs = homeViewModel.runs.collectAsStateWithLifecycle()
 
@@ -48,7 +51,10 @@ private fun HomeScreenContent(
                         run.id
                     }
                 ) { run ->
-                    HomeRunItem(run)
+                    HomeRunItem(
+                        run = run,
+                        onClick = { onRunClick(run.id) }
+                    )
                 }
             }
         } else {

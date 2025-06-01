@@ -1,4 +1,4 @@
-package kolomyichuk.runly.ui.screens.home
+package kolomyichuk.runly.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeMetricItem(
+fun MetricItem(
     value: String,
     label:String
 ) {

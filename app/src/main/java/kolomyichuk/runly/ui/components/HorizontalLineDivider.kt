@@ -17,7 +17,7 @@ fun HorizontalLineDivider(){
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(MaterialTheme.colorScheme.onBackground)
+            .background(MaterialTheme.colorScheme.outlineVariant)
     )
     Spacer(modifier = Modifier.height(5.dp))
 }

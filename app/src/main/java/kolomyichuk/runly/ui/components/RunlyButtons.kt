@@ -8,15 +8,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -139,5 +142,26 @@ fun MapVisibilityButton(
         backgroundColor = MaterialTheme.colorScheme.primary,
         contentDescription = null
     )
+}
+
+@Composable
+fun MapTypeToggleButton(
+    modifier: Modifier = Modifier,
+    onToggle: () -> Unit
+) {
+    IconButton(
+        onClick = onToggle,
+        modifier = modifier
+            .padding(16.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = CircleShape
+            )
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.LocationOn,
+            contentDescription = null
+        )
+    }
 }
 
