@@ -15,10 +15,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.data.model.RunState
 import kolomyichuk.runly.data.repository.RunRepository
-import kolomyichuk.runly.utils.NotificationHelper
 import kolomyichuk.runly.utils.FormatterUtils
+import kolomyichuk.runly.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,12 +27,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,6 +47,7 @@ class RunTrackingService : Service() {
     private var startTime = 0L
     private var timeRun = 0L
     private var timerJob: Job? = null
+    private var notificationJob: Job? = null
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun onCreate() {
@@ -57,7 +56,6 @@ class RunTrackingService : Service() {
             TRACKING_CHANNEL_ID,
             TRACKING_CHANNEL_NAME
         )
-        speedCalculation()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -85,6 +83,7 @@ class RunTrackingService : Service() {
         )
         startForeground(TRACKING_NOTIFICATION_ID, notification)
         startTimer()
+        startNotificationUpdater()
         startLocationTracking()
     }
 
@@ -100,15 +99,33 @@ class RunTrackingService : Service() {
                 val updatedTime = timeRun + (currentTime - startTime)
 
                 runRepository.updateRunState { copy(timeInMillis = updatedTime) }
+            }
+        }
+    }
 
-                val formattedDistance =
-                    FormatterUtils.formatDistanceToKm(runRepository.runState.value.distanceInMeters)
+    private fun startNotificationUpdater() {
+        if (notificationJob != null) return
 
-                notificationHelper.updateNotification(
-                    TRACKING_NOTIFICATION_ID,
-                    getString(R.string.run),
-                    "${FormatterUtils.formatTime(updatedTime)} · $formattedDistance km"
-                )
+        notificationJob = serviceScope.launch {
+            runRepository.runDisplayState.collectLatest { run ->
+                if (run.isTracking) {
+                    val unitDistance = when (run.unit) {
+                        DistanceUnit.KILOMETERS -> getString(R.string.km)
+                        DistanceUnit.MILES -> getString(R.string.miles)
+                    }
+                    val text = "${run.duration} · ${run.distance} $unitDistance"
+                    notificationHelper.updateNotification(
+                        TRACKING_NOTIFICATION_ID,
+                        getString(R.string.run),
+                        text
+                    )
+                } else if (run.isPause) {
+                    notificationHelper.updateNotification(
+                        TRACKING_NOTIFICATION_ID,
+                        getString(R.string.paused),
+                        run.duration
+                    )
+                }
             }
         }
     }
@@ -172,34 +189,6 @@ class RunTrackingService : Service() {
         runRepository.updateRunState { copy(pathPoints = updatedPath.toList()) }
     }
 
-    private fun speedCalculation() {
-        serviceScope.launch {
-            runRepository.runState
-                .map { state ->
-                    val distance = state.distanceInMeters
-                    val time = state.timeInMillis
-                    val tracking = state.isTracking
-
-                    if (!tracking) return@map null
-
-                    val timeInSeconds = time / 1000.0
-                    val distanceInKm = distance / 1000.0
-
-                    if (timeInSeconds > 5 && distanceInKm > 0.02) {
-                        val speed = distanceInKm / (timeInSeconds / 3600.0)
-                        if (speed.isFinite()) {
-                            String.format(Locale.US, "%.2f", speed).toFloat()
-                        } else null
-                    } else null
-                }
-                .filterNotNull()
-                .catch { e -> Timber.e("Error in speedCalculation: ${e.localizedMessage}") }
-                .collect { calculatedSpeed ->
-                    runRepository.updateRunState { copy(avgSpeed = calculatedSpeed) }
-                }
-        }
-    }
-
     private fun isValidLocation(prevPoint: LatLng, newPoint: LatLng, timeDiff: Float): Boolean {
         if (timeDiff <= 0f) return false
 
@@ -217,12 +206,6 @@ class RunTrackingService : Service() {
         timeRun += System.currentTimeMillis() - startTime
         stopTimer()
         stopLocationTracking()
-        val formattedTime = FormatterUtils.formatTime(runRepository.runState.value.timeInMillis)
-        notificationHelper.updateNotification(
-            TRACKING_NOTIFICATION_ID,
-            getString(R.string.paused),
-            formattedTime
-        )
     }
 
     private fun resumeTracking() {
@@ -256,10 +239,16 @@ class RunTrackingService : Service() {
         timerJob = null
     }
 
+    private fun stopNotificationUpdater() {
+        notificationJob?.cancel()
+        notificationJob = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         stopLocationTracking()
         stopTimer()
+        stopNotificationUpdater()
         serviceScope.cancel()
     }
 

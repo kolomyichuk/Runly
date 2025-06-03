@@ -15,13 +15,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.DistanceUnit
 
 @Composable
 fun RunInfoBlock(
     distance: String,
     time: String,
-    avgSpeed: String
+    avgSpeed: String,
+    distanceUnit: DistanceUnit
 ) {
+    val unitLabel = when(distanceUnit){
+        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
+        DistanceUnit.MILES -> stringResource(R.string.miles)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +36,7 @@ fun RunInfoBlock(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        InfoColumn(distance, stringResource(R.string.distance))
+        InfoColumn(distance, unitLabel)
         InfoColumn(avgSpeed, stringResource(R.string.avg_speed))
         InfoColumn(time, stringResource(R.string.time))
     }

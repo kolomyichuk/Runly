@@ -4,12 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kolomyichuk.runly.di.ThemePreferences
+import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.di.SettingsPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ThemePreferencesDataStore (
-    @ThemePreferences private val dataStore: DataStore<Preferences>
+class SettingsPreferencesDataStore(
+    @SettingsPreferences private val dataStore: DataStore<Preferences>
 ) {
     val themeState: Flow<AppTheme> = dataStore.data
         .map { preferences ->
@@ -17,17 +19,29 @@ class ThemePreferencesDataStore (
             AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
         }
 
+    val distanceUnitState: Flow<DistanceUnit> = dataStore.data
+        .map { preferences ->
+            val value = preferences[DISTANCE_UNIT_KEY] ?: DistanceUnit.KILOMETERS.name
+            DistanceUnit.entries.find { it.name == value } ?: DistanceUnit.KILOMETERS
+        }
+
+
     suspend fun saveTheme(theme: AppTheme) {
         dataStore.edit { preferences ->
             preferences[THEME_KEY] = theme.name
         }
     }
 
+    suspend fun saveDistanceUnit(distanceUnit: DistanceUnit) {
+        dataStore.edit { preferences ->
+            preferences[DISTANCE_UNIT_KEY] = distanceUnit.name
+        }
+    }
+
     companion object {
         private val THEME_KEY = stringPreferencesKey("app_theme")
+        private val DISTANCE_UNIT_KEY = stringPreferencesKey("distance_unit")
     }
 }
 
-enum class AppTheme {
-    LIGHT, DARK, SYSTEM
-}
+

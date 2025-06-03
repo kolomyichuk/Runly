@@ -14,18 +14,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 
 @Composable
 fun DashboardInfoBlock(
     distance: String,
     time: String,
-    avgSpeed: String
+    avgSpeed: String,
+    distanceUnit: DistanceUnit
 ) {
-    Column (
+    val unitLabel = when (distanceUnit) {
+        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
+        DistanceUnit.MILES -> stringResource(R.string.miles)
+    }
+    val speedUnit = when (distanceUnit) {
+        DistanceUnit.KILOMETERS -> stringResource(R.string.km_h)
+        DistanceUnit.MILES -> stringResource(R.string.miles_per_hour)
+    }
+
+    Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         DashboardInfoColumn(
             title = stringResource(R.string.time),
             value = time,
@@ -35,13 +46,13 @@ fun DashboardInfoBlock(
         DashboardInfoColumn(
             title = stringResource(R.string.avg_speed),
             value = avgSpeed,
-            type = stringResource(R.string.km_h)
+            type = speedUnit
         )
         HorizontalLineDivider()
         DashboardInfoColumn(
             title = stringResource(R.string.distance),
             value = distance,
-            type = stringResource(R.string.kilometers)
+            type = unitLabel
         )
     }
 }

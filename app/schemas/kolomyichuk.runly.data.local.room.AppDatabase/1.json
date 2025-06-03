@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "384c797f5a1f6200f8f43492fe176cc7",
+    "identityHash": "c0f257f10eb76deb4226cb3cf9e72378",
     "entities": [
       {
         "tableName": "runs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `durationInMillis` INTEGER NOT NULL, `distanceInMeters` REAL NOT NULL, `avgSpeed` REAL NOT NULL, `routePoints` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `durationInMillis` INTEGER NOT NULL, `distanceInMeters` REAL NOT NULL, `routePoints` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,12 +33,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "avgSpeed",
-            "columnName": "avgSpeed",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
             "fieldPath": "routePoints",
             "columnName": "routePoints",
             "affinity": "TEXT",
@@ -58,7 +52,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '384c797f5a1f6200f8f43492fe176cc7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c0f257f10eb76deb4226cb3cf9e72378')"
     ]
   }
 }

@@ -10,6 +10,5 @@ data class Run(
     @ColumnInfo val timestamp: Long,
     @ColumnInfo val durationInMillis: Long,
     @ColumnInfo val distanceInMeters: Double,
-    @ColumnInfo val avgSpeed: Float,
     @ColumnInfo val routePoints: List<List<LatLngPoint>>
 )
