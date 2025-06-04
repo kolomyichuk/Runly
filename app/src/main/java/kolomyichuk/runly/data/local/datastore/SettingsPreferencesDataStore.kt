@@ -3,6 +3,7 @@ package kolomyichuk.runly.data.local.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kolomyichuk.runly.data.model.AppTheme
 import kolomyichuk.runly.data.model.DistanceUnit
@@ -21,8 +22,8 @@ class SettingsPreferencesDataStore(
 
     val distanceUnitState: Flow<DistanceUnit> = dataStore.data
         .map { preferences ->
-            val value = preferences[DISTANCE_UNIT_KEY] ?: DistanceUnit.KILOMETERS.name
-            DistanceUnit.entries.find { it.name == value } ?: DistanceUnit.KILOMETERS
+            val ordinal = preferences[DISTANCE_UNIT_KEY] ?: DistanceUnit.KILOMETERS.ordinal
+            DistanceUnit.entries.getOrNull(ordinal) ?: DistanceUnit.KILOMETERS
         }
 
 
@@ -34,13 +35,13 @@ class SettingsPreferencesDataStore(
 
     suspend fun saveDistanceUnit(distanceUnit: DistanceUnit) {
         dataStore.edit { preferences ->
-            preferences[DISTANCE_UNIT_KEY] = distanceUnit.name
+            preferences[DISTANCE_UNIT_KEY] = distanceUnit.ordinal
         }
     }
 
     companion object {
         private val THEME_KEY = stringPreferencesKey("app_theme")
-        private val DISTANCE_UNIT_KEY = stringPreferencesKey("distance_unit")
+        private val DISTANCE_UNIT_KEY = intPreferencesKey("distance_unit")
     }
 }
 

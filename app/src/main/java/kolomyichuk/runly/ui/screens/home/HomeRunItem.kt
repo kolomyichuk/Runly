@@ -20,19 +20,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.ui.components.MetricItem
+import kolomyichuk.runly.utils.getUnitLabel
 
 @Composable
 fun HomeRunItem(
     run: RunDisplayModel,
     onClick: () -> Unit
 ) {
-    val unitLabel = when(run.unit){
-        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
-        DistanceUnit.MILES -> stringResource(R.string.miles)
-    }
+    val unitLabel = stringResource(run.unit.getUnitLabel())
 
     Card(
         shape = RoundedCornerShape(10.dp),

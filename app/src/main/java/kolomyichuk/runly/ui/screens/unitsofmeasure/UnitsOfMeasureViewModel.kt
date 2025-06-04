@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.data.repository.SettingsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class UnitsOfMeasureViewModel @Inject constructor(
     )
 
     fun saveDistanceUnit(distanceUnit: DistanceUnit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveDistanceUnit(distanceUnit)
         }
     }

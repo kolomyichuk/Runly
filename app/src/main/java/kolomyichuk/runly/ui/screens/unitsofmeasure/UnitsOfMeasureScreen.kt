@@ -24,6 +24,7 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.utils.getUnitLabel
 
 @Composable
 fun UnitsOfMeasureScreen(
@@ -63,10 +64,8 @@ fun UnitsOfMeasureScreenContent(
             )
     ) {
         DistanceUnit.entries.forEachIndexed { index, unit ->
-            val label = when (unit) {
-                DistanceUnit.KILOMETERS -> stringResource(R.string.kilometers)
-                DistanceUnit.MILES -> stringResource(R.string.miles)
-            }
+            val label = stringResource(unit.getUnitLabel())
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

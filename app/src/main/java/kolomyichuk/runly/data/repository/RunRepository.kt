@@ -6,6 +6,8 @@ import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.local.room.entity.Run
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.model.RunState
+import kolomyichuk.runly.data.utils.calculateAvgSpeed
+import kolomyichuk.runly.data.utils.convertDistance
 import kolomyichuk.runly.utils.FormatterUtils
 import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
 import kotlinx.coroutines.flow.Flow
@@ -31,13 +33,8 @@ class RunRepository(
         runState,
         settingsDataStore.distanceUnitState
     ) { run, unit ->
-        val distance = run.distanceInMeters / unit.metersPerUnit
-        val timeInSeconds = run.timeInMillis / 1000
-
-        val avgSpeed = if (timeInSeconds > 5 && distance > 0.01) {
-            val speed = distance / (timeInSeconds / 3600.0)
-            if (speed.isFinite()) String.format(Locale.US, "%.2f", speed) else "0.00"
-        } else "0.00"
+        val distance = convertDistance(run.distanceInMeters, unit)
+        val avgSpeed = calculateAvgSpeed(distance, run.timeInMillis)
 
         RunDisplayModel(
             distance = String.format(Locale.US, "%.2f", distance),
@@ -57,12 +54,8 @@ class RunRepository(
             settingsDataStore.distanceUnitState
         ) { runs, unit ->
             runs.map { run ->
-                val distance = run.distanceInMeters / unit.metersPerUnit
-                val timeInSeconds = run.durationInMillis / 1000
-                val avgSpeed = if (timeInSeconds > 5 && distance > 0.01) {
-                    val speed = distance / (timeInSeconds / 3600.0)
-                    if (speed.isFinite()) String.format(Locale.US, "%.2f", speed) else "0.00"
-                } else "0.00"
+                val distance = convertDistance(run.distanceInMeters, unit)
+                val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
 
                 RunDisplayModel(
                     id = run.id,
@@ -94,13 +87,9 @@ class RunRepository(
             runDao.getRunById(runId),
             settingsDataStore.distanceUnitState
         ) { run, unit ->
-            val distance = run.distanceInMeters / unit.metersPerUnit
-            val timeInSeconds = run.durationInMillis / 1000
+            val distance = convertDistance(run.distanceInMeters, unit)
+            val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
 
-            val avgSpeed = if (timeInSeconds > 5 && distance > 0.01) {
-                val speed = distance / (timeInSeconds / 3600.0)
-                if (speed.isFinite()) String.format(Locale.US, "%.2f", speed) else "0.00"
-            } else "0.00"
             RunDisplayModel(
                 id = run.id,
                 dateTime = run.timestamp.toFormattedDateTime(),

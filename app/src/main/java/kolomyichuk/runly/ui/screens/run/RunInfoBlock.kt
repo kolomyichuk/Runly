@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.utils.getUnitLabel
 
 @Composable
 fun RunInfoBlock(
@@ -24,10 +25,7 @@ fun RunInfoBlock(
     avgSpeed: String,
     distanceUnit: DistanceUnit
 ) {
-    val unitLabel = when(distanceUnit){
-        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
-        DistanceUnit.MILES -> stringResource(R.string.miles)
-    }
+    val unitLabel = stringResource(distanceUnit.getUnitLabel())
 
     Row(
         modifier = Modifier

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
+import kolomyichuk.runly.utils.getUnitLabel
 
 @Composable
 fun DashboardInfoBlock(
@@ -24,10 +25,7 @@ fun DashboardInfoBlock(
     avgSpeed: String,
     distanceUnit: DistanceUnit
 ) {
-    val unitLabel = when (distanceUnit) {
-        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
-        DistanceUnit.MILES -> stringResource(R.string.miles)
-    }
+    val unitLabel = stringResource(distanceUnit.getUnitLabel())
     val speedUnit = when (distanceUnit) {
         DistanceUnit.KILOMETERS -> stringResource(R.string.km_h)
         DistanceUnit.MILES -> stringResource(R.string.miles_per_hour)
