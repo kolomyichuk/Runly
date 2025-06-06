@@ -27,8 +27,8 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.AppTheme
 import kolomyichuk.runly.ui.components.MapTypeToggleButton
-import kolomyichuk.runly.data.local.datastore.AppTheme
 import kolomyichuk.runly.ui.components.currentLocationMarker
 
 const val POLYLINE_WIDTH = 12f

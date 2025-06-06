@@ -31,7 +31,7 @@ fun DashboardButtonsBlock(
     navController: NavController,
     isTracking: Boolean,
     isActiveRun: Boolean,
-    distance: Double,
+    distance: String,
     onSaveRun: () -> Unit
 ) {
     var showSaveRunDialog by remember { mutableStateOf(false) }

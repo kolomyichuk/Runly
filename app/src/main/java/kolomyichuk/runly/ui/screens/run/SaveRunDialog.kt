@@ -13,7 +13,7 @@ import kolomyichuk.runly.service.RunTrackingService
 
 @Composable
 fun SaveRunDialog(
-    distance: Double,
+    distance: String,
     onSaveRun: () -> Unit,
     onDismiss: () -> Unit,
     navController: NavController
@@ -29,18 +29,19 @@ fun SaveRunDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                if (distance > 0) {
-                    onSaveRun()
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.run_saved), Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.empty_run_not_saved), Toast.LENGTH_SHORT
-                    ).show()
-
+                distance.toDoubleOrNull()?.let { value ->
+                    if (value > 0) {
+                        onSaveRun()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.run_saved), Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.empty_run_not_saved), Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 sendCommandToRunService(
                     context = context, route = RunTrackingService.ACTION_STOP_TRACKING

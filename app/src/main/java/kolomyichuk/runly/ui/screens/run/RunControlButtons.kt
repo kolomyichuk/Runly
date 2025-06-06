@@ -29,7 +29,7 @@ import kolomyichuk.runly.ui.navigation.Screen
 fun RunControlButtons(
     isTracking: Boolean,
     isPause: Boolean,
-    distance: Double,
+    distance: String,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {

@@ -32,7 +32,7 @@ fun RunStartBlock(
     hasForegroundLocationPermission: Boolean,
     isTracking: Boolean,
     isPause: Boolean,
-    distance: Double,
+    distance: String,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {

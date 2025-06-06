@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,7 +15,6 @@ import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.screens.run.RunViewModel
-import kolomyichuk.runly.utils.FormatterUtils
 
 @Composable
 fun DashboardScreen(
@@ -40,16 +37,7 @@ private fun ContentDashboardScreen(
     navController: NavController,
     runViewModel: RunViewModel
 ) {
-    val runState by runViewModel.runState.collectAsStateWithLifecycle()
-    val time by remember(runState.timeInMillis) {
-        derivedStateOf { FormatterUtils.formatTime(runState.timeInMillis) }
-    }
-    val distance by remember(runState.distanceInMeters) {
-        derivedStateOf { FormatterUtils.formatDistanceToKm(runState.distanceInMeters) }
-    }
-    val avgSpeed by remember(runState.avgSpeed) {
-        derivedStateOf { runState.avgSpeed.toString() }
-    }
+    val runDisplayState by runViewModel.runDisplayState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -58,15 +46,16 @@ private fun ContentDashboardScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         DashboardInfoBlock(
-            time = time,
-            distance = distance,
-            avgSpeed = avgSpeed
+            time = runDisplayState.duration,
+            distance = runDisplayState.distance,
+            avgSpeed = runDisplayState.avgSpeed,
+            distanceUnit = runDisplayState.unit
         )
         DashboardButtonsBlock(
             navController = navController,
-            isTracking = runState.isTracking,
-            isActiveRun = runState.isActiveRun,
-            distance = runState.distanceInMeters,
+            isTracking = runDisplayState.isTracking,
+            isActiveRun = runDisplayState.isActiveRun,
+            distance = runDisplayState.distance,
             onSaveRun = { runViewModel.saveRun() }
         )
     }

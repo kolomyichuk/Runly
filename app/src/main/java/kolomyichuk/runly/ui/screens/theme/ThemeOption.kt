@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.local.datastore.AppTheme
+import kolomyichuk.runly.data.model.AppTheme
 import kolomyichuk.runly.ui.components.CircleIconButton
 
 @Composable

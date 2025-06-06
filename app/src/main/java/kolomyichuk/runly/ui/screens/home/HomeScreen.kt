@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,19 +35,19 @@ private fun HomeScreenContent(
     homeViewModel: HomeViewModel,
     onRunClick: (Int) -> Unit
 ) {
-    val runs = homeViewModel.runs.collectAsStateWithLifecycle()
+    val runs by homeViewModel.runs.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        if (runs.value.isNotEmpty()) {
+        if (runs.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
-                    items = runs.value,
+                    items = runs,
                     key = { run ->
                         run.id
                     }

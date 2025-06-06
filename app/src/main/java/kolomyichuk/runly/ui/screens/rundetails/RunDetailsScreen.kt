@@ -61,10 +61,11 @@ private fun RunDetailsScreenContent(
         RunDetailsInfoBlock(
             distance = run.distance,
             avgSpeed = run.avgSpeed,
-            duration = run.duration
+            duration = run.duration,
+            unit = run.unit
         )
         RunDetailsMapWithRoute(
-            pathPoints = run.pathPoints,
+            pathPoints = run.routePoints,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)

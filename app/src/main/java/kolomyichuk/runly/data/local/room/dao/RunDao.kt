@@ -16,7 +16,7 @@ interface RunDao {
     fun getAllRuns(): Flow<List<Run>>
 
     @Query("SELECT * FROM runs WHERE id = :runId")
-    suspend fun getRunById(runId: Int): Run
+    fun getRunById(runId: Int): Flow<Run>
 
     @Delete
     suspend fun deleteRun(run: Run)
