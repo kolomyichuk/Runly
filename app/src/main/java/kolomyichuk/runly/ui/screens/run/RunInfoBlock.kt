@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit
-import kolomyichuk.runly.utils.getUnitLabel
+import kolomyichuk.runly.ui.ext.getUnitLabel
 
 @Composable
 fun RunInfoBlock(

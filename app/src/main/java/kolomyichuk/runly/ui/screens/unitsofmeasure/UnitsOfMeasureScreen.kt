@@ -24,7 +24,7 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.components.TopBarApp
-import kolomyichuk.runly.utils.getUnitLabel
+import kolomyichuk.runly.ui.ext.getUnitLabel
 
 @Composable
 fun UnitsOfMeasureScreen(

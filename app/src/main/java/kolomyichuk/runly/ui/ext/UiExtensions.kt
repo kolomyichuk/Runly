@@ -1,4 +1,4 @@
-package kolomyichuk.runly.utils
+package kolomyichuk.runly.ui.ext
 
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.DistanceUnit

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.ui.components.MetricItem
-import kolomyichuk.runly.utils.getUnitLabel
+import kolomyichuk.runly.ui.ext.getUnitLabel
 
 @Composable
 fun HomeRunItem(
