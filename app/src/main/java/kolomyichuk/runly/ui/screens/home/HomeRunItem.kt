@@ -31,7 +31,8 @@ import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
 @Composable
 fun HomeRunItem(
     run: Run,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDelete: (Run) -> Unit,
 ) {
     val formattedDate = remember(run.timestamp) {
         run.timestamp.toFormattedDateTime()
@@ -52,7 +53,9 @@ fun HomeRunItem(
                 .padding(8.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = stringResource(R.string.date),
                     fontSize = 14.sp
@@ -61,6 +64,11 @@ fun HomeRunItem(
                 Text(
                     text = formattedDate,
                     fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                HomeRunDelete(
+                    run = run,
+                    onDelete = onDelete
                 )
             }
 
