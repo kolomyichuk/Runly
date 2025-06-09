@@ -50,7 +50,7 @@ fun UnitsOfMeasureScreen(
 
 
 @Composable
-fun UnitsOfMeasureScreenContent(
+private fun UnitsOfMeasureScreenContent(
     modifier: Modifier = Modifier,
     unitsOfMeasureViewModel: UnitsOfMeasureViewModel
 ) {
