@@ -6,14 +6,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import kolomyichuk.runly.ui.screens.profile.ProfileScreen
+import kolomyichuk.runly.ui.screens.profile.ProfileViewModel
 import kolomyichuk.runly.ui.screens.settings.SettingsScreen
 import kolomyichuk.runly.ui.screens.theme.ThemeScreen
-import kolomyichuk.runly.ui.screens.profile.ProfileViewModel
 import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
+import kolomyichuk.runly.ui.screens.unitsofmeasure.UnitsOfMeasureScreen
+import kolomyichuk.runly.ui.screens.unitsofmeasure.UnitsOfMeasureViewModel
 
-fun NavGraphBuilder.profileNavGraph(navController: NavController){
-    navigation<ProfileScreens>(startDestination = Screen.Profile){
-        composable<Screen.Profile>{
+fun NavGraphBuilder.profileNavGraph(navController: NavController) {
+    navigation<ProfileScreens>(startDestination = Screen.Profile) {
+        composable<Screen.Profile> {
             val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 onNavigateToSettings = {
@@ -24,12 +26,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavController){
         }
         composable<Screen.Settings> {
             SettingsScreen(
-                onNavigateToTheme = {
-                    navController.navigate(Screen.Theme)
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                navController = navController,
             )
         }
         composable<Screen.Theme> {
@@ -39,6 +36,15 @@ fun NavGraphBuilder.profileNavGraph(navController: NavController){
                     navController.popBackStack()
                 },
                 viewModel = themeViewModel
+            )
+        }
+        composable<Screen.UnitsOfMeasure> {
+            val unitsOfMeasureViewModel = hiltViewModel<UnitsOfMeasureViewModel>()
+            UnitsOfMeasureScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+                unitsOfMeasureViewModel = unitsOfMeasureViewModel
             )
         }
     }

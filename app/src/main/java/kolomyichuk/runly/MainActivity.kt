@@ -15,7 +15,7 @@ import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kolomyichuk.runly.data.local.datastore.AppTheme
+import kolomyichuk.runly.data.model.AppTheme
 import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.screens.main.MainViewModel

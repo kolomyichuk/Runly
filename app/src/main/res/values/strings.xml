@@ -19,7 +19,7 @@
     <string name="dark">Dark</string>
     <string name="system">System</string>
     <string name="avg_speed">Avg. Speed</string>
-    <string name="km_h">KM/H</string>
+    <string name="km_h">Km/h</string>
     <string name="kilometers">Kilometers</string>
     <string name="dashboard">Dashboard</string>
     <string name="map_visibility">Map visibility</string>
@@ -50,4 +50,7 @@
     <string name="no_runs">No runs to show.</string>
     <string name="record_at_least_one">Record at least one</string>
     <string name="details">Details</string>
+    <string name="units_of_measure">Units of measure</string>
+    <string name="miles">Miles</string>
+    <string name="miles_per_hour">mph</string>
 </resources>

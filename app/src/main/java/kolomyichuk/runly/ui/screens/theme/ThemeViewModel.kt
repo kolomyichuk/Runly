@@ -3,8 +3,8 @@ package kolomyichuk.runly.ui.screens.theme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.local.datastore.AppTheme
-import kolomyichuk.runly.data.repository.ThemeRepository
+import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
-    private val repository: ThemeRepository
+    private val repository: SettingsRepository
 ) : ViewModel() {
 
     val themeState = repository.themeState.stateIn(
@@ -21,7 +21,7 @@ class ThemeViewModel @Inject constructor(
         AppTheme.SYSTEM
     )
 
-    fun saveTheme (theme: AppTheme){
+    fun saveTheme(theme: AppTheme) {
         viewModelScope.launch {
             repository.saveTheme(theme)
         }

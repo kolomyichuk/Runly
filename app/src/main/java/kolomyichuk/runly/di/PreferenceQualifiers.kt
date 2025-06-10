@@ -4,7 +4,7 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ThemePreferences
+annotation class SettingsPreferences
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
