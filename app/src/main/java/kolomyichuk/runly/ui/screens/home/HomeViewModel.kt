@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.local.room.entity.Run
 import kolomyichuk.runly.data.repository.RunRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +22,10 @@ class HomeViewModel @Inject constructor(
     private val _runs = MutableStateFlow<List<Run>>(emptyList())
     val runs: StateFlow<List<Run>> = _runs.asStateFlow()
 
-    private val _snackBarMessages = MutableSharedFlow<HomeSnackBarData>()
-    val snackBarMessages = _snackBarMessages.asSharedFlow()
+    private val _homeEffects = MutableSharedFlow<HomeEffect>()
+    val homeEffects = _homeEffects.asSharedFlow()
 
-    private var recentlyDeletedRun: Run? = null
+    private var recentlyDeleteRun: Run? = null
 
     init {
         getAllRuns()
@@ -39,22 +40,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteRun(run: Run, message: String, actionLabel: String) {
-        viewModelScope.launch {
-            recentlyDeletedRun = run
-            runRepository.deleteRun(run)
-            _snackBarMessages.emit(
-                HomeSnackBarData(message = message, actionLabel = actionLabel)
-            )
+    fun confirmDeleteRun() {
+        recentlyDeleteRun?.let { run ->
+            viewModelScope.launch(Dispatchers.IO) {
+                runRepository.deleteRun(run)
+            }
+            recentlyDeleteRun = run
         }
     }
 
-    fun undoDelete() {
-        recentlyDeletedRun?.let { run ->
-            viewModelScope.launch {
-                runRepository.insertRun(run)
-                recentlyDeletedRun = null
-            }
+    fun requestDeleteRun(run: Run) {
+        viewModelScope.launch {
+            recentlyDeleteRun = run
+            _homeEffects.emit(HomeEffect.ShowDeleteSnackBar(run))
         }
+    }
+
+    fun undoDeleteRun(){
+        recentlyDeleteRun = null
     }
 }

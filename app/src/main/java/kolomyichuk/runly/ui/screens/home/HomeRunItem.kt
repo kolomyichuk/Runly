@@ -67,8 +67,7 @@ fun HomeRunItem(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 HomeRunDelete(
-                    run = run,
-                    onDelete = onDelete
+                    onDelete = { onDelete(run) }
                 )
             }
 

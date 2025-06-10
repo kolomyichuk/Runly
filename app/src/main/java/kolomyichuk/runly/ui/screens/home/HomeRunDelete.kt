@@ -19,12 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.local.room.entity.Run
 
 @Composable
 fun HomeRunDelete(
-    run: Run,
-    onDelete: (Run) -> Unit
+    onDelete: () -> Unit
 ) {
     var showDropDownMenu by remember {
         mutableStateOf(false)
@@ -52,9 +50,8 @@ fun HomeRunDelete(
                     Text(text = stringResource(R.string.delete))
                 },
                 onClick = {
-                    onDelete(run)
+                    onDelete()
                     showDropDownMenu = false
-
                 },
                 leadingIcon = {
                     Icon(

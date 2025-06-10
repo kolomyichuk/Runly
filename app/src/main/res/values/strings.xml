@@ -51,6 +51,6 @@
     <string name="record_at_least_one">Record at least one</string>
     <string name="details">Details</string>
     <string name="delete">Delete</string>
-    <string name="run_deleted">Run deleted</string>
+    <string name="run_deleted">Run will be deleted in 5 seconds</string>
     <string name="undo">Undo</string>
 </resources>
