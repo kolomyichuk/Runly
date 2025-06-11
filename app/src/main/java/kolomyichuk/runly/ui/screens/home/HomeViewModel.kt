@@ -45,14 +45,13 @@ class HomeViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 runRepository.deleteRun(run)
             }
-            recentlyDeleteRun = run
         }
     }
 
     fun requestDeleteRun(run: Run) {
         viewModelScope.launch {
             recentlyDeleteRun = run
-            _homeEffects.emit(HomeEffect.ShowDeleteSnackBar(run))
+            _homeEffects.emit(HomeEffect.ShowDeleteSnackBar)
         }
     }
 

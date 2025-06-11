@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
@@ -21,17 +22,15 @@ fun HomeScreen(
     onRunClick: (Int) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-
-    val message = stringResource(R.string.run_deleted)
-    val actionLabel = stringResource(R.string.undo)
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         homeViewModel.homeEffects.collect { effect ->
             when (effect) {
                 is HomeEffect.ShowDeleteSnackBar -> {
                     val result = snackBarHostState.showSnackbar(
-                        message = message,
-                        actionLabel = actionLabel,
+                        message = context.getString(R.string.run_deleted),
+                        actionLabel = context.getString(R.string.undo),
                         duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -61,7 +60,3 @@ fun HomeScreen(
         )
     }
 }
-
-
-
-
