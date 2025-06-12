@@ -28,7 +28,7 @@ import kolomyichuk.runly.ui.ext.getUnitLabel
 fun HomeRunItem(
     run: RunDisplayModel,
     onClick: () -> Unit,
-    onDelete: (RunDisplayModel) -> Unit,
+    onDelete: () -> Unit,
 ) {
     val unitLabel = stringResource(run.unit.getUnitLabel())
 
@@ -61,7 +61,7 @@ fun HomeRunItem(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 HomeRunDelete(
-                    onDelete = { onDelete(run) }
+                    onDelete = { onDelete() }
                 )
             }
 
