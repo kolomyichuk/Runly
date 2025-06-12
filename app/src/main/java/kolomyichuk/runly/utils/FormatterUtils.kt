@@ -25,10 +25,6 @@ object FormatterUtils {
         }
     }
 
-    fun formatDistanceToKm(distanceInMeters: Double): String {
-        return "%.2f".format(distanceInMeters / 1000)
-    }
-
     fun Long.toFormattedDateTime(): String {
         val date = Date(this)
         val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())

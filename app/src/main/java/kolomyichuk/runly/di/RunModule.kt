@@ -7,14 +7,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
 import kolomyichuk.runly.data.local.room.AppDatabase
+import kolomyichuk.runly.data.local.room.MIGRATION_1_2
 import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.repository.RunRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RunModule{
+object RunModule {
 
     @Provides
     @Singleton
@@ -23,7 +25,9 @@ object RunModule{
             context.applicationContext,
             AppDatabase::class.java,
             "database"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides
@@ -34,7 +38,10 @@ object RunModule{
 
     @Provides
     @Singleton
-    fun provideRunRepository(runDao: RunDao): RunRepository {
-        return RunRepository(runDao)
+    fun provideRunRepository(
+        runDao: RunDao,
+        settingsDataStore: SettingsPreferencesDataStore
+    ): RunRepository {
+        return RunRepository(runDao, settingsDataStore)
     }
 }

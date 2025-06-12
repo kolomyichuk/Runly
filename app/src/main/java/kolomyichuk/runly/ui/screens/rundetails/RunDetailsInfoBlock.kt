@@ -11,14 +11,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.ui.components.MetricItem
 
 @Composable
 fun RunDetailsInfoBlock(
     distance: String,
     duration: String,
-    avgSpeed: String
+    avgSpeed: String,
+    unit: DistanceUnit
 ) {
+    val unitLabel = when (unit) {
+        DistanceUnit.KILOMETERS -> stringResource(R.string.km)
+        DistanceUnit.MILES -> stringResource(R.string.miles)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +35,7 @@ fun RunDetailsInfoBlock(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            MetricItem(distance, stringResource(R.string.km))
+            MetricItem(distance, unitLabel)
             MetricItem(avgSpeed, stringResource(R.string.avg_speed))
             MetricItem(duration, stringResource(R.string.time))
         }

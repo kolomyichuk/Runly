@@ -53,4 +53,7 @@
     <string name="delete">Видалити</string>
     <string name="run_deleted">Пробіжку буде видалено через 5 секунд</string>
     <string name="undo">Відмінити</string>
+    <string name="units_of_measure">Одиниці вимірювання</string>
+    <string name="miles">Милі</string>
+    <string name="miles_per_hour">Миль/год</string>
 </resources>

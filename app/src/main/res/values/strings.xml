@@ -53,4 +53,7 @@
     <string name="delete">Delete</string>
     <string name="run_deleted">Run will be deleted in 5 seconds</string>
     <string name="undo">Undo</string>
+    <string name="units_of_measure">Units of measure</string>
+    <string name="miles">Miles</string>
+    <string name="miles_per_hour">mph</string>
 </resources>

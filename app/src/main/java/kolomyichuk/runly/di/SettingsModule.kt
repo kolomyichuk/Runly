@@ -12,41 +12,41 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kolomyichuk.runly.data.local.datastore.ThemePreferencesDataStore
-import kolomyichuk.runly.data.repository.ThemeRepository
+import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
+import kolomyichuk.runly.data.repository.SettingsRepository
 import javax.inject.Singleton
 
-private const val THEME_DATA_STORE_NAME = "theme.preferences_pb"
+private const val SETTINGS_DATA_STORE_NAME = "settings.preferences_pb"
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ThemeModule {
+object SettingsModule {
 
     @Provides
     @Singleton
-    @ThemePreferences
-    fun provideThemeDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+    @SettingsPreferences
+    fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.dataStoreFile(THEME_DATA_STORE_NAME) }
+            produceFile = { context.dataStoreFile(SETTINGS_DATA_STORE_NAME) }
         )
     }
 
     @Provides
     @Singleton
-    fun provideThemeRepository(
-        preferencesDataStore: ThemePreferencesDataStore
-    ): ThemeRepository {
-        return ThemeRepository(preferencesDataStore)
+    fun provideSettingsRepository(
+        preferencesDataStore: SettingsPreferencesDataStore
+    ): SettingsRepository {
+        return SettingsRepository(preferencesDataStore)
     }
 
     @Provides
     @Singleton
-    fun provideThemePreferencesDataStore(
-        @ThemePreferences dataStore: DataStore<Preferences>
-    ): ThemePreferencesDataStore {
-        return ThemePreferencesDataStore(dataStore)
+    fun provideSettingsPreferencesDataStore(
+        @SettingsPreferences dataStore: DataStore<Preferences>
+    ): SettingsPreferencesDataStore {
+        return SettingsPreferencesDataStore(dataStore)
     }
 }

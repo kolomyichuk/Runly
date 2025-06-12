@@ -24,6 +24,9 @@ sealed interface Screen {
 
     @Serializable
     data class RunDetails(val runId: Int) : Screen
+
+    @Serializable
+    object UnitsOfMeasure : Screen
 }
 
 @Serializable
