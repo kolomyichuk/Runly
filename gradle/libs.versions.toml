@@ -22,7 +22,9 @@ dataStore = "1.1.2"
 androidMapsUtils = "3.5.3"
 serialization = "1.8.0"
 navCompose = "2.8.9"
-
+firebaseBom = "33.15.0"
+playServicesAuth = "21.3.0"
+googleServices = "4.4.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -57,6 +59,9 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 data-store-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+play-service-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -66,4 +71,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 
