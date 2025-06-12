@@ -27,7 +27,8 @@ import kolomyichuk.runly.ui.ext.getUnitLabel
 @Composable
 fun HomeRunItem(
     run: RunDisplayModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     val unitLabel = stringResource(run.unit.getUnitLabel())
 
@@ -46,7 +47,9 @@ fun HomeRunItem(
                 .padding(8.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = stringResource(R.string.date),
                     fontSize = 14.sp
@@ -55,6 +58,10 @@ fun HomeRunItem(
                 Text(
                     text = run.dateTime,
                     fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                HomeRunDelete(
+                    onDelete = { onDelete() }
                 )
             }
 

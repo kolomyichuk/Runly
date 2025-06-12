@@ -32,8 +32,8 @@ class RunRepository(
         runDao.insertRun(run)
     }
 
-    suspend fun deleteRun(run: Run) {
-        runDao.deleteRun(run)
+    suspend fun deleteRunById(runId: Int) {
+        runDao.deleteRunById(runId)
     }
 
     val runDisplayState: Flow<RunDisplayModel> = combine(

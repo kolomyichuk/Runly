@@ -1,16 +1,18 @@
 package kolomyichuk.runly.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 
@@ -19,48 +21,43 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     onRunClick: (Int) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(
-            title = stringResource(R.string.home)
-        )
-        HomeScreenContent(
-            homeViewModel = homeViewModel,
-            onRunClick = onRunClick
-        )
-    }
-}
+    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-@Composable
-private fun HomeScreenContent(
-    homeViewModel: HomeViewModel,
-    onRunClick: (Int) -> Unit
-) {
-    val runs by homeViewModel.runs.collectAsStateWithLifecycle()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-    ) {
-        if (runs.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    items = runs,
-                    key = { run ->
-                        run.id
-                    }
-                ) { run ->
-                    HomeRunItem(
-                        run = run,
-                        onClick = { onRunClick(run.id) }
+    LaunchedEffect(Unit) {
+        homeViewModel.homeEffects.collect { effect ->
+            when (effect) {
+                is HomeEffect.ShowDeleteSnackBar -> {
+                    val result = snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.run_deleted),
+                        actionLabel = context.getString(R.string.undo),
+                        duration = SnackbarDuration.Short
                     )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        homeViewModel.undoDeleteRun()
+                    } else {
+                        homeViewModel.confirmDeleteRun()
+                    }
                 }
             }
-        } else {
-            HomeEmptyList()
         }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        topBar = {
+            TopBarApp(
+                title = stringResource(R.string.home)
+            )
+        }
+    ) { innerPadding ->
+        HomeScreenContent(
+            homeViewModel = homeViewModel,
+            onRunClick = onRunClick,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
     }
 }
 
