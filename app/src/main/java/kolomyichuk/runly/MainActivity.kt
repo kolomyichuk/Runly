@@ -16,8 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.ui.navigation.AppNavHost
 import kolomyichuk.runly.ui.navigation.Screen
-import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.screens.main.MainViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         initRootScreen()
     }
 
-    private fun initRootScreen(initScreen: Screen = Screen.Home) {
+    private fun initRootScreen(initScreen: Screen = Screen.SignIn) {
         setContent {
             val navController = rememberNavController()
             val mainViewModel: MainViewModel = hiltViewModel()
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
             RunlyTheme(darkTheme = isDarkTheme) {
                 CompositionLocalProvider(LocalAppTheme provides currentTheme) {
-                    MainScreen(
+                    AppNavHost(
                         navController = navController,
                         mainViewModel = mainViewModel
                     )

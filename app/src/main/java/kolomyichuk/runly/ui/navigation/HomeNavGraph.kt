@@ -12,7 +12,7 @@ import kolomyichuk.runly.ui.screens.home.HomeScreen
 import kolomyichuk.runly.ui.screens.home.HomeViewModel
 
 fun NavGraphBuilder.homeNavGraph(navController: NavController) {
-    navigation<HomeScreens>(startDestination = Screen.Home) {
+    navigation<HomeGraph>(startDestination = Screen.Home) {
         composable<Screen.Home> {
             val homeViewModel: HomeViewModel = hiltViewModel()
             HomeScreen(

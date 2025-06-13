@@ -27,14 +27,20 @@ sealed interface Screen {
 
     @Serializable
     object UnitsOfMeasure : Screen
+
+    @Serializable
+    object SignIn : Screen
+
+    @Serializable
+    object Main : Screen
 }
 
 @Serializable
-object RunScreens
+object RunGraph
 
 @Serializable
-object ProfileScreens
+object ProfileGraph
 
 @Serializable
-object HomeScreens
+object HomeGraph
 

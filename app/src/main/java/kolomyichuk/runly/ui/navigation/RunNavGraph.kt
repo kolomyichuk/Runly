@@ -9,8 +9,8 @@ import kolomyichuk.runly.ui.screens.dashboard.DashboardScreen
 import kolomyichuk.runly.ui.screens.run.RunScreen
 import kolomyichuk.runly.ui.screens.run.RunViewModel
 
-fun NavGraphBuilder.runNavGraph(navController: NavController){
-    navigation<RunScreens>(startDestination = Screen.Run){
+fun NavGraphBuilder.runNavGraph(navController: NavController) {
+    navigation<RunGraph>(startDestination = Screen.Run) {
         composable<Screen.Run> {
             val runViewModel = hiltViewModel<RunViewModel>()
             RunScreen(
