@@ -40,7 +40,7 @@ fun SignInScreenContent(
         verticalArrangement = Arrangement.Center
     ) {
         Button(onClick = {
-            navController.navigate(Screen.Main)
+            navController.navigate(Screen.Home)
         }) {
             Text(text = "Sign In")
         }

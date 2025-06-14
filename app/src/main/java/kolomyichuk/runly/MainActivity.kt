@@ -16,8 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.model.AppTheme
-import kolomyichuk.runly.ui.navigation.AppNavHost
 import kolomyichuk.runly.ui.navigation.Screen
+import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.screens.main.MainViewModel
 import kolomyichuk.runly.ui.theme.RunlyTheme
 
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
             RunlyTheme(darkTheme = isDarkTheme) {
                 CompositionLocalProvider(LocalAppTheme provides currentTheme) {
-                    AppNavHost(
+                    MainScreen(
                         navController = navController,
                         mainViewModel = mainViewModel
                     )

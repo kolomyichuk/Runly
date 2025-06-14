@@ -10,39 +10,41 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import kolomyichuk.runly.ui.components.BottomNavigationBar
-import kolomyichuk.runly.ui.navigation.HomeGraph
+import kolomyichuk.runly.ui.navigation.HomeNavGraph
 import kolomyichuk.runly.ui.navigation.Screen
+import kolomyichuk.runly.ui.navigation.authNavGraph
 import kolomyichuk.runly.ui.navigation.homeNavGraph
 import kolomyichuk.runly.ui.navigation.profileNavGraph
 import kolomyichuk.runly.ui.navigation.runNavGraph
 
 @Composable
 fun MainScreen(
+    navController: NavHostController,
     mainViewModel: MainViewModel
 ) {
-    val nestedNavController = rememberNavController()
     val runState by mainViewModel.runState.collectAsStateWithLifecycle()
 
     Scaffold(
         bottomBar = {
-            val currentEntry by nestedNavController.currentBackStackEntryAsState()
+            val currentEntry by navController.currentBackStackEntryAsState()
             if (currentEntry?.destination?.hasRoute<Screen.Run>() == false &&
-                currentEntry?.destination?.hasRoute<Screen.Dashboard>() == false
+                currentEntry?.destination?.hasRoute<Screen.Dashboard>() == false &&
+                currentEntry?.destination?.hasRoute<Screen.SignIn>() == false
             ) {
-                BottomNavigationBar(nestedNavController, runState.isActiveRun)
+                BottomNavigationBar(navController, runState.isActiveRun)
             }
         }
     ) { paddingValues ->
         NavHost(
-            navController = nestedNavController,
-            startDestination = HomeGraph,
+            navController = navController,
+            startDestination = HomeNavGraph,
             modifier = Modifier.padding(paddingValues)
         ) {
-            homeNavGraph(nestedNavController)
-            runNavGraph(nestedNavController)
-            profileNavGraph(nestedNavController)
+            authNavGraph(navController)
+            homeNavGraph(navController)
+            runNavGraph(navController)
+            profileNavGraph(navController)
         }
     }
 }

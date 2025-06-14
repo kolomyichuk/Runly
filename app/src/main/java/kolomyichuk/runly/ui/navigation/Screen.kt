@@ -30,17 +30,16 @@ sealed interface Screen {
 
     @Serializable
     object SignIn : Screen
-
-    @Serializable
-    object Main : Screen
 }
 
 @Serializable
-object RunGraph
+object RunNavGraph
 
 @Serializable
-object ProfileGraph
+object ProfileNavGraph
 
 @Serializable
-object HomeGraph
+object HomeNavGraph
 
+@Serializable
+object AuthNavGraph
