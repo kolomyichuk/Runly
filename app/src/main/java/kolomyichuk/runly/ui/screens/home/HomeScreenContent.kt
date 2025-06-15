@@ -35,7 +35,7 @@ fun HomeScreenContent(
                     HomeRunItem(
                         run = run,
                         onClick = { onRunClick(run.id) },
-                        onDelete = { homeViewModel.requestDeleteRun(it) }
+                        onDelete = { homeViewModel.requestDeleteRun(run) }
                     )
                 }
             }
