@@ -56,4 +56,6 @@
     <string name="units_of_measure">Одиниці вимірювання</string>
     <string name="miles">Милі</string>
     <string name="miles_per_hour">Миль/год</string>
+    <string name="join_us">Приєднуйтесь до нас</string>
+    <string name="sign_in_with_google">Увійти через Google</string>
 </resources>

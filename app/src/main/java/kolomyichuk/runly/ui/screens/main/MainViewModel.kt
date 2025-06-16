@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.data.repository.AuthRepository
 import kolomyichuk.runly.data.repository.RunRepository
 import kolomyichuk.runly.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,8 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     runRepository: RunRepository,
-    themeRepository: SettingsRepository
+    themeRepository: SettingsRepository,
 ) : ViewModel() {
 
     val runState = runRepository.runState.stateIn(
@@ -27,4 +29,8 @@ class MainViewModel @Inject constructor(
         SharingStarted.Eagerly,
         AppTheme.SYSTEM
     )
+
+    fun isUserSignedIn(): Boolean {
+        return authRepository.isUserSignedIn()
+    }
 }

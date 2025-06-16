@@ -11,7 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kolomyichuk.runly.ui.components.BottomNavigationBar
-import kolomyichuk.runly.ui.navigation.HomeNavGraph
 import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.navigation.authNavGraph
 import kolomyichuk.runly.ui.navigation.homeNavGraph
@@ -21,7 +20,8 @@ import kolomyichuk.runly.ui.navigation.runNavGraph
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    startDestination: Any
 ) {
     val runState by mainViewModel.runState.collectAsStateWithLifecycle()
 
@@ -38,7 +38,7 @@ fun MainScreen(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = HomeNavGraph,
+            startDestination = startDestination,
             modifier = Modifier.padding(paddingValues)
         ) {
             authNavGraph(navController)

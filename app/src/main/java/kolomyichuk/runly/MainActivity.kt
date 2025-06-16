@@ -16,6 +16,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.ui.navigation.AuthNavGraph
+import kolomyichuk.runly.ui.navigation.HomeNavGraph
+import kolomyichuk.runly.ui.navigation.RunNavGraph
 import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.screens.main.MainViewModel
@@ -31,14 +34,27 @@ class MainActivity : ComponentActivity() {
         initRootScreen()
     }
 
-    private fun initRootScreen(initScreen: Screen = Screen.SignIn) {
+    private fun initRootScreen(initScreen: Screen = Screen.Home) {
         setContent {
             val navController = rememberNavController()
             val mainViewModel: MainViewModel = hiltViewModel()
             val currentTheme by mainViewModel.themeState.collectAsState(initial = AppTheme.SYSTEM)
 
+            val isUserSignIn = mainViewModel.isUserSignedIn()
+            val startDestination = if (isUserSignIn) {
+                when (initScreen) {
+                    Screen.Home -> HomeNavGraph
+                    Screen.Run -> RunNavGraph
+                    else -> HomeNavGraph
+                }
+            } else {
+                AuthNavGraph
+            }
+
             LaunchedEffect(initScreen) {
-                navController.navigate(initScreen)
+                if (isUserSignIn) {
+                    navController.navigate(initScreen)
+                }
             }
 
             DisposableEffect(Unit) {
@@ -61,7 +77,8 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(LocalAppTheme provides currentTheme) {
                     MainScreen(
                         navController = navController,
-                        mainViewModel = mainViewModel
+                        mainViewModel = mainViewModel,
+                        startDestination = startDestination
                     )
                 }
             }

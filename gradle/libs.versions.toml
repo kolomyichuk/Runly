@@ -25,6 +25,9 @@ navCompose = "2.8.9"
 firebaseBom = "33.15.0"
 playServicesAuth = "21.3.0"
 googleServices = "4.4.2"
+credentials = "1.5.0"
+credentialsAuth = "1.5.0"
+identityGoogleid = "1.1.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -61,7 +64,10 @@ androidx-compose-material-iconsExtended = { group = "androidx.compose.material",
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-play-service-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth"}
+play-service-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsAuth" }
+identity-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "identityGoogleid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

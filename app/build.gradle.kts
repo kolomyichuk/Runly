@@ -81,6 +81,11 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.play.service.auth)
 
+    // Credentials
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.identity.googleid)
+
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
