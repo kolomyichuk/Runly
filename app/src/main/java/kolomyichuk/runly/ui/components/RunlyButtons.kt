@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -195,7 +194,7 @@ fun GoogleSignInButton(
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.google_logo),
+                painter = painterResource(R.drawable.google_logo),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = Color.Unspecified

@@ -13,6 +13,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.model.AppTheme
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
             val mainViewModel: MainViewModel = hiltViewModel()
             val currentTheme by mainViewModel.themeState.collectAsState(initial = AppTheme.SYSTEM)
 
-            val isUserSignIn = mainViewModel.isUserSignedIn()
+            val isUserSignIn by mainViewModel.isUserSignIn.collectAsStateWithLifecycle()
             val startDestination = if (isUserSignIn) {
                 when (initScreen) {
                     Screen.Home -> HomeNavGraph
