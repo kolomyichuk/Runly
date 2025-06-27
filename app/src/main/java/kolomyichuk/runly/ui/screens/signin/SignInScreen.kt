@@ -19,15 +19,13 @@ import kolomyichuk.runly.R
 
 @Composable
 fun SignInScreen(
-    signInViewModel: SignInViewModel,
-    onSignInSuccess: () -> Unit
+    onSignInSuccess: (String) -> Unit
 ) {
     Scaffold { innerPadding ->
         SignInScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            signInViewModel = signInViewModel,
             onSignInSuccess = onSignInSuccess
         )
     }
@@ -35,10 +33,9 @@ fun SignInScreen(
 
 
 @Composable
-fun SignInScreenContent(
+private fun SignInScreenContent(
     modifier: Modifier = Modifier,
-    signInViewModel: SignInViewModel,
-    onSignInSuccess: () -> Unit
+    onSignInSuccess: (String) -> Unit
 ) {
     Box(
         modifier = modifier.padding(16.dp),
@@ -67,7 +64,6 @@ fun SignInScreenContent(
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .align(Alignment.BottomCenter),
-            signInViewModel = signInViewModel,
             onSignInSuccess = onSignInSuccess
         )
     }

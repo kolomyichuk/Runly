@@ -11,18 +11,15 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.GoogleSignInButton
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-private const val CLIENT_ID =
-    "729943515695-3kfe6qc1jhvd42r681opknat0762s50j.apps.googleusercontent.com"
-
 @Composable
 fun GoogleSignInButtonWithLogic(
     modifier: Modifier = Modifier,
-    signInViewModel: SignInViewModel,
-    onSignInSuccess: () -> Unit
+    onSignInSuccess: (String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalActivity.current as Activity
@@ -33,7 +30,7 @@ fun GoogleSignInButtonWithLogic(
                 try {
                     val credentialManager = CredentialManager.create(activity)
                     val googleIdOption = GetGoogleIdOption.Builder()
-                        .setServerClientId(CLIENT_ID)
+                        .setServerClientId(activity.getString(R.string.default_web_client_id))
                         .setFilterByAuthorizedAccounts(false)
                         .build()
 
@@ -46,8 +43,7 @@ fun GoogleSignInButtonWithLogic(
                         GoogleIdTokenCredential.createFrom(result.credential.data)
                     val idToken = credential.idToken
 
-                    signInViewModel.signInWithGoogle(idToken)
-                    onSignInSuccess()
+                    onSignInSuccess(idToken)
                 } catch (e: NoCredentialException) {
                     Timber.e("No Google accounts ${e.message}")
                 } catch (e: GetCredentialCancellationException) {
