@@ -13,9 +13,13 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.ui.navigation.AuthNavGraph
+import kolomyichuk.runly.ui.navigation.HomeNavGraph
+import kolomyichuk.runly.ui.navigation.RunNavGraph
 import kolomyichuk.runly.ui.navigation.Screen
 import kolomyichuk.runly.ui.screens.main.MainScreen
 import kolomyichuk.runly.ui.screens.main.MainViewModel
@@ -37,8 +41,21 @@ class MainActivity : ComponentActivity() {
             val mainViewModel: MainViewModel = hiltViewModel()
             val currentTheme by mainViewModel.themeState.collectAsState(initial = AppTheme.SYSTEM)
 
+            val isUserSignIn by mainViewModel.isUserSignIn.collectAsStateWithLifecycle()
+            val startDestination = if (isUserSignIn) {
+                when (initScreen) {
+                    Screen.Home -> HomeNavGraph
+                    Screen.Run -> RunNavGraph
+                    else -> HomeNavGraph
+                }
+            } else {
+                AuthNavGraph
+            }
+
             LaunchedEffect(initScreen) {
-                navController.navigate(initScreen)
+                if (isUserSignIn) {
+                    navController.navigate(initScreen)
+                }
             }
 
             DisposableEffect(Unit) {
@@ -61,7 +78,8 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(LocalAppTheme provides currentTheme) {
                     MainScreen(
                         navController = navController,
-                        mainViewModel = mainViewModel
+                        mainViewModel = mainViewModel,
+                        startDestination = startDestination
                     )
                 }
             }

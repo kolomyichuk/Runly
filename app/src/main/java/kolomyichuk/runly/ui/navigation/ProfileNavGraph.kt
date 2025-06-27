@@ -14,7 +14,7 @@ import kolomyichuk.runly.ui.screens.unitsofmeasure.UnitsOfMeasureScreen
 import kolomyichuk.runly.ui.screens.unitsofmeasure.UnitsOfMeasureViewModel
 
 fun NavGraphBuilder.profileNavGraph(navController: NavController) {
-    navigation<ProfileScreens>(startDestination = Screen.Profile) {
+    navigation<ProfileNavGraph>(startDestination = Screen.Profile) {
         composable<Screen.Profile> {
             val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(

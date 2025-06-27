@@ -56,4 +56,6 @@
     <string name="units_of_measure">Units of measure</string>
     <string name="miles">Miles</string>
     <string name="miles_per_hour">mph</string>
+    <string name="join_us">Join us</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
 </resources>

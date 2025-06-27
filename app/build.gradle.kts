@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -75,6 +76,16 @@ android {
 }
 
 dependencies {
+    // Firebase
+    implementation(libs.firebase.auth)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.play.service.auth)
+
+    // Credentials
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.identity.googleid)
+
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
@@ -125,5 +136,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //Permissions
-    implementation (libs.accompanist.permissions)
+    implementation(libs.accompanist.permissions)
 }
