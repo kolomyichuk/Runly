@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
@@ -18,7 +17,7 @@ import kolomyichuk.runly.ui.components.TopBarApp
 @Composable
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBarApp(
@@ -37,8 +36,7 @@ fun ProfileScreen(
 private fun ProfileScreenContent(
     profileViewModel: ProfileViewModel
 ) {
-    val username by profileViewModel.username.collectAsStateWithLifecycle()
-    val imageFilePath by profileViewModel.imageFilePath.collectAsStateWithLifecycle()
+    val profile by profileViewModel.userProfile.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -46,10 +44,7 @@ private fun ProfileScreenContent(
             .padding(16.dp)
     ) {
         ProfileUserInfo(
-            username = username,
-            imageFilePath = imageFilePath,
-            onSaveUsername = { profileViewModel.saveUsername(it) },
-            onPickImage = { profileViewModel.saveProfileImage(it) }
+            profile = profile
         )
     }
 }

@@ -76,6 +76,10 @@ android {
 }
 
 dependencies {
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     // Firebase
     implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
@@ -117,7 +121,6 @@ dependencies {
     implementation(libs.play.services.location)
 
     // Jetpack Compose
-    implementation(libs.coil.compose)
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

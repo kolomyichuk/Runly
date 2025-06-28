@@ -7,12 +7,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kolomyichuk.runly.data.model.AppTheme
 import kolomyichuk.runly.data.model.DistanceUnit
-import kolomyichuk.runly.di.SettingsPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsPreferencesDataStore(
-    @SettingsPreferences private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>
 ) {
     val themeState: Flow<AppTheme> = dataStore.data
         .map { preferences ->

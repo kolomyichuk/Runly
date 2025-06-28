@@ -1,13 +1,14 @@
 package kolomyichuk.runly.ui.screens.profile
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kolomyichuk.runly.data.model.UserProfile
 import kolomyichuk.runly.data.repository.ProfileRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,37 +17,23 @@ class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository
 ) : ViewModel() {
 
-    private val _username = MutableStateFlow("")
-    val username: StateFlow<String> = _username.asStateFlow()
-
-    private val _imageFilePath = MutableStateFlow<String?>(null)
-    val imageFilePath = _imageFilePath.asStateFlow()
+    private val _userProfile = MutableStateFlow(UserProfile())
+    val userProfile: StateFlow<UserProfile> = _userProfile
 
     init {
-        viewModelScope.launch {
-            repository.getUsername().collect { name ->
-                _username.value = name
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val name = repository.getCurrentUserName()
+            val photo = repository.getCurrentPhotoUrl()
+            _userProfile.update {
+                it.copy(
+                    name = name,
+                    photoUrl = photo
+                )
             }
-        }
-        loadProfileImage()
-    }
-
-    fun saveUsername(newUsername: String) {
-        viewModelScope.launch {
-            repository.saveUsername(newUsername)
-        }
-    }
-
-    fun saveProfileImage(uri: Uri) {
-        viewModelScope.launch {
-            val newFilePath = repository.saveProfileImage(uri)
-            _imageFilePath.value = newFilePath
-        }
-    }
-
-    private fun loadProfileImage() {
-        viewModelScope.launch {
-            _imageFilePath.value = repository.loadProfileImage()
         }
     }
 }
