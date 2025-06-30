@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -208,6 +209,27 @@ fun GoogleSignInButton(
                 fontWeight = FontWeight.Medium
             )
         }
+    }
+}
+
+@Composable
+fun LogOutButton(
+    onLogOutClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onLogOutClick,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.error
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(R.string.log_out),
+            fontSize = 20.sp,
+        )
     }
 }
 

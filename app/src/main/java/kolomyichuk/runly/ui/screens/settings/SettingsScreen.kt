@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
+import kolomyichuk.runly.ui.components.LogOutButton
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.navigation.Screen
 
@@ -67,5 +68,9 @@ private fun SettingsScreenContent(
             },
             settingsItemIcon = R.drawable.measure
         )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        LogOutButton(onLogOutClick = {})
     }
 }

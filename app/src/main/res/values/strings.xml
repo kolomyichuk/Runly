@@ -58,4 +58,5 @@
     <string name="miles_per_hour">mph</string>
     <string name="join_us">Join us</string>
     <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="log_out">Log Out</string>
 </resources>
