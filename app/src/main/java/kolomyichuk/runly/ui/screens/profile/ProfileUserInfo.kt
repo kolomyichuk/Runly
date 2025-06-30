@@ -26,30 +26,32 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kolomyichuk.runly.R
 import kolomyichuk.runly.data.model.UserProfile
 import okhttp3.OkHttpClient
+import timber.log.Timber
 
 @Composable
 fun ProfileUserInfo(
     profile: UserProfile
 ) {
     val context = LocalContext.current
-    val imageLoader = remember {
-        ImageLoader.Builder(context)
-            .components {
-                add(OkHttpNetworkFetcherFactory(callFactory = { OkHttpClient() }))
-            }.build()
-    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!profile.photoUrl.isNullOrBlank()) {
+            val imageLoader = remember {
+                ImageLoader.Builder(context)
+                    .components {
+                        add(OkHttpNetworkFetcherFactory(callFactory = { OkHttpClient() }))
+                    }.build()
+            }
+
             AsyncImage(
                 model = profile.photoUrl,
                 imageLoader = imageLoader,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                onError = { println("Image load error: ${it.result.throwable} ") },
+                onError = { Timber.e("Image load error: ${it.result.throwable}") },
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
