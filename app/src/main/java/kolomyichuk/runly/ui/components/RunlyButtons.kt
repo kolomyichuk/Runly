@@ -213,11 +213,11 @@ fun GoogleSignInButton(
 }
 
 @Composable
-fun LogOutButton(
-    onLogOutClick: () -> Unit
+fun SignOutButton(
+    onSignOutClick: () -> Unit
 ) {
     OutlinedButton(
-        onClick = onLogOutClick,
+        onClick = onSignOutClick,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.outlinedButtonColors(

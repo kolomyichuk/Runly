@@ -7,20 +7,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
-import kolomyichuk.runly.ui.components.LogOutButton
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
 fun SettingsScreen(
-    navController: NavController
+    navController: NavController,
+    settingsViewModel: SettingsViewModel
 ) {
     Scaffold(
         topBar = {
@@ -34,7 +36,8 @@ fun SettingsScreen(
             navController = navController,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerPadding),
+            settingsViewModel = settingsViewModel,
         )
     }
 }
@@ -42,8 +45,11 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreenContent(
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    settingsViewModel: SettingsViewModel,
 ) {
+    val signOutResult by settingsViewModel.signOutResult.collectAsStateWithLifecycle()
+
     Column(
         modifier = modifier
             .padding(16.dp),
@@ -71,6 +77,14 @@ private fun SettingsScreenContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        LogOutButton(onLogOutClick = {})
+        SettingsSignOutSection(
+            signOutResult = signOutResult,
+            onSignOutClick = { settingsViewModel.signOut() },
+            onNavigateToSignIn = {
+                navController.navigate(Screen.SignIn) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        )
     }
 }
