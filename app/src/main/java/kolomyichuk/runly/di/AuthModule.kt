@@ -1,6 +1,7 @@
 package kolomyichuk.runly.di
 
 import android.content.Context
+import androidx.credentials.CredentialManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -20,10 +21,16 @@ object AuthModule {
 
     @Provides
     @Singleton
+    fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {
+        return CredentialManager.create(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         firebaseAuth: FirebaseAuth,
-        @ApplicationContext context: Context
+        credentialManager: CredentialManager
     ): AuthRepository {
-        return AuthRepository(firebaseAuth, context)
+        return AuthRepository(firebaseAuth, credentialManager)
     }
 }

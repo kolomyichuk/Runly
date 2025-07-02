@@ -1,23 +1,17 @@
 package kolomyichuk.runly.data.repository
 
-import android.content.Context
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 class AuthRepository(
     private val firebaseAuth: FirebaseAuth,
-    @ApplicationContext private val context: Context
+    private val credentialManager: CredentialManager
 ) {
-    private val credentialManager by lazy {
-        CredentialManager.create(context)
-    }
-
     fun isUserSignedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }

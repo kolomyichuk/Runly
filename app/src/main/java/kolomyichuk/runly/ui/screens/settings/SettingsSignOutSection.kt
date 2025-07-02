@@ -8,20 +8,25 @@ import kolomyichuk.runly.ui.components.SignOutButton
 
 @Composable
 fun SettingsSignOutSection(
-    signOutResult: Result<Unit>?,
+    signOutSuccess: Boolean,
+    signOutError: String?,
     onSignOutClick: () -> Unit,
-    onNavigateToSignIn: () -> Unit
+    onNavigateToSignIn: () -> Unit,
+    onResetStates: () -> Unit
 ) {
     val context = LocalContext.current
 
-    LaunchedEffect(signOutResult) {
-        signOutResult?.let { result ->
-            if (result.isSuccess) {
-                onNavigateToSignIn()
-            } else {
-                val message = result.exceptionOrNull()?.message ?: "Sign out failed"
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
+    LaunchedEffect(signOutSuccess) {
+        if (signOutSuccess){
+            onNavigateToSignIn()
+            onResetStates()
+        }
+    }
+
+    LaunchedEffect(signOutError) {
+        signOutError?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            onResetStates()
         }
     }
 

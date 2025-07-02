@@ -15,13 +15,25 @@ class SettingsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _signOutResult = MutableStateFlow<Result<Unit>?>(null)
-    val signOutResult: StateFlow<Result<Unit>?> = _signOutResult
+    private val _signOutSuccess = MutableStateFlow(false)
+    val signOutSuccess: StateFlow<Boolean> = _signOutSuccess
+
+    private val _signOutError = MutableStateFlow<String?>(null)
+    val signOutError: StateFlow<String?> = _signOutError
 
     fun signOut() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = authRepository.signOut()
-            _signOutResult.value = result
+            if (result.isSuccess) {
+                _signOutSuccess.value = true
+            } else {
+                _signOutError.value = result.exceptionOrNull()?.message ?: "Sign out failed"
+            }
         }
+    }
+
+    fun resetStates() {
+        _signOutSuccess.value = false
+        _signOutError.value = null
     }
 }

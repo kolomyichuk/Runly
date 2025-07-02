@@ -48,7 +48,8 @@ private fun SettingsScreenContent(
     modifier: Modifier = Modifier,
     settingsViewModel: SettingsViewModel,
 ) {
-    val signOutResult by settingsViewModel.signOutResult.collectAsStateWithLifecycle()
+    val signOutSuccess by settingsViewModel.signOutSuccess.collectAsStateWithLifecycle()
+    val signOutError by settingsViewModel.signOutError.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -78,13 +79,15 @@ private fun SettingsScreenContent(
         Spacer(modifier = Modifier.weight(1f))
 
         SettingsSignOutSection(
-            signOutResult = signOutResult,
+            signOutSuccess = signOutSuccess,
+            signOutError = signOutError,
             onSignOutClick = { settingsViewModel.signOut() },
             onNavigateToSignIn = {
                 navController.navigate(Screen.SignIn) {
                     popUpTo(0) { inclusive = true }
                 }
-            }
+            },
+            onResetStates = { settingsViewModel.resetStates() }
         )
     }
 }
