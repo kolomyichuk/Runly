@@ -1,72 +1,80 @@
 package kolomyichuk.runly.ui.screens.profile
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import kolomyichuk.runly.R
+import kolomyichuk.runly.data.model.UserProfile
+import okhttp3.OkHttpClient
+import timber.log.Timber
 
 @Composable
 fun ProfileUserInfo(
-    username: String,
-    imageFilePath: String?,
-    onSaveUsername: (String) -> Unit,
-    onPickImage: (Uri) -> Unit
+    profile: UserProfile
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-    var newName by remember { mutableStateOf("") }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { onPickImage(it) }
-    }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileUserImage(
-            imageFilePath = imageFilePath,
-            onEditClick = { launcher.launch("image/*") }
-        )
+        if (!profile.photoUrl.isNullOrBlank()) {
+            val imageLoader = remember {
+                ImageLoader.Builder(context)
+                    .components {
+                        add(OkHttpNetworkFetcherFactory(callFactory = { OkHttpClient() }))
+                    }.build()
+            }
+
+            AsyncImage(
+                model = profile.photoUrl,
+                imageLoader = imageLoader,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                onError = { Timber.e("Image load error: ${it.result.throwable}") },
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.user),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+
+            )
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(
-            onClick = { showDialog = true }
-        ) {
-            Text(
-                text = username,
-                fontSize = 18.sp,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        if (showDialog) {
-            ProfileAddUserName(
-                newName = newName,
-                onNameChange = { newName = it },
-                onConfirm = {
-                    if (newName.isNotBlank()) {
-                        onSaveUsername(newName)
-                        showDialog = false
-                    }
-                },
-                onDismiss = { showDialog = false }
-            )
-        }
+        Text(
+            text = profile.name ?: stringResource(R.string.user),
+            fontSize = 18.sp,
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
