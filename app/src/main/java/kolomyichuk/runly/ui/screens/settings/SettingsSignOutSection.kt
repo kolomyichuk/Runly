@@ -5,28 +5,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import kolomyichuk.runly.ui.components.SignOutButton
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun SettingsSignOutSection(
-    signOutSuccess: Boolean,
-    signOutError: String?,
+    signOutEffect: SharedFlow<SignOutEffect>,
     onSignOutClick: () -> Unit,
-    onNavigateToSignIn: () -> Unit,
-    onResetStates: () -> Unit
+    onNavigateToSignIn: () -> Unit
 ) {
     val context = LocalContext.current
 
-    LaunchedEffect(signOutSuccess) {
-        if (signOutSuccess){
-            onNavigateToSignIn()
-            onResetStates()
-        }
-    }
-
-    LaunchedEffect(signOutError) {
-        signOutError?.let { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            onResetStates()
+    LaunchedEffect(Unit) {
+        signOutEffect.collect { effect ->
+            when (effect) {
+                is SignOutEffect.Success -> onNavigateToSignIn()
+                is SignOutEffect.Failure -> {
+                    Toast.makeText(context, effect.messageResId, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

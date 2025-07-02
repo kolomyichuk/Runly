@@ -3,10 +3,12 @@ package kolomyichuk.runly.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kolomyichuk.runly.R
 import kolomyichuk.runly.data.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,25 +17,21 @@ class SettingsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _signOutSuccess = MutableStateFlow(false)
-    val signOutSuccess: StateFlow<Boolean> = _signOutSuccess
-
-    private val _signOutError = MutableStateFlow<String?>(null)
-    val signOutError: StateFlow<String?> = _signOutError
+    private val _signOutEffect = MutableSharedFlow<SignOutEffect>()
+    val signOutEffect: SharedFlow<SignOutEffect> = _signOutEffect.asSharedFlow()
 
     fun signOut() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = authRepository.signOut()
             if (result.isSuccess) {
-                _signOutSuccess.value = true
+                _signOutEffect.emit(SignOutEffect.Success)
             } else {
-                _signOutError.value = result.exceptionOrNull()?.message ?: "Sign out failed"
+                _signOutEffect.emit(
+                    SignOutEffect.Failure(
+                        R.string.sign_out_failed
+                    )
+                )
             }
         }
-    }
-
-    fun resetStates() {
-        _signOutSuccess.value = false
-        _signOutError.value = null
     }
 }
