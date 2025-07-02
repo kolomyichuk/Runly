@@ -59,4 +59,5 @@
     <string name="join_us">Join us</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="log_out">Log Out</string>
+    <string name="user">User</string>
 </resources>

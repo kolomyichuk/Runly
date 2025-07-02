@@ -24,7 +24,6 @@ object SettingsModule {
 
     @Provides
     @Singleton
-    @SettingsPreferences
     fun provideSettingsDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
@@ -45,7 +44,7 @@ object SettingsModule {
     @Provides
     @Singleton
     fun provideSettingsPreferencesDataStore(
-        @SettingsPreferences dataStore: DataStore<Preferences>
+        dataStore: DataStore<Preferences>
     ): SettingsPreferencesDataStore {
         return SettingsPreferencesDataStore(dataStore)
     }
