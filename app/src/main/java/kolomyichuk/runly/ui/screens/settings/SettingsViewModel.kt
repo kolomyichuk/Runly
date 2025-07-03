@@ -3,7 +3,6 @@ package kolomyichuk.runly.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.R
 import kolomyichuk.runly.data.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,11 +25,7 @@ class SettingsViewModel @Inject constructor(
             if (result.isSuccess) {
                 _signOutEffect.emit(SignOutEffect.Success)
             } else {
-                _signOutEffect.emit(
-                    SignOutEffect.Failure(
-                        R.string.sign_out_failed
-                    )
-                )
+                _signOutEffect.emit(SignOutEffect.Failure)
             }
         }
     }
