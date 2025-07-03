@@ -58,5 +58,7 @@
     <string name="miles_per_hour">Миль/год</string>
     <string name="join_us">Приєднуйтесь до нас</string>
     <string name="sign_in_with_google">Увійти через Google</string>
+    <string name="log_out">Вихід</string>
     <string name="user">Користувач</string>
+    <string name="sign_out_failed">Не вдалося вийти</string>
 </resources>

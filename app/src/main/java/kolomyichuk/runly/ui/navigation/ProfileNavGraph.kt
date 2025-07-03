@@ -8,6 +8,7 @@ import androidx.navigation.compose.navigation
 import kolomyichuk.runly.ui.screens.profile.ProfileScreen
 import kolomyichuk.runly.ui.screens.profile.ProfileViewModel
 import kolomyichuk.runly.ui.screens.settings.SettingsScreen
+import kolomyichuk.runly.ui.screens.settings.SettingsViewModel
 import kolomyichuk.runly.ui.screens.theme.ThemeScreen
 import kolomyichuk.runly.ui.screens.theme.ThemeViewModel
 import kolomyichuk.runly.ui.screens.unitsofmeasure.UnitsOfMeasureScreen
@@ -25,8 +26,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavController) {
             )
         }
         composable<Screen.Settings> {
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
             SettingsScreen(
                 navController = navController,
+                settingsViewModel = settingsViewModel
             )
         }
         composable<Screen.Theme> {
