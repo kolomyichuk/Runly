@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
     private val runRepository: RunRepository
 ) : ViewModel() {
 
-    val runs: StateFlow<List<RunDisplayModel>> = runRepository.getAllRuns()
+    val runs: StateFlow<List<RunDisplayModel>> = runRepository.getAllRunsFromFirestore()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(
     fun confirmDeleteRun() {
         recentlyDeleteRun?.let { run ->
             viewModelScope.launch(Dispatchers.IO) {
-                runRepository.deleteRunById(run.id)
+                runRepository.deleteRunByIdInFirestore(run.id)
             }
         }
     }

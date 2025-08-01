@@ -1,25 +1,42 @@
 package kolomyichuk.runly.data.repository
 
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
 import kolomyichuk.runly.data.local.room.dao.RunDao
-import kolomyichuk.runly.data.local.room.entity.Run
+import kolomyichuk.runly.data.local.room.mappers.fromRunEntityToRun
+import kolomyichuk.runly.data.local.room.mappers.fromRunToRunEntity
 import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.data.model.Run
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.model.RunState
+import kolomyichuk.runly.data.remote.firestore.mappers.fromRunFirestoreModelToRun
+import kolomyichuk.runly.data.remote.firestore.mappers.fromRunToRunFirestoreModel
+import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
 import kolomyichuk.runly.utils.FormatterUtils
 import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.util.Locale
+
+private const val RUNS_COLLECTION = "runs"
+private const val USER_ID_FIELD = "userId"
 
 class RunRepository(
     private val runDao: RunDao,
-    private val settingsDataStore: SettingsPreferencesDataStore
+    private val settingsDataStore: SettingsPreferencesDataStore,
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) {
     private val _runState = MutableStateFlow(RunState())
     val runState: StateFlow<RunState> = _runState.asStateFlow()
@@ -28,8 +45,85 @@ class RunRepository(
         _runState.update { it.update() }
     }
 
+    private val userId: String
+        get() = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+
+    suspend fun insertRunInFirestore(run: Run) {
+        try {
+            val newDocRef = firestore.collection(RUNS_COLLECTION).document()
+            val runWithId = run.copy(id = newDocRef.id)
+            val firestoreModel = runWithId.fromRunToRunFirestoreModel(userId)
+            newDocRef.set(firestoreModel).await()
+        } catch (e: Exception) {
+            Timber.e("Error inserting run: ${e.message}")
+        }
+    }
+
+    suspend fun deleteRunByIdInFirestore(runId: String) {
+        try {
+            firestore.collection(RUNS_COLLECTION).document(runId).delete().await()
+        } catch (e: Exception) {
+            Timber.e("Error deleting error with id: $runId - ${e.message}")
+        }
+    }
+
+    fun getAllRunsFromFirestore(): Flow<List<RunDisplayModel>> {
+        val currentUser = auth.currentUser
+        if (currentUser == null) return flowOf(emptyList())
+
+        return callbackFlow {
+            val subscription = firestore.collection(RUNS_COLLECTION)
+                .whereEqualTo(USER_ID_FIELD, currentUser.uid)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val runs = snapshot?.documents
+                        ?.mapNotNull {
+                            it.toObject(RunFirestoreModel::class.java)?.fromRunFirestoreModelToRun()
+                        } ?: emptyList()
+                    try {
+                        trySend(runs)
+                    } catch (e: Exception) {
+                        Timber.e("Sending to flow failed: ${e.message}")
+                    }
+                }
+            awaitClose { subscription.remove() }
+        }.combine(settingsDataStore.distanceUnitState) { runs, unit ->
+            runs.map { run -> mapRunFromFirestoreToDisplayModel(run, unit) }
+        }
+    }
+
+    fun getRunByIdFromFirestore(runId: String): Flow<RunDisplayModel> {
+        return callbackFlow {
+            val docRef = firestore.collection(RUNS_COLLECTION).document(runId)
+            val subscription = docRef.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Timber.e("Snapshot error: ${error.message}")
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                try {
+                    val run =
+                        snapshot?.toObject(RunFirestoreModel::class.java)
+                            ?.fromRunFirestoreModelToRun()
+                    if (run != null) trySend(run)
+                } catch (e: Exception) {
+                    Timber.e("Error: ${e.message}")
+                }
+            }
+
+            awaitClose { subscription.remove() }
+        }.combine(settingsDataStore.distanceUnitState) { run, unit ->
+            mapRunFromFirestoreToDisplayModel(run, unit)
+        }
+    }
+
     suspend fun insertRun(run: Run) {
-        runDao.insertRun(run)
+        runDao.insertRun(run.fromRunToRunEntity())
     }
 
     suspend fun deleteRunById(runId: Int) {
@@ -46,7 +140,7 @@ class RunRepository(
             runDao.getAllRuns(),
             settingsDataStore.distanceUnitState
         ) { runs, unit ->
-            runs.map { run -> mapRunToDisplayModel(run, unit) }
+            runs.map { run -> mapRunFromRoomToDisplayModel(run.fromRunEntityToRun(), unit) }
         }
     }
 
@@ -54,10 +148,29 @@ class RunRepository(
         return combine(
             runDao.getRunById(runId),
             settingsDataStore.distanceUnitState
-        ) { run, unit -> mapRunToDisplayModel(run, unit) }
+        ) { run, unit -> mapRunFromRoomToDisplayModel(run.fromRunEntityToRun(), unit) }
     }
 
-    private fun mapRunToDisplayModel(run: Run, unit: DistanceUnit): RunDisplayModel {
+    private fun mapRunFromFirestoreToDisplayModel(run: Run, unit: DistanceUnit): RunDisplayModel {
+        val distance = convertDistance(run.distanceInMeters, unit)
+        val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
+
+        return RunDisplayModel(
+            id = run.id,
+            distance = String.format(Locale.US, "%.2f", distance),
+            duration = FormatterUtils.formatTime(run.durationInMillis),
+            routePoints = run.routePoints.map { path ->
+                path.map {
+                    LatLng(it.latitude, it.longitude)
+                }
+            },
+            avgSpeed = avgSpeed,
+            dateTime = run.timestamp.toFormattedDateTime(),
+            unit = unit
+        )
+    }
+
+    private fun mapRunFromRoomToDisplayModel(run: Run, unit: DistanceUnit): RunDisplayModel {
         val distance = convertDistance(run.distanceInMeters, unit)
         val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
 

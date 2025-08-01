@@ -23,7 +23,7 @@ sealed interface Screen {
     object Dashboard : Screen
 
     @Serializable
-    data class RunDetails(val runId: Int) : Screen
+    data class RunDetails(val runId: String) : Screen
 
     @Serializable
     object UnitsOfMeasure : Screen

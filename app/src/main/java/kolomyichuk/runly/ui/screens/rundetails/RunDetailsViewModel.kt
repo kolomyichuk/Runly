@@ -20,9 +20,9 @@ class RunDetailsViewModel @Inject constructor(
     private val _runDetailsState = MutableStateFlow(RunDisplayModel())
     val runDetailsState: StateFlow<RunDisplayModel> = _runDetailsState.asStateFlow()
 
-    fun loadRun(runId: Int) {
+    fun loadRun(runId: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            runRepository.getRunById(runId).collect { run ->
+            runRepository.getRunByIdFromFirestore(runId).collect { run ->
                 _runDetailsState.value = run
             }
         }

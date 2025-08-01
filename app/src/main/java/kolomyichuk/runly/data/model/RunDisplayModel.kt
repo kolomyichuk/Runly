@@ -3,7 +3,7 @@ package kolomyichuk.runly.data.model
 import com.google.android.gms.maps.model.LatLng
 
 data class RunDisplayModel(
-    val id: Int = 0,
+    val id: String = "",
     val dateTime: String = "",
     val distance: String = "0,0",
     val duration: String = "00:00",

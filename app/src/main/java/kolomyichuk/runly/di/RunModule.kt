@@ -2,6 +2,8 @@ package kolomyichuk.runly.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,10 +40,18 @@ object RunModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideRunRepository(
         runDao: RunDao,
-        settingsDataStore: SettingsPreferencesDataStore
+        settingsDataStore: SettingsPreferencesDataStore,
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
     ): RunRepository {
-        return RunRepository(runDao, settingsDataStore)
+        return RunRepository(runDao, settingsDataStore, firestore, auth)
     }
 }

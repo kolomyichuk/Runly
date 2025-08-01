@@ -21,7 +21,7 @@ import kolomyichuk.runly.ui.components.TopBarApp
 fun RunDetailsScreen(
     onBack: () -> Unit,
     runDetailsViewModel: RunDetailsViewModel = hiltViewModel(),
-    runId: Int
+    runId: String
 ) {
     Scaffold(
         topBar = {
@@ -44,7 +44,7 @@ fun RunDetailsScreen(
 @Composable
 private fun RunDetailsScreenContent(
     runDetailsViewModel: RunDetailsViewModel,
-    runId: Int,
+    runId: String,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(runId) {

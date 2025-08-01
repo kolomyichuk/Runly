@@ -65,6 +65,7 @@ androidx-compose-material-iconsExtended = { group = "androidx.compose.material",
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 play-service-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsAuth" }
