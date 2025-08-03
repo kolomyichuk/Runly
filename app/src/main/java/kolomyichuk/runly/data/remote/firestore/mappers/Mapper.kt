@@ -4,7 +4,7 @@ import kolomyichuk.runly.data.model.Run
 import kolomyichuk.runly.data.remote.firestore.model.RouteSegment
 import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
 
-fun RunFirestoreModel.fromRunFirestoreModelToRun(): Run {
+fun RunFirestoreModel.toRun(): Run {
     return Run(
         id = id,
         timestamp = timestamp,
@@ -14,7 +14,7 @@ fun RunFirestoreModel.fromRunFirestoreModelToRun(): Run {
     )
 }
 
-fun Run.fromRunToRunFirestoreModel(userId: String): RunFirestoreModel {
+fun Run.toRunFirestoreModel(userId: String): RunFirestoreModel {
     return RunFirestoreModel(
         id = id,
         userId = userId,

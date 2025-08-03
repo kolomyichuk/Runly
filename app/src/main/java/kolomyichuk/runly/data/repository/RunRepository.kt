@@ -5,14 +5,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
 import kolomyichuk.runly.data.local.room.dao.RunDao
-import kolomyichuk.runly.data.local.room.mappers.fromRunEntityToRun
-import kolomyichuk.runly.data.local.room.mappers.fromRunToRunEntity
+import kolomyichuk.runly.data.local.room.entity.RunEntity
+import kolomyichuk.runly.data.local.room.mappers.toRunEntity
 import kolomyichuk.runly.data.model.DistanceUnit
 import kolomyichuk.runly.data.model.Run
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.model.RunState
-import kolomyichuk.runly.data.remote.firestore.mappers.fromRunFirestoreModelToRun
-import kolomyichuk.runly.data.remote.firestore.mappers.fromRunToRunFirestoreModel
+import kolomyichuk.runly.data.remote.firestore.mappers.toRun
+import kolomyichuk.runly.data.remote.firestore.mappers.toRunFirestoreModel
 import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
 import kolomyichuk.runly.utils.FormatterUtils
 import kolomyichuk.runly.utils.FormatterUtils.toFormattedDateTime
@@ -52,7 +52,7 @@ class RunRepository(
         try {
             val newDocRef = firestore.collection(RUNS_COLLECTION).document()
             val runWithId = run.copy(id = newDocRef.id)
-            val firestoreModel = runWithId.fromRunToRunFirestoreModel(userId)
+            val firestoreModel = runWithId.toRunFirestoreModel(userId)
             newDocRef.set(firestoreModel).await()
         } catch (e: Exception) {
             Timber.e("Error inserting run: ${e.message}")
@@ -82,7 +82,7 @@ class RunRepository(
 
                     val runs = snapshot?.documents
                         ?.mapNotNull {
-                            it.toObject(RunFirestoreModel::class.java)?.fromRunFirestoreModelToRun()
+                            it.toObject(RunFirestoreModel::class.java)?.toRun()
                         } ?: emptyList()
                     try {
                         trySend(runs)
@@ -92,7 +92,7 @@ class RunRepository(
                 }
             awaitClose { subscription.remove() }
         }.combine(settingsDataStore.distanceUnitState) { runs, unit ->
-            runs.map { run -> mapRunFromFirestoreToDisplayModel(run, unit) }
+            runs.map { it.toRunDisplayModel(unit) }
         }
     }
 
@@ -109,7 +109,7 @@ class RunRepository(
                 try {
                     val run =
                         snapshot?.toObject(RunFirestoreModel::class.java)
-                            ?.fromRunFirestoreModelToRun()
+                            ?.toRun()
                     if (run != null) trySend(run)
                 } catch (e: Exception) {
                     Timber.e("Error: ${e.message}")
@@ -118,12 +118,12 @@ class RunRepository(
 
             awaitClose { subscription.remove() }
         }.combine(settingsDataStore.distanceUnitState) { run, unit ->
-            mapRunFromFirestoreToDisplayModel(run, unit)
+            run.toRunDisplayModel(unit)
         }
     }
 
     suspend fun insertRun(run: Run) {
-        runDao.insertRun(run.fromRunToRunEntity())
+        runDao.insertRun(run.toRunEntity())
     }
 
     suspend fun deleteRunById(runId: Int) {
@@ -140,7 +140,7 @@ class RunRepository(
             runDao.getAllRuns(),
             settingsDataStore.distanceUnitState
         ) { runs, unit ->
-            runs.map { run -> mapRunFromRoomToDisplayModel(run.fromRunEntityToRun(), unit) }
+            runs.map { it.toRunDisplayModel(unit) }
         }
     }
 
@@ -148,43 +148,43 @@ class RunRepository(
         return combine(
             runDao.getRunById(runId),
             settingsDataStore.distanceUnitState
-        ) { run, unit -> mapRunFromRoomToDisplayModel(run.fromRunEntityToRun(), unit) }
+        ) { run, unit -> run.toRunDisplayModel(unit) }
     }
 
-    private fun mapRunFromFirestoreToDisplayModel(run: Run, unit: DistanceUnit): RunDisplayModel {
-        val distance = convertDistance(run.distanceInMeters, unit)
-        val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
+    private fun Run.toRunDisplayModel(unit: DistanceUnit): RunDisplayModel {
+        val distance = convertDistance(this.distanceInMeters, unit)
+        val avgSpeed = calculateAvgSpeed(distance, this.durationInMillis)
 
         return RunDisplayModel(
-            id = run.id,
+            id = this.id,
             distance = String.format(Locale.US, "%.2f", distance),
-            duration = FormatterUtils.formatTime(run.durationInMillis),
-            routePoints = run.routePoints.map { path ->
+            duration = FormatterUtils.formatTime(this.durationInMillis),
+            routePoints = this.routePoints.map { path ->
                 path.map {
                     LatLng(it.latitude, it.longitude)
                 }
             },
             avgSpeed = avgSpeed,
-            dateTime = run.timestamp.toFormattedDateTime(),
+            dateTime = this.timestamp.toFormattedDateTime(),
             unit = unit
         )
     }
 
-    private fun mapRunFromRoomToDisplayModel(run: Run, unit: DistanceUnit): RunDisplayModel {
-        val distance = convertDistance(run.distanceInMeters, unit)
-        val avgSpeed = calculateAvgSpeed(distance, run.durationInMillis)
+    private fun RunEntity.toRunDisplayModel(unit: DistanceUnit): RunDisplayModel {
+        val distance = convertDistance(distanceInMeters, unit)
+        val avgSpeed = calculateAvgSpeed(distance, durationInMillis)
 
         return RunDisplayModel(
-            id = run.id,
+            id = id.toString(),
             distance = String.format(Locale.US, "%.2f", distance),
-            duration = FormatterUtils.formatTime(run.durationInMillis),
-            routePoints = run.routePoints.map { path ->
+            duration = FormatterUtils.formatTime(durationInMillis),
+            routePoints = routePoints.map { path ->
                 path.map {
                     LatLng(it.latitude, it.longitude)
                 }
             },
             avgSpeed = avgSpeed,
-            dateTime = run.timestamp.toFormattedDateTime(),
+            dateTime = timestamp.toFormattedDateTime(),
             unit = unit
         )
     }
