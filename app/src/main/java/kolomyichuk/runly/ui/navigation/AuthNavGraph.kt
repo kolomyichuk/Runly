@@ -19,9 +19,9 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
                 onSignInSuccess = { idToken ->
                     coroutineScope.launch {
                         signInViewModel.signInWithGoogle(idToken)
-                    }
-                    navController.navigate(HomeNavGraph) {
-                        popUpTo<Screen.SignIn> { inclusive = true }
+                        navController.navigate(HomeNavGraph) {
+                            popUpTo<Screen.SignIn> { inclusive = true }
+                        }
                     }
                 }
             )

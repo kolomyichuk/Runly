@@ -5,9 +5,6 @@ import androidx.credentials.CredentialManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -15,12 +12,8 @@ class AuthRepository(
     private val firebaseAuth: FirebaseAuth,
     private val credentialManager: CredentialManager
 ) {
-    fun isUserSignedIn(): Flow<Boolean> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener {
-            trySend(it.currentUser != null)
-        }
-        firebaseAuth.addAuthStateListener(listener)
-        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
+    fun isUserSignedIn(): Boolean {
+        return firebaseAuth.currentUser != null
     }
 
     suspend fun signInWithGoogle(idToken: String): Result<Unit> {

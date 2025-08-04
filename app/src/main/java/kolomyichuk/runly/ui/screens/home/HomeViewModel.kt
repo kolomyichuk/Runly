@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun undoDeleteRun(){
+    fun undoDeleteRun() {
         recentlyDeleteRun = null
     }
 }
