@@ -66,10 +66,17 @@ fun HomeScreenContent(
             }
 
             is RunUiState.Error -> {
-                val message = (uiState as RunUiState.Error)
+                val message = when ((uiState as RunUiState.Error).type) {
+                    ErrorType.NETWORK -> stringResource(R.string.error_network)
+                    ErrorType.UNAUTHORIZED -> stringResource(R.string.error_unauthorized)
+                    ErrorType.UNKNOWN -> stringResource(R.string.something_went_wrong)
+                }
 
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(R.string.an_error_occurred, message))
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = message)
                 }
             }
         }

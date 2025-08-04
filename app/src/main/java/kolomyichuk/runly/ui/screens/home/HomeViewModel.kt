@@ -2,6 +2,7 @@ package kolomyichuk.runly.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.repository.RunRepository
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import okio.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,11 +29,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadRuns() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             runRepository
                 .getAllRunsFromFirestore()
                 .catch { e ->
-                    _uiState.value = RunUiState.Error(e.message ?: "Unknown error")
+                    val errorType = when(e){
+                        is IOException -> ErrorType.NETWORK
+                        is FirebaseAuthException -> ErrorType.UNAUTHORIZED
+                        else -> ErrorType.UNKNOWN
+                    }
+                    _uiState.value = RunUiState.Error(errorType)
                 }
                 .collect { runs ->
                     _uiState.value = RunUiState.Success(runs)

@@ -61,5 +61,7 @@
     <string name="log_out">Вихід</string>
     <string name="user">Користувач</string>
     <string name="sign_out_failed">Не вдалося вийти</string>
-    <string name="an_error_occurred">Сталася помилка: %1$s</string>
+    <string name="error_network">Помилка мережі.\nПеревірте з’єднання.</string>
+    <string name="error_unauthorized">Ви не авторизовані.\nУвійдіть повторно.</string>
+    <string name="something_went_wrong">Щось пішло не так.</string>
 </resources>
