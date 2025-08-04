@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
     implementation(libs.play.service.auth)
+    implementation(libs.firebase.firestore)
 
     // Credentials
     implementation(libs.credentials)

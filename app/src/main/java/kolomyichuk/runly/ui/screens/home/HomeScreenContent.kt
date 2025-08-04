@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun HomeScreenContent(
     homeViewModel: HomeViewModel,
-    onRunClick: (Int) -> Unit,
+    onRunClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val runs = homeViewModel.runs.collectAsStateWithLifecycle()

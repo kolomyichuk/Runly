@@ -19,7 +19,7 @@ import kolomyichuk.runly.ui.components.TopBarApp
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
-    onRunClick: (Int) -> Unit
+    onRunClick: (String) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kolomyichuk.runly.data.local.room.entity.LatLngPoint
-import kolomyichuk.runly.data.local.room.entity.Run
+import kolomyichuk.runly.data.model.Run
 import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.repository.RunRepository
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +38,7 @@ class RunViewModel @Inject constructor(
                 distanceInMeters = state.distanceInMeters,
                 routePoints = routePoints
             )
-            runRepository.insertRun(run)
+            runRepository.insertRunInFirestore(run)
         }
     }
 }
