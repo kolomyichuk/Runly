@@ -7,10 +7,10 @@ import kolomyichuk.runly.data.model.RunDisplayModel
 import kolomyichuk.runly.data.repository.RunRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,12 +19,25 @@ class HomeViewModel @Inject constructor(
     private val runRepository: RunRepository
 ) : ViewModel() {
 
-    val runs: StateFlow<List<RunDisplayModel>> = runRepository.getAllRunsFromFirestore()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
-        )
+    private val _uiState = MutableStateFlow<RunUiState>(RunUiState.Loading)
+    val uiState: StateFlow<RunUiState> = _uiState
+
+    init {
+        loadRuns()
+    }
+
+    private fun loadRuns() {
+        viewModelScope.launch {
+            runRepository
+                .getAllRunsFromFirestore()
+                .catch { e ->
+                    _uiState.value = RunUiState.Error(e.message ?: "Unknown error")
+                }
+                .collect { runs ->
+                    _uiState.value = RunUiState.Success(runs)
+                }
+        }
+    }
 
     private val _homeEffects = MutableSharedFlow<HomeEffect>()
     val homeEffects = _homeEffects.asSharedFlow()
