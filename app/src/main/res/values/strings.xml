@@ -61,4 +61,7 @@
     <string name="log_out">Log Out</string>
     <string name="user">User</string>
     <string name="sign_out_failed">Sign out failed</string>
+    <string name="error_network">Network error.\nPlease check your connection.</string>
+    <string name="error_unauthorized">You are not authorized.\nPlease log in again.</string>
+    <string name="something_went_wrong">Something went wrong.</string>
 </resources>
