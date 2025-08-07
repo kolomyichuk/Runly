@@ -40,7 +40,7 @@ class AuthRepositoryTest {
     }
 
     @Test
-    fun `isUserSignedIn returns true when user exists`() {
+    fun `Given mockUser, When isUserSignedIn is called, Then true should be returned`() {
         // Given
         val mockUser = mockk<FirebaseUser>(relaxed = true)
         every { firebaseAuth.currentUser } returns mockUser
@@ -53,7 +53,7 @@ class AuthRepositoryTest {
     }
 
     @Test
-    fun `isUserSignedIn returns false when user is null`() {
+    fun `Given no user is logged in, When isUserSignIn is called, Then it returns false`() {
         // Given
         every { firebaseAuth.currentUser } returns null
 
@@ -65,131 +65,141 @@ class AuthRepositoryTest {
     }
 
     @Test
-    fun `signInWithGoogle should return success when authentication succeeds`() = runTest {
-        // Given
-        val authCredential = mockk<AuthCredential>(relaxed = true)
-        val authResult = mockk<AuthResult>(relaxed = true)
-        val idToken = "valid_id_token"
+    fun `Given valid id token, When signInWithGoogle is called, Then it returns success`() =
+        runTest {
+            // Given
+            val authCredential = mockk<AuthCredential>(relaxed = true)
+            val authResult = mockk<AuthResult>(relaxed = true)
+            val idToken = "valid_id_token"
 
-        mockkStatic(GoogleAuthProvider::class)
-        mockkStatic(Tasks::class)
+            mockkStatic(GoogleAuthProvider::class)
+            mockkStatic(Tasks::class)
 
-        every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
-        every { firebaseAuth.signInWithCredential(authCredential) } returns Tasks.forResult(authResult)
+            every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
+            every { firebaseAuth.signInWithCredential(authCredential) } returns Tasks.forResult(
+                authResult
+            )
 
-        // When
-        val result = authRepository.signInWithGoogle(idToken)
+            // When
+            val result = authRepository.signInWithGoogle(idToken)
 
-        // Then
-        assertTrue(result.isSuccess)
-        assertEquals(Unit, result.getOrNull())
+            // Then
+            assertTrue(result.isSuccess)
+            assertEquals(Unit, result.getOrNull())
 
-        verify(exactly = 1) {
-            GoogleAuthProvider.getCredential(idToken, null)
-            firebaseAuth.signInWithCredential(authCredential)
+            verify(exactly = 1) {
+                GoogleAuthProvider.getCredential(idToken, null)
+                firebaseAuth.signInWithCredential(authCredential)
+            }
+
+            unmockkStatic(GoogleAuthProvider::class)
+            unmockkStatic(Tasks::class)
         }
 
-        unmockkStatic(GoogleAuthProvider::class)
-        unmockkStatic(Tasks::class)
-    }
+    @Test
+    fun `Given invalid id token, When signInWithGoogle is called, Then it returns failure with FirebaseAuthException`() =
+        runTest {
+            // Given
+            val idToken = "invalid_token"
+            val credential = mockk<AuthCredential>(relaxed = true)
+            val task = mockk<Task<AuthResult>>(relaxed = true)
+            val exception = mockk<FirebaseAuthException>(relaxed = true)
+
+            mockkStatic(GoogleAuthProvider::class)
+            mockkStatic("kotlinx.coroutines.tasks.TasksKt")
+
+            every { GoogleAuthProvider.getCredential(idToken, null) } returns credential
+            every { firebaseAuth.signInWithCredential(credential) } returns task
+            coEvery { task.await() } throws exception
+
+            // When
+            val result = authRepository.signInWithGoogle(idToken)
+
+            // Then
+            assertTrue(result.isFailure)
+            assertTrue(result.exceptionOrNull() is FirebaseAuthException)
+
+            verify { GoogleAuthProvider.getCredential(idToken, null) }
+            verify { firebaseAuth.signInWithCredential(credential) }
+            coVerify { task.await() }
+
+            unmockkStatic(GoogleAuthProvider::class)
+            unmockkStatic("kotlinx.coroutines.tasks.TasksKt")
+        }
 
     @Test
-    fun `signInWithGoogle should return failure when FirebaseAuthException occurs`() = runTest {
-        // Given
-        val idToken = "invalid_token"
-        val credential = mockk<AuthCredential>(relaxed = true)
-        val task = mockk<Task<AuthResult>>(relaxed = true)
-        val exception = mockk<FirebaseAuthException>(relaxed = true)
+    fun `Given an unexpected error occurs, When signInWithGoogle is called, Then it returns failure with exception`() =
+        runTest {
+            // Given
+            val authCredential = mockk<AuthCredential>(relaxed = true)
+            val generalException = Exception("Network error")
+            val idToken = "some_token"
 
-        mockkStatic(GoogleAuthProvider::class)
-        mockkStatic("kotlinx.coroutines.tasks.TasksKt")
+            mockkStatic(GoogleAuthProvider::class)
+            mockkStatic(Tasks::class)
 
-        every { GoogleAuthProvider.getCredential(idToken, null) } returns credential
-        every { firebaseAuth.signInWithCredential(credential) } returns task
-        coEvery { task.await() } throws exception
+            every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
+            every { firebaseAuth.signInWithCredential(authCredential) } returns Tasks.forException(
+                generalException
+            )
 
-        // When
-        val result = authRepository.signInWithGoogle(idToken)
+            // When
+            val result = authRepository.signInWithGoogle(idToken)
 
-        // Then
-        assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is FirebaseAuthException)
+            // Then
+            assertTrue(result.isFailure)
+            val exception = result.exceptionOrNull()
+            assertTrue(exception is Exception)
+            assertEquals("Network error", exception?.message)
 
-        verify { GoogleAuthProvider.getCredential(idToken, null) }
-        verify { firebaseAuth.signInWithCredential(credential) }
-        coVerify { task.await() }
-
-        unmockkStatic(GoogleAuthProvider::class)
-        unmockkStatic("kotlinx.coroutines.tasks.TasksKt")
-    }
-
-    @Test
-    fun `signInWithGoogle should return failure when general Exception occurs`() = runTest {
-        // Given
-        val authCredential = mockk<AuthCredential>(relaxed = true)
-        val generalException = Exception("Network error")
-        val idToken = "some_token"
-
-        mockkStatic(GoogleAuthProvider::class)
-        mockkStatic(Tasks::class)
-
-        every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
-        every { firebaseAuth.signInWithCredential(authCredential) } returns Tasks.forException(generalException)
-
-        // When
-        val result = authRepository.signInWithGoogle(idToken)
-
-        // Then
-        assertTrue(result.isFailure)
-        val exception = result.exceptionOrNull()
-        assertTrue(exception is Exception)
-        assertEquals("Network error", exception?.message)
-
-        unmockkStatic(GoogleAuthProvider::class)
-        unmockkStatic(Tasks::class)
-    }
+            unmockkStatic(GoogleAuthProvider::class)
+            unmockkStatic(Tasks::class)
+        }
 
     @Test
-    fun `signOut calls FirebaseAuth signOut and clears credentials`() = runTest {
-        // Given
-        coEvery { credentialManager.clearCredentialState(any()) } just Runs
+    fun `Given user is signed in, When signOut is called, Then FirebaseAuth signs out and credentials are cleared`() =
+        runTest {
+            // Given
+            coEvery { credentialManager.clearCredentialState(any()) } just Runs
 
-        // When
-        val result = authRepository.signOut()
+            // When
+            val result = authRepository.signOut()
 
-        // Then
-        verify { firebaseAuth.signOut() }
-        coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
-        assertTrue(result.isSuccess)
-    }
-
-    @Test
-    fun `signOut returns failure when Firebase signOut throws exception`() = runTest {
-        // Given
-        val exception = Exception("Logout failed")
-        every { firebaseAuth.signOut() } throws exception
-
-        // When
-        val result = authRepository.signOut()
-
-        // Then
-        assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
-    }
+            // Then
+            verify { firebaseAuth.signOut() }
+            coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
+            assertTrue(result.isSuccess)
+        }
 
     @Test
-    fun `signOut still succeeds if clearCredentialsState fails`() = runTest {
-        // Given
-        val exception = Exception("Clear failed")
-        coEvery { credentialManager.clearCredentialState(any()) } throws exception
+    fun `Given FirebaseAuth signOut throws exception, When signOut is called, Then it returns failure`() =
+        runTest {
+            // Given
+            val exception = Exception("Logout failed")
+            every { firebaseAuth.signOut() } throws exception
 
-        // When
-        val result = authRepository.signOut()
+            // When
+            val result = authRepository.signOut()
 
-        // Then
-        verify { firebaseAuth.signOut() }
-        coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
+            // Then
+            assertTrue(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+        }
 
-        assertTrue(result.isSuccess)
-    }
+    @Test
+    fun `Given clearCredentialsState trows exception, When signOut is called, Then it stills returns success`() =
+        runTest {
+            // Given
+            val exception = Exception("Clear failed")
+            coEvery { credentialManager.clearCredentialState(any()) } throws exception
+
+            // When
+            val result = authRepository.signOut()
+
+            // Then
+            verify { firebaseAuth.signOut() }
+            coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
+
+            assertTrue(result.isSuccess)
+        }
 }
