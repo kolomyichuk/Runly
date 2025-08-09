@@ -27,7 +27,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.data.local.datastore.model.AppTheme
 import kolomyichuk.runly.ui.components.MapTypeToggleButton
 import kolomyichuk.runly.ui.components.currentLocationMarker
 

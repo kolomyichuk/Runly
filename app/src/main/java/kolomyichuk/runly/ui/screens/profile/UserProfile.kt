@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.model
+package kolomyichuk.runly.ui.screens.profile
 
 data class UserProfile(
     val name: String? = null,

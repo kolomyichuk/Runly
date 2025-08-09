@@ -3,8 +3,8 @@ package kolomyichuk.runly.ui.screens.rundetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.model.RunDisplayModel
-import kolomyichuk.runly.data.repository.RunRepository
+import kolomyichuk.runly.domain.run.model.RunDisplayModel
+import kolomyichuk.runly.domain.run.usecase.GetRunByIdFromFirestoreUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RunDetailsViewModel @Inject constructor(
-    private val runRepository: RunRepository
+    private val getRunByIdFromFirestoreUseCase: GetRunByIdFromFirestoreUseCase
 ) : ViewModel() {
 
     private val _runDetailsState = MutableStateFlow(RunDisplayModel())
@@ -22,7 +22,7 @@ class RunDetailsViewModel @Inject constructor(
 
     fun loadRun(runId: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            runRepository.getRunByIdFromFirestore(runId).collect { run ->
+            getRunByIdFromFirestoreUseCase(runId).collect { run ->
                 _runDetailsState.value = run
             }
         }

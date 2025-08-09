@@ -3,7 +3,6 @@ package kolomyichuk.runly.ui.screens.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.model.UserProfile
 import kolomyichuk.runly.data.repository.ProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,6 +1,6 @@
-package kolomyichuk.runly.data.model
+package kolomyichuk.runly.domain.run.model
 
-import com.google.android.gms.maps.model.LatLng
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 
 data class RunDisplayModel(
     val id: String = "",
@@ -8,7 +8,7 @@ data class RunDisplayModel(
     val distance: String = "0,0",
     val duration: String = "00:00",
     val avgSpeed: String = "0,00",
-    val routePoints: List<List<LatLng>> = emptyList(),
+    val routePoints: List<List<RoutePoint>> = emptyList(),
     val unit: DistanceUnit = DistanceUnit.KILOMETERS,
     val isTracking: Boolean = false,
     val isPause: Boolean = false,

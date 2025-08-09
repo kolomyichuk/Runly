@@ -13,7 +13,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
-import kolomyichuk.runly.data.repository.SettingsRepository
+import kolomyichuk.runly.data.repository.SettingsRepositoryImpl
+import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import javax.inject.Singleton
 
 private const val SETTINGS_DATA_STORE_NAME = "settings.preferences_pb"
@@ -38,7 +39,7 @@ object SettingsModule {
     fun provideSettingsRepository(
         preferencesDataStore: SettingsPreferencesDataStore
     ): SettingsRepository {
-        return SettingsRepository(preferencesDataStore)
+        return SettingsRepositoryImpl(preferencesDataStore)
     }
 
     @Provides

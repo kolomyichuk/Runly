@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.maps.model.LatLng
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -35,7 +36,11 @@ fun RunScreenContent(
         RunMapView(
             modifier = Modifier.weight(1f),
             isTracking = runDisplayState.isTracking,
-            pathPoints = runDisplayState.routePoints,
+            pathPoints = runDisplayState.routePoints.map { path ->
+                path.map { routePoint ->  
+                    LatLng(routePoint.latitude, routePoint.longitude)
+                }
+            },
             hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted
         )
         RunInfoBlock(

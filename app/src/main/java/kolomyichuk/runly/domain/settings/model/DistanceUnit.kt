@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.model
+package kolomyichuk.runly.domain.settings.model
 
 enum class DistanceUnit(val metersPerUnit: Double) {
     KILOMETERS(1000.0),

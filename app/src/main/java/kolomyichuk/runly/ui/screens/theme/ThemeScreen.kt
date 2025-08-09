@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.data.local.datastore.model.AppTheme
 import kolomyichuk.runly.ui.components.TopBarApp
 
 

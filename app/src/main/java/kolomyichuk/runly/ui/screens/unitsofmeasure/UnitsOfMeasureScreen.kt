@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.data.local.datastore.model.DistanceUnitData
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.components.TopBarApp
 import kolomyichuk.runly.ui.ext.getUnitLabel
@@ -54,7 +55,7 @@ private fun UnitsOfMeasureScreenContent(
     modifier: Modifier = Modifier,
     unitsOfMeasureViewModel: UnitsOfMeasureViewModel
 ) {
-    val selectedUnit by unitsOfMeasureViewModel.distanceUnitState.collectAsStateWithLifecycle()
+    val selectedUnit by unitsOfMeasureViewModel.distanceUnitDataState.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -88,7 +89,7 @@ private fun UnitsOfMeasureScreenContent(
                 )
             }
 
-            if (index < DistanceUnit.entries.lastIndex) {
+            if (index < DistanceUnitData.entries.lastIndex) {
                 HorizontalLineDivider()
             }
         }

@@ -1,7 +1,7 @@
 package kolomyichuk.runly.ui.ext
 
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 
 fun DistanceUnit.getUnitLabel(): Int {
     return when (this) {

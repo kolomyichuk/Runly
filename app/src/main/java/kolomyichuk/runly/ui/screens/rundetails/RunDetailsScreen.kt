@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.maps.model.LatLng
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.components.TopBarApp
@@ -65,7 +66,11 @@ private fun RunDetailsScreenContent(
             unit = run.unit
         )
         RunDetailsMapWithRoute(
-            pathPoints = run.routePoints,
+            pathPoints = run.routePoints.map { path ->
+                path.map {
+                    LatLng(it.latitude, it.longitude)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
