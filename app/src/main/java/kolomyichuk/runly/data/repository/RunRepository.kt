@@ -3,6 +3,7 @@ package kolomyichuk.runly.data.repository
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kolomyichuk.runly.data.local.datastore.SettingsPreferencesDataStore
 import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.local.room.entity.RunEntity
@@ -31,6 +32,7 @@ import java.util.Locale
 
 private const val RUNS_COLLECTION = "runs"
 private const val USER_ID_FIELD = "userId"
+private const val TIMESTAMP_FIELD = "timestamp"
 
 class RunRepository(
     private val runDao: RunDao,
@@ -74,6 +76,7 @@ class RunRepository(
         return callbackFlow {
             val subscription = firestore.collection(RUNS_COLLECTION)
                 .whereEqualTo(USER_ID_FIELD, currentUser.uid)
+                .orderBy(TIMESTAMP_FIELD, Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         close(error)
