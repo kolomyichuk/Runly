@@ -3,11 +3,11 @@ package kolomyichuk.runly.ui.screens.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.local.datastore.model.AppTheme
 import kolomyichuk.runly.data.repository.AuthRepository
-import kolomyichuk.runly.data.repository.SettingsRepositoryImpl
 import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
+import kolomyichuk.runly.domain.settings.model.AppTheme
+import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     getRunDisplayModelUseCase: GetRunDisplayModelUseCase,
-    settingsRepository: SettingsRepositoryImpl,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _isUserSignIn = MutableStateFlow(false)

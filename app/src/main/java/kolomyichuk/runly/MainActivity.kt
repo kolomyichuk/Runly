@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kolomyichuk.runly.data.local.datastore.model.AppTheme
+import kolomyichuk.runly.domain.settings.model.AppTheme
 import kolomyichuk.runly.ui.navigation.AuthNavGraph
 import kolomyichuk.runly.ui.navigation.HomeNavGraph
 import kolomyichuk.runly.ui.navigation.RunNavGraph

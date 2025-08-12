@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.local.datastore.model.DistanceUnitData
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.components.TopBarApp
@@ -89,7 +88,7 @@ private fun UnitsOfMeasureScreenContent(
                 )
             }
 
-            if (index < DistanceUnitData.entries.lastIndex) {
+            if (index < DistanceUnit.entries.lastIndex) {
                 HorizontalLineDivider()
             }
         }

@@ -3,9 +3,8 @@ package kolomyichuk.runly.ui.screens.unitsofmeasure
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.local.datastore.model.DistanceUnitData
-import kolomyichuk.runly.data.repository.SettingsRepositoryImpl
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
+import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -14,10 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UnitsOfMeasureViewModel @Inject constructor(
-    private val settingsRepositoryImpl: SettingsRepositoryImpl
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    val distanceUnitDataState = settingsRepositoryImpl.distanceUnitDataState.stateIn(
+    val distanceUnitDataState = settingsRepository.distanceUnitDataState.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         DistanceUnit.KILOMETERS
@@ -25,7 +24,7 @@ class UnitsOfMeasureViewModel @Inject constructor(
 
     fun saveDistanceUnit(distanceUnit: DistanceUnit) {
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepositoryImpl.saveDistanceUnit(distanceUnit)
+            settingsRepository.saveDistanceUnit(distanceUnit)
         }
     }
 }

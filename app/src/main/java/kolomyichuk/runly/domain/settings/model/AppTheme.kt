@@ -1,4 +1,4 @@
-package kolomyichuk.runly.data.local.datastore.model
+package kolomyichuk.runly.domain.settings.model
 
 enum class AppTheme {
     LIGHT,

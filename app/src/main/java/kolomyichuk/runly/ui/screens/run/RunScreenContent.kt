@@ -36,11 +36,7 @@ fun RunScreenContent(
         RunMapView(
             modifier = Modifier.weight(1f),
             isTracking = runDisplayState.isTracking,
-            pathPoints = runDisplayState.routePoints.map { path ->
-                path.map { routePoint ->  
-                    LatLng(routePoint.latitude, routePoint.longitude)
-                }
-            },
+            pathPoints = runDisplayState.routePoints,
             hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted
         )
         RunInfoBlock(

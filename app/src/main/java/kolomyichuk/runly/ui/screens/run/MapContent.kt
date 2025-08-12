@@ -27,9 +27,11 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.local.datastore.model.AppTheme
+import kolomyichuk.runly.domain.run.model.RoutePoint
+import kolomyichuk.runly.domain.settings.model.AppTheme
 import kolomyichuk.runly.ui.components.MapTypeToggleButton
 import kolomyichuk.runly.ui.components.currentLocationMarker
+import kolomyichuk.runly.ui.ext.toLatLng
 
 const val POLYLINE_WIDTH = 12f
 
@@ -38,7 +40,7 @@ const val POLYLINE_WIDTH = 12f
 fun MapContent(
     modifier: Modifier,
     isTracking: Boolean,
-    pathPoints: List<List<LatLng>>,
+    pathPoints: List<List<RoutePoint>>,
     currentLocation: LatLng?,
     cameraPositionState: CameraPositionState
 ) {
@@ -85,7 +87,7 @@ fun MapContent(
             pathPoints.forEach { segment ->
                 if (segment.isNotEmpty()) {
                     Polyline(
-                        points = segment,
+                        points = segment.map { it.toLatLng() },
                         color = MaterialTheme.colorScheme.primary,
                         width = POLYLINE_WIDTH
                     )
@@ -95,7 +97,7 @@ fun MapContent(
                 val lastSegment = pathPoints.lastOrNull()
                 lastSegment?.lastOrNull()?.let { latestLocation ->
                     Marker(
-                        state = MarkerState(latestLocation),
+                        state = MarkerState(latestLocation.toLatLng()),
                         icon = currentLocationMarker,
                         anchor = Offset(0.5f, 0.5f)
                     )

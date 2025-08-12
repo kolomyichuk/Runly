@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.local.datastore.model.DistanceUnitData
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.ui.components.MetricItem
 

@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kolomyichuk.runly.data.local.datastore.model.AppTheme
-import kolomyichuk.runly.data.local.datastore.model.DistanceUnitData
+import kolomyichuk.runly.domain.settings.model.AppTheme
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -19,10 +19,10 @@ class SettingsPreferencesDataStore(
             AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
         }
 
-    val distanceUnitDataState: Flow<DistanceUnitData> = dataStore.data
+    val distanceUnitDataState: Flow<DistanceUnit> = dataStore.data
         .map { preferences ->
-            val ordinal = preferences[DISTANCE_UNIT_KEY] ?: DistanceUnitData.KILOMETERS.ordinal
-            DistanceUnitData.entries.getOrNull(ordinal) ?: DistanceUnitData.KILOMETERS
+            val ordinal = preferences[DISTANCE_UNIT_KEY] ?: DistanceUnit.KILOMETERS.ordinal
+            DistanceUnit.entries.getOrNull(ordinal) ?: DistanceUnit.KILOMETERS
         }
 
 
@@ -32,7 +32,7 @@ class SettingsPreferencesDataStore(
         }
     }
 
-    suspend fun saveDistanceUnit(distanceUnitData: DistanceUnitData) {
+    suspend fun saveDistanceUnit(distanceUnitData: DistanceUnit) {
         dataStore.edit { preferences ->
             preferences[DISTANCE_UNIT_KEY] = distanceUnitData.ordinal
         }

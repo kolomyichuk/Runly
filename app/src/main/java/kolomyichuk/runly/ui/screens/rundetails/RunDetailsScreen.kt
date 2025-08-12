@@ -66,11 +66,7 @@ private fun RunDetailsScreenContent(
             unit = run.unit
         )
         RunDetailsMapWithRoute(
-            pathPoints = run.routePoints.map { path ->
-                path.map {
-                    LatLng(it.latitude, it.longitude)
-                }
-            },
+            pathPoints = run.routePoints,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
