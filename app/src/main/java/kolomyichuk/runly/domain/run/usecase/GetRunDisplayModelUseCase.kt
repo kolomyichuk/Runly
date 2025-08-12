@@ -1,9 +1,8 @@
 package kolomyichuk.runly.domain.run.usecase
 
-import kolomyichuk.runly.domain.run.avgSpeed
+import kolomyichuk.runly.domain.run.RunCalculations
 import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.domain.run.repository.RunRepository
-import kolomyichuk.runly.domain.run.toDistanceUnit
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kolomyichuk.runly.utils.FormatterUtils
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +19,8 @@ class GetRunDisplayModelUseCase @Inject constructor(
             runRepository.runState,
             settingsRepository.getDistanceUnit()
         ) { runState, unit ->
-            val distance = runState.distanceInMeters.toDistanceUnit(unit)
-            val avgSpeed = distance.avgSpeed(runState.timeInMillis)
+            val distance = RunCalculations.convertDistance(runState.distanceInMeters, unit)
+            val avgSpeed = RunCalculations.calculateAvgSpeed(distance, runState.timeInMillis)
 
             RunDisplayModel(
                 distance = String.format(Locale.US, "%.2f", distance),
@@ -31,8 +30,11 @@ class GetRunDisplayModelUseCase @Inject constructor(
                 unit = unit,
                 isActiveRun = runState.isActiveRun,
                 isPause = runState.isPause,
-                isTracking = runState.isTracking
+                isTracking = runState.isTracking,
+                distanceInMeters = runState.distanceInMeters,
+                timeInMillis = runState.timeInMillis
             )
         }
     }
 }
+

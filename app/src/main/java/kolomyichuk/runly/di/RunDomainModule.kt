@@ -9,7 +9,6 @@ import kolomyichuk.runly.domain.run.usecase.DeleteRunByIdInFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetAllRunsFromFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetRunByIdFromFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
-import kolomyichuk.runly.domain.run.usecase.GetRunStateUseCase
 import kolomyichuk.runly.domain.run.usecase.InsertRunInFirestoreUseCase
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 
@@ -49,13 +48,6 @@ object RunDomainModule {
     ): GetRunDisplayModelUseCase = GetRunDisplayModelUseCase(
         runRepository = runRepository,
         settingsRepository = settingsRepository
-    )
-
-    @Provides
-    fun provideGetRunStateUseCase(
-        runRepository: RunRepository
-    ): GetRunStateUseCase = GetRunStateUseCase(
-        runRepository = runRepository
     )
 
     @Provides

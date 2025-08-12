@@ -8,6 +8,8 @@ data class RunDisplayModel(
     val distance: String = "0,0",
     val duration: String = "00:00",
     val avgSpeed: String = "0,00",
+    val distanceInMeters: Double = 0.00,
+    val timeInMillis: Long = 0,
     val routePoints: List<List<RoutePoint>> = emptyList(),
     val unit: DistanceUnit = DistanceUnit.KILOMETERS,
     val isTracking: Boolean = false,

@@ -7,7 +7,6 @@ import kolomyichuk.runly.domain.run.model.RoutePoint
 import kolomyichuk.runly.domain.run.model.Run
 import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
-import kolomyichuk.runly.domain.run.usecase.GetRunStateUseCase
 import kolomyichuk.runly.domain.run.usecase.InsertRunInFirestoreUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +16,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RunViewModel @Inject constructor(
-    private val getRunStateUseCase: GetRunStateUseCase,
     private val insertRunInFirestoreUseCase: InsertRunInFirestoreUseCase,
     getRunDisplayModelUseCase: GetRunDisplayModelUseCase
 ) : ViewModel() {
@@ -30,16 +28,15 @@ class RunViewModel @Inject constructor(
 
     fun saveRun() {
         viewModelScope.launch(Dispatchers.Default) {
-            val state = getRunStateUseCase().value
-            val routePoints = state.pathPoints.map { path ->
+            val routePoints = runDisplayState.value.routePoints.map { path ->
                 path.map { latLng ->
                     RoutePoint(latLng.latitude, latLng.longitude)
                 }
             }
             val run = Run(
                 timestamp = System.currentTimeMillis(),
-                durationInMillis = state.timeInMillis,
-                distanceInMeters = state.distanceInMeters,
+                durationInMillis = runDisplayState.value.timeInMillis,
+                distanceInMeters = runDisplayState.value.distanceInMeters,
                 routePoints = routePoints
             )
             insertRunInFirestoreUseCase(run)

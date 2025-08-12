@@ -100,7 +100,7 @@ class RunTrackingService : Service() {
         timerJob = serviceScope.launch(CoroutineExceptionHandler { _, throwable ->
             Timber.e("Timer error: ${throwable.localizedMessage}")
         }) {
-            while (true) {
+            while (runRepository.runState.value.isTracking) {
                 delay(TIMER_INTERVAL)
                 val currentTime = System.currentTimeMillis()
                 val updatedTime = timeRun + (currentTime - startTime)
