@@ -16,7 +16,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -30,23 +29,25 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kolomyichuk.runly.LocalAppTheme
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.AppTheme
+import kolomyichuk.runly.domain.run.model.RoutePoint
+import kolomyichuk.runly.domain.settings.model.AppTheme
 import kolomyichuk.runly.ui.components.MapTypeToggleButton
 import kolomyichuk.runly.ui.components.finishMarker
 import kolomyichuk.runly.ui.components.startMarker
+import kolomyichuk.runly.ui.ext.toLatLng
 import kolomyichuk.runly.ui.screens.run.MAP_ZOOM
 import kolomyichuk.runly.ui.screens.run.POLYLINE_WIDTH
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun RunDetailsMapWithRoute(
-    pathPoints: List<List<LatLng>>,
+    pathPoints: List<List<RoutePoint>>,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
     val cameraPositionState = rememberCameraPositionState()
-    val firstLocation = pathPoints.firstOrNull()?.firstOrNull()
+    val firstLocation = pathPoints.firstOrNull()?.firstOrNull()?.toLatLng()
 
     LaunchedEffect(firstLocation) {
         if (firstLocation != null) {
@@ -90,7 +91,7 @@ fun RunDetailsMapWithRoute(
             }
             pathPoints.forEach { segment ->
                 Polyline(
-                    points = segment,
+                    points = segment.map { it.toLatLng() },
                     color = MaterialTheme.colorScheme.primary,
                     width = POLYLINE_WIDTH
                 )
@@ -99,7 +100,7 @@ fun RunDetailsMapWithRoute(
             val firstSegment = pathPoints.firstOrNull()
             firstSegment?.firstOrNull()?.let { firstLocation ->
                 Marker(
-                    state = MarkerState(firstLocation),
+                    state = MarkerState(firstLocation.toLatLng()),
                     icon = startMarker,
                     anchor = Offset(0.5f, 0.5f)
                 )
@@ -108,7 +109,7 @@ fun RunDetailsMapWithRoute(
             val lastSegment = pathPoints.lastOrNull()
             lastSegment?.lastOrNull()?.let { lastLocation ->
                 Marker(
-                    state = MarkerState(lastLocation),
+                    state = MarkerState(lastLocation.toLatLng()),
                     icon = finishMarker,
                     anchor = Offset(0.5f, 0.5f)
                 )

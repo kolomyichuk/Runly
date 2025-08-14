@@ -12,6 +12,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import kolomyichuk.runly.domain.run.model.RoutePoint
+import kolomyichuk.runly.ui.ext.toLatLng
 
 const val MAP_ZOOM = 15f
 
@@ -19,7 +21,7 @@ const val MAP_ZOOM = 15f
 fun RunMapView(
     hasForegroundLocationPermission: Boolean,
     isTracking: Boolean,
-    pathPoints: List<List<LatLng>>,
+    pathPoints: List<List<RoutePoint>>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -40,7 +42,7 @@ fun RunMapView(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
             if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()
-            ) pathPoints.first().first()
+            ) pathPoints.first().first().toLatLng()
             else LatLng(49.010708, 25.796191), MAP_ZOOM
         )
     }

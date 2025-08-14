@@ -1,6 +1,4 @@
-package kolomyichuk.runly.data.model
-
-import com.google.android.gms.maps.model.LatLng
+package kolomyichuk.runly.domain.run.model
 
 data class RunState(
     val isTracking: Boolean = false,
@@ -8,5 +6,5 @@ data class RunState(
     val isPause: Boolean = false,
     val timeInMillis: Long = 0,
     val distanceInMeters: Double = 0.00,
-    val pathPoints: List<List<LatLng>> = emptyList()
+    val pathPoints: List<List<RoutePoint>> = emptyList()
 )

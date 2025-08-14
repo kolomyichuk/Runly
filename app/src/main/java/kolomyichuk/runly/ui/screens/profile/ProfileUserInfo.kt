@@ -24,7 +24,6 @@ import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.UserProfile
 import okhttp3.OkHttpClient
 import timber.log.Timber
 

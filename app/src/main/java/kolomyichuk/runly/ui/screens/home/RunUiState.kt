@@ -1,6 +1,6 @@
 package kolomyichuk.runly.ui.screens.home
 
-import kolomyichuk.runly.data.model.RunDisplayModel
+import kolomyichuk.runly.domain.run.model.RunDisplayModel
 
 sealed class RunUiState {
     data object Loading : RunUiState()

@@ -15,9 +15,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.DistanceUnit
-import kolomyichuk.runly.data.model.RunState
-import kolomyichuk.runly.data.repository.RunRepository
+import kolomyichuk.runly.domain.run.model.RunState
+import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
+import kolomyichuk.runly.ui.ext.toLatLng
+import kolomyichuk.runly.ui.ext.toRoutePoint
 import kolomyichuk.runly.utils.FormatterUtils
 import kolomyichuk.runly.utils.NotificationHelper
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -39,6 +42,9 @@ class RunTrackingService : Service() {
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    @Inject
+    lateinit var getRunDisplayModelUseCase: GetRunDisplayModelUseCase
 
     @Inject
     lateinit var runRepository: RunRepository
@@ -77,9 +83,10 @@ class RunTrackingService : Service() {
         timeRun = 0
         startTime = System.currentTimeMillis()
 
+        val currentTime = runRepository.runState.value.timeInMillis
         val notification = notificationHelper.getNotification(
             getString(R.string.run),
-            FormatterUtils.formatTime(runRepository.runState.value.timeInMillis)
+            FormatterUtils.formatTime(currentTime)
         )
         startForeground(TRACKING_NOTIFICATION_ID, notification)
         startTimer()
@@ -107,7 +114,7 @@ class RunTrackingService : Service() {
         if (notificationJob != null) return
 
         notificationJob = serviceScope.launch {
-            runRepository.runDisplayState.collectLatest { run ->
+            getRunDisplayModelUseCase.invoke().collectLatest { run ->
                 if (run.isTracking) {
                     val unitDistance = when (run.unit) {
                         DistanceUnit.KILOMETERS -> getString(R.string.km)
@@ -167,7 +174,7 @@ class RunTrackingService : Service() {
                     addLocationPoints(newPoint)
                     val currentPath = runRepository.runState.value.pathPoints
                     val segmentDistance = currentPath.map { segment ->
-                        SphericalUtil.computeLength(segment)
+                        SphericalUtil.computeLength(segment.map { it.toLatLng() })
                     }
                     val totalDistance = segmentDistance.sum()
                     runRepository.updateRunState { copy(distanceInMeters = totalDistance) }
@@ -180,13 +187,15 @@ class RunTrackingService : Service() {
     private fun addLocationPoints(point: LatLng) {
         val updatedPath = runRepository.runState.value.pathPoints.toMutableList()
         if (updatedPath.isEmpty()) {
-            updatedPath.add(listOf(point))
+            updatedPath.add(listOf(point.toRoutePoint()))
         } else {
             val lastSegment = updatedPath.last().toMutableList()
-            lastSegment.add(point)
+            lastSegment.add(point.toRoutePoint())
             updatedPath[updatedPath.lastIndex] = lastSegment
         }
-        runRepository.updateRunState { copy(pathPoints = updatedPath.toList()) }
+        runRepository.updateRunState {
+            copy(pathPoints = updatedPath.toList())
+        }
     }
 
     private fun isValidLocation(prevPoint: LatLng, newPoint: LatLng, timeDiff: Float): Boolean {

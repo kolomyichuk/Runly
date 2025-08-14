@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
-import kolomyichuk.runly.data.model.DistanceUnit
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.ui.components.HorizontalLineDivider
 import kolomyichuk.runly.ui.ext.getUnitLabel
 

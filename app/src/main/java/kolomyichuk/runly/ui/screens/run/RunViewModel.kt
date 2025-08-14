@@ -3,10 +3,11 @@ package kolomyichuk.runly.ui.screens.run
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.local.room.entity.LatLngPoint
-import kolomyichuk.runly.data.model.Run
-import kolomyichuk.runly.data.model.RunDisplayModel
-import kolomyichuk.runly.data.repository.RunRepository
+import kolomyichuk.runly.domain.run.model.RoutePoint
+import kolomyichuk.runly.domain.run.model.Run
+import kolomyichuk.runly.domain.run.model.RunDisplayModel
+import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
+import kolomyichuk.runly.domain.run.usecase.InsertRunInFirestoreUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -15,10 +16,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RunViewModel @Inject constructor(
-    private val runRepository: RunRepository
+    private val insertRunInFirestoreUseCase: InsertRunInFirestoreUseCase,
+    getRunDisplayModelUseCase: GetRunDisplayModelUseCase
 ) : ViewModel() {
 
-    val runDisplayState = runRepository.runDisplayState.stateIn(
+    val runDisplayState = getRunDisplayModelUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = RunDisplayModel()
@@ -26,19 +28,18 @@ class RunViewModel @Inject constructor(
 
     fun saveRun() {
         viewModelScope.launch(Dispatchers.Default) {
-            val state = runRepository.runState.value
-            val routePoints = state.pathPoints.map { path ->
+            val routePoints = runDisplayState.value.routePoints.map { path ->
                 path.map { latLng ->
-                    LatLngPoint(latLng.latitude, latLng.longitude)
+                    RoutePoint(latLng.latitude, latLng.longitude)
                 }
             }
             val run = Run(
                 timestamp = System.currentTimeMillis(),
-                durationInMillis = state.timeInMillis,
-                distanceInMeters = state.distanceInMeters,
+                durationInMillis = runDisplayState.value.timeInMillis,
+                distanceInMeters = runDisplayState.value.distanceInMeters,
                 routePoints = routePoints
             )
-            runRepository.insertRunInFirestore(run)
+            insertRunInFirestoreUseCase(run)
         }
     }
 }

@@ -3,8 +3,8 @@ package kolomyichuk.runly.ui.screens.theme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kolomyichuk.runly.data.model.AppTheme
-import kolomyichuk.runly.data.repository.SettingsRepository
+import kolomyichuk.runly.domain.settings.model.AppTheme
+import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

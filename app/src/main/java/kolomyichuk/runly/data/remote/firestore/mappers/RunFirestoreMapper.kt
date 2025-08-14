@@ -1,8 +1,10 @@
 package kolomyichuk.runly.data.remote.firestore.mappers
 
-import kolomyichuk.runly.data.model.Run
-import kolomyichuk.runly.data.remote.firestore.model.RouteSegment
+import kolomyichuk.runly.data.remote.firestore.model.LatLngPointFirestore
+import kolomyichuk.runly.domain.run.model.Run
+import kolomyichuk.runly.data.remote.firestore.model.RoutePointFirestore
 import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
+import kolomyichuk.runly.domain.run.model.RoutePoint
 
 fun RunFirestoreModel.toRun(): Run {
     return Run(
@@ -10,7 +12,11 @@ fun RunFirestoreModel.toRun(): Run {
         timestamp = timestamp,
         durationInMillis = durationInMillis,
         distanceInMeters = distanceInMeters,
-        routePoints = routePoints.map { it.points }
+        routePoints = routePoints.map { path ->
+            path.points.map { latLngPointFirestore ->
+                RoutePoint(latLngPointFirestore.latitude, latLngPointFirestore.longitude)
+            }
+        }
     )
 }
 
@@ -21,8 +27,12 @@ fun Run.toRunFirestoreModel(userId: String): RunFirestoreModel {
         timestamp = timestamp,
         durationInMillis = durationInMillis,
         distanceInMeters = distanceInMeters,
-        routePoints = routePoints.map { segment ->
-            RouteSegment(points = segment)
+        routePoints = routePoints.map { path ->
+            RoutePointFirestore(
+                points = path.map { routePoint ->
+                    LatLngPointFirestore(routePoint.latitude, routePoint.longitude)
+                }
+            )
         }
     )
 }
