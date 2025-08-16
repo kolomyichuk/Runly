@@ -9,11 +9,17 @@ import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-val currentLocationMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
-    val centerX = 25f
-    val centerY = 25f
-    val outerRadius = 20f
-    val strokeWidth = 4f
+private const val CANVAS_SIZE = 50
+private const val OUTER_RADIUS = 20f
+private const val CENTER = 25f
+private const val STROKE_WIDTH = 4f
+private const val TILE_DIVISOR = 1.5f
+
+val currentLocationMarker = canvasToBitmapDescriptor(CANVAS_SIZE) { canvas, paint ->
+    val centerX = CENTER
+    val centerY = CENTER
+    val outerRadius = OUTER_RADIUS
+    val strokeWidth = STROKE_WIDTH
     val innerRadius = outerRadius - strokeWidth / 2
 
     paint.style = Paint.Style.STROKE
@@ -26,27 +32,26 @@ val currentLocationMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
     canvas.drawCircle(centerX, centerY, innerRadius, paint)
 }
 
-@Suppress("NAME_SHADOWING")
-val finishMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
-    val centerX = 25f
-    val centerY = 25f
-    val radius = 20f
-    val strokeWidth = 4f
-    val tileSize = radius - strokeWidth / 2
+val finishMarker = canvasToBitmapDescriptor(CANVAS_SIZE) { canvas, paint ->
+    val centerX = CENTER
+    val centerY = CENTER
+    val outerRadius = OUTER_RADIUS
+    val strokeWidth = STROKE_WIDTH
+    val tileSize = outerRadius - strokeWidth / 2
     val paintBlack = Paint().apply { color = Color.Black.toArgb(); style = Paint.Style.FILL }
     val paintWhite = Paint().apply { color = Color.White.toArgb(); style = Paint.Style.FILL }
 
-    val path = Path().apply { addCircle(centerX, centerY, radius, Path.Direction.CCW) }
+    val path = Path().apply { addCircle(centerX, centerY, outerRadius, Path.Direction.CCW) }
     canvas.save()
     canvas.clipPath(path)
 
     for (i in 0..2) {
         for (j in 0..2) {
-            val paint = if ((i + j) % 2 == 0) paintBlack else paintWhite
-            val left = centerX - tileSize + i * tileSize / 1.5f
-            val top = centerY - tileSize + j * tileSize / 1.5f
-            val size = tileSize / 1.5f
-            canvas.drawRect(left, top, left + size, top + size, paint)
+            val tilePaint = if ((i + j) % 2 == 0) paintBlack else paintWhite
+            val left = centerX - tileSize + i * tileSize / TILE_DIVISOR
+            val top = centerY - tileSize + j * tileSize / TILE_DIVISOR
+            val size = tileSize / TILE_DIVISOR
+            canvas.drawRect(left, top, left + size, top + size, tilePaint)
         }
     }
 
@@ -54,15 +59,15 @@ val finishMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
 
     paint.style = Paint.Style.STROKE
     paint.color = Color.White.toArgb()
-    paint.strokeWidth = 4f
-    canvas.drawCircle(centerX, centerY, radius, paint)
+    paint.strokeWidth = STROKE_WIDTH
+    canvas.drawCircle(centerX, centerY, outerRadius, paint)
 }
 
-val startMarker = canvasToBitmapDescriptor(50) { canvas, paint ->
-    val centerX = 25f
-    val centerY = 25f
-    val outerRadius = 20f
-    val strokeWidth = 4f
+val startMarker = canvasToBitmapDescriptor(CANVAS_SIZE) { canvas, paint ->
+    val centerX = CENTER
+    val centerY = CENTER
+    val outerRadius = OUTER_RADIUS
+    val strokeWidth = STROKE_WIDTH
     val innerRadius = outerRadius - strokeWidth / 2
 
     paint.style = Paint.Style.STROKE
@@ -84,12 +89,3 @@ fun canvasToBitmapDescriptor(size: Int, draw: (Canvas, Paint) -> Unit): BitmapDe
 
     return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
-
-
-
-
-
-
-
-
-

@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
     val runs: StateFlow<List<RunDisplayModel>> = getAllRunsFromFirestoreUseCase()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             emptyList()
         )
     private val _uiState = MutableStateFlow<RunUiState>(RunUiState.Loading)

@@ -26,6 +26,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryTest {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -128,33 +129,54 @@ class AuthRepositoryTest {
         }
 
     @Test
-    fun `Given an unexpected error occurs, When signInWithGoogle is called, Then it returns failure with exception`() =
+    fun `Given an illegal argument, When signInWithGoogle is called, Then it returns failure with IllegalArgumentException`() =
         runTest {
             // Given
-            val authCredential = mockk<AuthCredential>(relaxed = true)
-            val generalException = Exception("Network error")
-            val idToken = "some_token"
+            val idToken = ""
+            val exception = IllegalArgumentException("Token must not be empty")
 
             mockkStatic(GoogleAuthProvider::class)
-            mockkStatic(Tasks::class)
 
-            every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
-            every { firebaseAuth.signInWithCredential(authCredential) } returns Tasks.forException(
-                generalException
-            )
+            every { GoogleAuthProvider.getCredential(idToken, null) } throws exception
 
             // When
             val result = authRepository.signInWithGoogle(idToken)
 
             // Then
             assertTrue(result.isFailure)
-            val exception = result.exceptionOrNull()
-            assertTrue(exception is Exception)
-            assertEquals("Network error", exception?.message)
+            val thrown = result.exceptionOrNull()
+            assertTrue(thrown is IllegalArgumentException)
+            assertEquals("Token must not be empty", thrown?.message)
 
             unmockkStatic(GoogleAuthProvider::class)
-            unmockkStatic(Tasks::class)
         }
+
+    @Test
+    fun `Given coroutine is cancelled, When signInWithGoogle is called, Then it returns failure with CancellationException`() =
+        runTest {
+            // Given
+            val idToken = "some_token"
+            val authCredential = mockk<AuthCredential>(relaxed = true)
+            val task = mockk<Task<AuthResult>>(relaxed = true)
+
+            mockkStatic(GoogleAuthProvider::class)
+            mockkStatic("kotlinx.coroutines.tasks.TasksKt")
+
+            every { GoogleAuthProvider.getCredential(idToken, null) } returns authCredential
+            every { firebaseAuth.signInWithCredential(authCredential) } returns task
+            coEvery { task.await() } throws CancellationException("Coroutine cancelled")
+
+            // When
+            val result = authRepository.signInWithGoogle(idToken)
+
+            // Then
+            assertTrue(result.isFailure)
+            assertTrue(result.exceptionOrNull() is CancellationException)
+
+            unmockkStatic(GoogleAuthProvider::class)
+            unmockkStatic("kotlinx.coroutines.tasks.TasksKt")
+        }
+
 
     @Test
     fun `Given user is signed in, When signOut is called, Then FirebaseAuth signs out and credentials are cleared`() =
@@ -172,26 +194,11 @@ class AuthRepositoryTest {
         }
 
     @Test
-    fun `Given FirebaseAuth signOut throws exception, When signOut is called, Then it returns failure`() =
+    fun `Given clearCredentialState throws SecurityException, When signOut is called, Then it still returns success`() =
         runTest {
             // Given
-            val exception = Exception("Logout failed")
-            every { firebaseAuth.signOut() } throws exception
-
-            // When
-            val result = authRepository.signOut()
-
-            // Then
-            assertTrue(result.isFailure)
-            assertEquals(exception, result.exceptionOrNull())
-        }
-
-    @Test
-    fun `Given clearCredentialsState trows exception, When signOut is called, Then it stills returns success`() =
-        runTest {
-            // Given
-            val exception = Exception("Clear failed")
-            coEvery { credentialManager.clearCredentialState(any()) } throws exception
+            coEvery { credentialManager.clearCredentialState(any()) } throws
+                    SecurityException("No permission")
 
             // When
             val result = authRepository.signOut()
@@ -199,7 +206,22 @@ class AuthRepositoryTest {
             // Then
             verify { firebaseAuth.signOut() }
             coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
+            assertTrue(result.isSuccess)
+        }
 
+    @Test
+    fun `Given clearCredentialState throws IllegalStateException, When signOut is called, Then it still returns success`() =
+        runTest {
+            // Given
+            coEvery { credentialManager.clearCredentialState(any()) } throws
+                    IllegalStateException("CredentialManager in invalid state")
+
+            // When
+            val result = authRepository.signOut()
+
+            // Then
+            verify { firebaseAuth.signOut() }
+            coVerify { credentialManager.clearCredentialState(any<ClearCredentialStateRequest>()) }
             assertTrue(result.isSuccess)
         }
 }

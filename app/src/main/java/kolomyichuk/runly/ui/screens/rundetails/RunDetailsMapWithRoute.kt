@@ -89,6 +89,7 @@ fun RunDetailsMapWithRoute(
                 val mapStyle = MapStyleOptions.loadRawResourceStyle(context, mapStyleRes)
                 map.setMapStyle(mapStyle)
             }
+
             pathPoints.forEach { segment ->
                 Polyline(
                     points = segment.map { it.toLatLng() },
@@ -102,7 +103,7 @@ fun RunDetailsMapWithRoute(
                 Marker(
                     state = MarkerState(firstLocation.toLatLng()),
                     icon = startMarker,
-                    anchor = Offset(0.5f, 0.5f)
+                    anchor = Offset(x = 0.5f, y = 0.5f)
                 )
             }
 
@@ -111,10 +112,11 @@ fun RunDetailsMapWithRoute(
                 Marker(
                     state = MarkerState(lastLocation.toLatLng()),
                     icon = finishMarker,
-                    anchor = Offset(0.5f, 0.5f)
+                    anchor = Offset(x = 0.5f, y = 0.5f)
                 )
             }
         }
+
         MapTypeToggleButton(
             modifier = Modifier.align(Alignment.TopEnd),
             onToggle = { isSatellite = !isSatellite }

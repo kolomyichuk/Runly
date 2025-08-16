@@ -12,4 +12,3 @@ import kolomyichuk.runly.data.local.room.entity.RunEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getRunDao(): RunDao
 }
-

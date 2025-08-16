@@ -7,4 +7,3 @@ sealed class RunUiState {
     data class Success(val runs: List<RunDisplayModel>) : RunUiState()
     data class Error(val type: ErrorType) : RunUiState()
 }
-

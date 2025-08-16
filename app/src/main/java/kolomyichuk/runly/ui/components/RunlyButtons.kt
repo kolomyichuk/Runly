@@ -232,4 +232,3 @@ fun SignOutButton(
         )
     }
 }
-

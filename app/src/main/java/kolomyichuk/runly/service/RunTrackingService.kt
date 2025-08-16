@@ -163,7 +163,7 @@ class RunTrackingService : Service() {
                         latitude = it.latitude
                         longitude = it.longitude
                     }
-                }?.time ?: location.time)) / 1000
+                }?.time ?: location.time)) / MILLIS_IN_SECOND
 
                 if (lastValidLocation == null || isValidLocation(
                         lastValidLocation!!,
@@ -206,8 +206,8 @@ class RunTrackingService : Service() {
             prevPoint.latitude, prevPoint.longitude,
             newPoint.latitude, newPoint.longitude, distance
         )
-        val maxSpeed = 30 / 3.6
-        return distance[0] < 50 && distance[0] / timeDiff < maxSpeed
+        val maxSpeed = MAX_SPEED_KMH / KMH_TO_MPS
+        return distance[0] < MAX_DISTANCE_METERS && distance[0] / timeDiff < maxSpeed
     }
 
     private fun pauseTracking() {
@@ -277,6 +277,9 @@ class RunTrackingService : Service() {
 
         private const val LOCATION_UPDATE_INTERVAL = 5000L
         private const val TIMER_INTERVAL = 1000L
+        private const val MILLIS_IN_SECOND = 1000
+        private const val MAX_SPEED_KMH = 30
+        private const val MAX_DISTANCE_METERS = 50
+        private const val KMH_TO_MPS = 3.6
     }
 }
-

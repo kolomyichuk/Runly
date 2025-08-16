@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -72,6 +73,22 @@ android {
     }
     room {
         schemaDirectory("$projectDir/schemas")
+    }
+}
+
+detekt {
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+}
+
+tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
+    ignoreFailures = true
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("build/reports/detekt.html"))
+        xml.required.set(false)
+        sarif.required.set(false)
+        md.required.set(false)
     }
 }
 

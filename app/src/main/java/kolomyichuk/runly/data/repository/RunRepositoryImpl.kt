@@ -2,6 +2,7 @@ package kolomyichuk.runly.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import kolomyichuk.runly.data.local.room.dao.RunDao
 import kolomyichuk.runly.data.local.room.mappers.toRun
@@ -41,7 +42,7 @@ class RunRepositoryImpl(
     }
 
     private val userId: String
-        get() = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        get() = auth.currentUser?.uid ?: error("User not logged in")
 
     override suspend fun insertRunInFirestore(run: Run) {
         try {
@@ -49,16 +50,16 @@ class RunRepositoryImpl(
             val runWithId = run.copy(id = newDocRef.id)
             val firestoreModel = runWithId.toRunFirestoreModel(userId)
             newDocRef.set(firestoreModel).await()
-        } catch (e: Exception) {
-            Timber.e("Error inserting run: ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            Timber.e(e, "Error inserting run into Firestore")
         }
     }
 
     override suspend fun deleteRunByIdInFirestore(runId: String) {
         try {
             firestore.collection(RUNS_COLLECTION).document(runId).delete().await()
-        } catch (e: Exception) {
-            Timber.e("Error deleting error with id: $runId - ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            Timber.e(e, "Error deleting run with id: $runId")
         }
     }
 
@@ -79,11 +80,8 @@ class RunRepositoryImpl(
                         ?.mapNotNull {
                             it.toObject(RunFirestoreModel::class.java)?.toRun()
                         } ?: emptyList()
-                    try {
-                        trySend(runs)
-                    } catch (e: Exception) {
-                        Timber.e("Sending to flow failed: ${e.message}")
-                    }
+
+                    trySend(runs)
                 }
             awaitClose { subscription.remove() }
         }
@@ -99,13 +97,8 @@ class RunRepositoryImpl(
                     return@addSnapshotListener
                 }
 
-                try {
-                    val run =
-                        snapshot?.toObject(RunFirestoreModel::class.java)
-                            ?.toRun()
-                    if (run != null) trySend(run)
-                } catch (e: Exception) {
-                    Timber.e("Error: ${e.message}")
+                snapshot?.toObject(RunFirestoreModel::class.java)?.toRun()?.let {
+                    trySend(it).isSuccess
                 }
             }
 
@@ -133,4 +126,3 @@ class RunRepositoryImpl(
         }
     }
 }
-
