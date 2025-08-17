@@ -27,9 +27,7 @@ import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
 fun RunControlButtons(
-    isTracking: Boolean,
-    isPause: Boolean,
-    distance: String,
+    runUiState: RunUiState,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {
@@ -39,7 +37,7 @@ fun RunControlButtons(
 
     if (showSaveRunDialog) {
         SaveRunDialog(
-            distance = distance,
+            distance = runUiState.distance,
             onSaveRun = onSaveRun,
             onDismiss = { showSaveRunDialog = false },
             navController = navController
@@ -54,7 +52,7 @@ fun RunControlButtons(
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        if (isTracking || isPause) {
+        if (runUiState.isTracking || runUiState.isPause) {
             StopButton {
                 sendCommandToRunService(
                     context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
@@ -65,7 +63,7 @@ fun RunControlButtons(
 
         Button(
             onClick = {
-                if (isTracking) {
+                if (runUiState.isTracking) {
                     sendCommandToRunService(
                         context = context, route = RunTrackingService.ACTION_PAUSE_TRACKING
                     )
@@ -80,7 +78,7 @@ fun RunControlButtons(
                 .height(40.dp)
                 .wrapContentSize()
         ) {
-            Text(text = if (isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
+            Text(text = if (runUiState.isTracking) stringResource(R.string.pause) else stringResource(R.string.resume))
         }
 
         MapVisibilityButton { navController.navigate(Screen.Dashboard) }

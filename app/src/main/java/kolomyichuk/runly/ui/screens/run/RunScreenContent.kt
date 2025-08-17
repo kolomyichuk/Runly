@@ -46,12 +46,14 @@ fun RunScreenContent(
             distanceUnit = runDisplayState.unit
         )
         RunStartBlock(
-            isTracking = runDisplayState.isTracking,
-            isPause = runDisplayState.isPause,
+            runUiState = RunUiState(
+                isTracking = runDisplayState.isTracking,
+                isPause = runDisplayState.isPause,
+                hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
+                distance = runDisplayState.distance
+            ),
             navController = navController,
-            hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
             onSaveRun = { runViewModel.saveRun() },
-            distance = runDisplayState.distance
         )
     }
 }
