@@ -2,6 +2,7 @@ package kolomyichuk.runly.service.manager
 
 import kolomyichuk.runly.domain.run.repository.RunRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -10,9 +11,9 @@ import javax.inject.Inject
 
 private const val TIMER_INTERVAL = 1000L
 
-class TimerManager @Inject constructor(
+class RunTimerManager(
     private val runRepository: RunRepository
-) : BaseServiceManager() {
+) {
 
     private var startTime = 0L
     private var timeRun = 0L
@@ -22,7 +23,7 @@ class TimerManager @Inject constructor(
         startTime = System.currentTimeMillis()
     }
 
-    fun startTimer() {
+    fun startTimer(scope: CoroutineScope) {
         if (timerJob != null) return
 
         timerJob = scope.launch(CoroutineExceptionHandler { _, throwable ->
@@ -43,9 +44,9 @@ class TimerManager @Inject constructor(
         cancelTimer()
     }
 
-    fun resumeTimer() {
+    fun resumeTimer(scope: CoroutineScope) {
         startTime = System.currentTimeMillis()
-        startTimer()
+        startTimer(scope)
     }
 
     fun stopTimer() {

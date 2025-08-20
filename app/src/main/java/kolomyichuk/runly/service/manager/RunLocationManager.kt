@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 private const val LOCATION_UPDATE_INTERVAL = 3000L
 
-class RunLocationManager @Inject constructor(
+class RunLocationManager(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
     private val runRepository: RunRepository
 ) {

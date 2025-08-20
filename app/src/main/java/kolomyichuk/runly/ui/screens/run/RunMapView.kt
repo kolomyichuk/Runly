@@ -33,14 +33,12 @@ fun RunMapView(
     var locationCallback by remember { mutableStateOf<LocationCallback?>(null) }
 
     HandlePassiveLocationUpdates(
-        LocationUpdateHandlerParams(
             isTracking = isTracking,
             fusedLocationClient = fusedLocationClient,
             onLocationUpdate = { currentLocation = it },
             onCallbackChanged = { locationCallback = it },
             locationCallback = locationCallback,
             hasForegroundLocationPermission = hasForegroundLocationPermission
-        )
     )
 
     val cameraPositionState = rememberCameraPositionState {

@@ -12,17 +12,18 @@ import kolomyichuk.runly.R
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.service.RunTrackingService.Companion.TRACKING_NOTIFICATION_ID
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class RunNotificationManager @Inject constructor(
-    @ApplicationContext private val context: Context,
+class RunNotificationManager(
+    private val context: Context,
     private val notificationManager: NotificationManager,
     private val trackingNotificationBuilder: Builder,
     private val getRunDisplayModelUseCase: GetRunDisplayModelUseCase
-) : BaseServiceManager() {
+) {
 
     private var notificationJob: Job? = null
 
@@ -47,7 +48,7 @@ class RunNotificationManager @Inject constructor(
             .build()
     }
 
-    fun startNotificationUpdater() {
+    fun startNotificationUpdater(scope: CoroutineScope) {
         if (notificationJob != null) return
 
         notificationJob = scope.launch {
@@ -75,7 +76,6 @@ class RunNotificationManager @Inject constructor(
     fun stopNotificationUpdater() {
         notificationJob?.cancel()
         notificationJob = null
-        cancelScope()
     }
 
     private fun updateNotification(title: String, content: String) {

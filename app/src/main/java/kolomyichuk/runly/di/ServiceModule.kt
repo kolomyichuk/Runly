@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Builder
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
@@ -14,7 +16,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import kolomyichuk.runly.MainActivity
 import kolomyichuk.runly.R
+import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.service.RunTrackingService
+import kolomyichuk.runly.service.manager.RunLocationManager
+import kolomyichuk.runly.service.manager.RunNotificationManager
+import kolomyichuk.runly.service.manager.RunTimerManager
 
 @Module
 @InstallIn(ServiceComponent::class)
@@ -57,5 +64,43 @@ object ServiceModule {
     @Provides
     fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    @ServiceScoped
+    @Provides
+    fun provideRunLocationManager(
+        fusedLocationProviderClient: FusedLocationProviderClient,
+        runRepository: RunRepository
+    ): RunLocationManager {
+        return RunLocationManager(
+            fusedLocationProviderClient = fusedLocationProviderClient,
+            runRepository = runRepository
+        )
+    }
+
+    @ServiceScoped
+    @Provides
+    fun provideRunNotificationManager(
+        @ApplicationContext context: Context,
+        notificationManager: NotificationManager,
+        trackingNotificationBuilder: Builder,
+        getRunDisplayModelUseCase: GetRunDisplayModelUseCase
+    ): RunNotificationManager {
+        return RunNotificationManager(
+            context = context,
+            notificationManager = notificationManager,
+            trackingNotificationBuilder = trackingNotificationBuilder,
+            getRunDisplayModelUseCase = getRunDisplayModelUseCase
+        )
+    }
+
+    @ServiceScoped
+    @Provides
+    fun provideRunTimerManager(
+        runRepository: RunRepository
+    ): RunTimerManager {
+        return RunTimerManager(
+            runRepository = runRepository
+        )
     }
 }

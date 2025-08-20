@@ -1,6 +1,8 @@
 package kolomyichuk.runly.ui.screens.run
 
 import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -10,15 +12,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.maps.model.LatLng
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RunScreenContent(
     navController: NavController,
     runViewModel: RunViewModel
 ) {
-    val runDisplayState by runViewModel.runDisplayState.collectAsStateWithLifecycle()
+    val runState by runViewModel.runDisplayState.collectAsStateWithLifecycle()
+    val runStartBlockState by runViewModel.runStartBlockState.collectAsStateWithLifecycle()
 
     val foregroundPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -35,23 +38,19 @@ fun RunScreenContent(
     ) {
         RunMapView(
             modifier = Modifier.weight(1f),
-            isTracking = runDisplayState.isTracking,
-            pathPoints = runDisplayState.routePoints,
+            isTracking = runState.isTracking,
+            pathPoints = runState.routePoints,
             hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted
         )
         RunInfoBlock(
-            distance = runDisplayState.distance,
-            time = runDisplayState.duration,
-            avgSpeed = runDisplayState.avgSpeed,
-            distanceUnit = runDisplayState.unit
+            distance = runState.distance,
+            time = runState.duration,
+            avgSpeed = runState.avgSpeed,
+            distanceUnit = runState.unit
         )
         RunStartBlock(
-            runUiState = RunUiState(
-                isTracking = runDisplayState.isTracking,
-                isPause = runDisplayState.isPause,
-                hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
-                distance = runDisplayState.distance
-            ),
+            runStartBlockState = runStartBlockState,
+            hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
             navController = navController,
             onSaveRun = { runViewModel.saveRun() },
         )

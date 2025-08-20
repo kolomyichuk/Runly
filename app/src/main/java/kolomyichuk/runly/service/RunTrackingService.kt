@@ -10,8 +10,13 @@ import kolomyichuk.runly.domain.run.repository.RunRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.service.manager.RunLocationManager
 import kolomyichuk.runly.service.manager.RunNotificationManager
-import kolomyichuk.runly.service.manager.TimerManager
+import kolomyichuk.runly.service.manager.RunTimerManager
 import kolomyichuk.runly.utils.FormatterUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -20,7 +25,7 @@ class RunTrackingService : Service() {
     lateinit var runNotificationManager: RunNotificationManager
 
     @Inject
-    lateinit var timerManager: TimerManager
+    lateinit var runTimerManager: RunTimerManager
 
     @Inject
     lateinit var runLocationManager: RunLocationManager
@@ -30,6 +35,8 @@ class RunTrackingService : Service() {
 
     @Inject
     lateinit var runRepository: RunRepository
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun onCreate() {
         super.onCreate()
@@ -62,15 +69,19 @@ class RunTrackingService : Service() {
         )
 
         startForeground(TRACKING_NOTIFICATION_ID, notification)
-        timerManager.initializeTimer()
-        timerManager.startTimer()
-        runNotificationManager.startNotificationUpdater()
+        runTimerManager.initializeTimer()
+        serviceScope.launch {
+            runTimerManager.startTimer(this)
+        }
+        serviceScope.launch {
+            runNotificationManager.startNotificationUpdater(this)
+        }
         runLocationManager.startLocationTracking()
     }
 
     private fun pauseTracking() {
         runRepository.updateRunState { copy(isTracking = false, isPause = true) }
-        timerManager.pauseTimer()
+        runTimerManager.pauseTimer()
         runLocationManager.stopLocationTracking()
     }
 
@@ -81,14 +92,16 @@ class RunTrackingService : Service() {
                 updatedPath.add(emptyList())
                 copy(isTracking = true, isPause = false, pathPoints = updatedPath.toList())
             }
-            timerManager.resumeTimer()
+            serviceScope.launch {
+                runTimerManager.resumeTimer(this)
+            }
             runLocationManager.startLocationTracking()
         }
     }
 
     private fun stopTracking() {
         runRepository.updateRunState { RunState() }
-        timerManager.stopTimer()
+        runTimerManager.stopTimer()
         runLocationManager.stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -97,10 +110,9 @@ class RunTrackingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         runLocationManager.stopLocationTracking()
-        timerManager.stopTimer()
+        runTimerManager.stopTimer()
         runNotificationManager.stopNotificationUpdater()
-        runNotificationManager.cancelScope()
-        timerManager.cancelScope()
+        serviceScope.cancel()
     }
 
     override fun onBind(p0: Intent?): IBinder? {

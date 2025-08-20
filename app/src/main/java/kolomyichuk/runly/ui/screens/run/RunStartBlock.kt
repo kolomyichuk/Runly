@@ -25,13 +25,16 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import kolomyichuk.runly.R
+import kolomyichuk.runly.domain.run.model.RunDisplayModel
+import kolomyichuk.runly.domain.run.model.RunState
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.StartButton
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun RunStartBlock(
-    runUiState: RunUiState,
+    hasForegroundLocationPermission: Boolean,
+    runStartBlockState: RunStartBlockState,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {
@@ -48,12 +51,12 @@ fun RunStartBlock(
         )
     }
 
-    if (!runUiState.isTracking && !runUiState.isPause) {
+    if (!runStartBlockState.isTracking && !runStartBlockState.isPause) {
         StartButton(
             onClick = {
                 handleStartClick(
                     context = context,
-                    hasForegroundLocationPermission = runUiState.hasForegroundLocationPermission,
+                    hasForegroundLocationPermission = hasForegroundLocationPermission,
                     backgroundPermissionState = backgroundPermissionState,
                     onShowDialog = { showBackgroundLocationDialog = true }
                 )
@@ -66,11 +69,9 @@ fun RunStartBlock(
         )
     } else {
         RunControlButtons(
-            runUiState = RunUiState(
-                isTracking = runUiState.isTracking,
-                isPause = runUiState.isPause,
-                distance = runUiState.distance,
-            ),
+            isTracking = runStartBlockState.isTracking,
+            isPause = runStartBlockState.isPause,
+            distance = runStartBlockState.distance,
             navController = navController,
             onSaveRun = onSaveRun
         )

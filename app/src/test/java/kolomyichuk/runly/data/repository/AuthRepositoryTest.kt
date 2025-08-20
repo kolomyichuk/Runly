@@ -98,7 +98,7 @@ class AuthRepositoryTest {
         }
 
     @Test
-    fun `Given invalid id token, When signInWithGoogle is called, Then it returns failure with FirebaseAuthException`() =
+    fun `Given invalid id token, When signInWithGoogle is called, Then it returns failure withFirebaseAuthException`() =
         runTest {
             // Given
             val idToken = "invalid_token"
