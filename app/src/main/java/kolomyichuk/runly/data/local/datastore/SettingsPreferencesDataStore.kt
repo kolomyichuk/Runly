@@ -43,5 +43,3 @@ class SettingsPreferencesDataStore(
         private val DISTANCE_UNIT_KEY = intPreferencesKey("distance_unit")
     }
 }
-
-

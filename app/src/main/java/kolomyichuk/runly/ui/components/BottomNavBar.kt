@@ -37,7 +37,9 @@ private sealed class BottomNavItem(
     val icon: ImageVector
 ) {
     data object Home : BottomNavItem(Screen.Home, R.string.home, Icons.Default.Home)
-    data object Run : BottomNavItem(Screen.Run, R.string.run, Icons.AutoMirrored.Default.DirectionsRun)
+    data object Run :
+        BottomNavItem(Screen.Run, R.string.run, Icons.AutoMirrored.Default.DirectionsRun)
+
     data object Profile : BottomNavItem(Screen.Profile, R.string.profile, Icons.Default.Person)
 }
 
@@ -57,7 +59,7 @@ fun BottomNavigationBar(
             initialValue = 1f,
             targetValue = 0f,
             animationSpec = InfiniteRepeatableSpec(
-                animation = tween(800),
+                animation = tween(durationMillis = 800),
                 repeatMode = RepeatMode.Reverse
             ), label = "Blinking Color"
         )

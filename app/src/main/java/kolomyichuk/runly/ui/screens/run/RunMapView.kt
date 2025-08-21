@@ -16,6 +16,8 @@ import kolomyichuk.runly.domain.run.model.RoutePoint
 import kolomyichuk.runly.ui.ext.toLatLng
 
 const val MAP_ZOOM = 15f
+private const val DEFAULT_CAMERA_LOCATION_LATITUDE = 49.010708
+private const val DEFAULT_CAMERA_LOCATION_LONGITUDE = 25.796191
 
 @Composable
 fun RunMapView(
@@ -43,7 +45,8 @@ fun RunMapView(
         position = CameraPosition.fromLatLngZoom(
             if (pathPoints.isNotEmpty() && pathPoints.first().isNotEmpty()
             ) pathPoints.first().first().toLatLng()
-            else LatLng(49.010708, 25.796191), MAP_ZOOM
+            else LatLng(DEFAULT_CAMERA_LOCATION_LATITUDE, DEFAULT_CAMERA_LOCATION_LONGITUDE),
+            MAP_ZOOM
         )
     }
 

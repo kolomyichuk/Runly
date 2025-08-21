@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -24,15 +25,15 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import kolomyichuk.runly.R
+import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.StartButton
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun RunStartBlock(
     hasForegroundLocationPermission: Boolean,
-    isTracking: Boolean,
-    isPause: Boolean,
-    distance: String,
+    runState: RunDisplayModel,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {
@@ -49,7 +50,7 @@ fun RunStartBlock(
         )
     }
 
-    if (!isTracking && !isPause) {
+    if (!runState.isTracking && !runState.isPause) {
         StartButton(
             onClick = {
                 handleStartClick(
@@ -67,9 +68,9 @@ fun RunStartBlock(
         )
     } else {
         RunControlButtons(
-            isTracking = isTracking,
-            isPause = isPause,
-            distance = distance,
+            isTracking = runState.isTracking,
+            isPause = runState.isPause,
+            distance = runState.distance,
             navController = navController,
             onSaveRun = onSaveRun
         )
@@ -84,39 +85,49 @@ private fun handleStartClick(
     onShowDialog: () -> Unit
 ) {
     if (hasForegroundLocationPermission) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
-            when (val status = backgroundPermissionState.status) {
-                is PermissionStatus.Granted -> {
-                    sendCommandToRunService(
-                        context = context,
-                        route = RunTrackingService.ACTION_START_TRACKING
-                    )
-                }
-
-                is PermissionStatus.Denied -> {
-                    if (status.shouldShowRationale) {
-                        onShowDialog()
-                    }
-                }
-
-                else -> {
-                    onShowDialog()
-                }
-            }
-        } else {
-            sendCommandToRunService(
-                context = context,
-                route = RunTrackingService.ACTION_START_TRACKING
-            )
-        }
-
+        handleStartBasedOnAndroidVersion(
+            context = context,
+            backgroundPermissionState = backgroundPermissionState,
+            onShowDialog = onShowDialog
+        )
     } else {
         Toast.makeText(
             context,
             context.getString(R.string.location_permission_not_granted),
             Toast.LENGTH_SHORT
         ).show()
+    }
+}
+
+private fun handleStartBasedOnAndroidVersion(
+    context: Context,
+    backgroundPermissionState: PermissionState,
+    onShowDialog: () -> Unit,
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        when (val status = backgroundPermissionState.status) {
+            is PermissionStatus.Granted -> {
+                sendCommandToRunService(
+                    context = context,
+                    route = RunTrackingService.ACTION_START_TRACKING
+                )
+            }
+
+            is PermissionStatus.Denied -> {
+                if (status.shouldShowRationale) {
+                    onShowDialog()
+                }
+            }
+
+            else -> {
+                onShowDialog()
+            }
+        }
+    } else {
+        sendCommandToRunService(
+            context = context,
+            route = RunTrackingService.ACTION_START_TRACKING
+        )
     }
 }
 

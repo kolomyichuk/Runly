@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepository(
     private val firebaseAuth: FirebaseAuth,
@@ -24,9 +25,11 @@ class AuthRepository(
         } catch (e: FirebaseAuthException) {
             Timber.e("Firebase error: ${e.errorCode} - ${e.message}")
             Result.failure(e)
-        } catch (e: Exception) {
-            Timber.e("General error: ${e.message}")
-            e.printStackTrace()
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Invalid token: ${e.message}")
+            Result.failure(e)
+        } catch (e: CancellationException) {
+            Timber.d("Sign-in was cancelled: ${e.message}")
             Result.failure(e)
         }
     }
@@ -34,17 +37,14 @@ class AuthRepository(
     suspend fun signOut(): Result<Unit> {
         return try {
             firebaseAuth.signOut()
-
-            try {
-                credentialManager.clearCredentialState(ClearCredentialStateRequest())
-            } catch (e: Exception) {
-                Timber.e("Could not clear credential state: ${e.message}")
-            }
-
+            credentialManager.clearCredentialState(ClearCredentialStateRequest())
             Result.success(Unit)
-        } catch (e: Exception) {
-            Timber.e("Sign out error: ${e.message}")
-            Result.failure(e)
+        } catch (e: SecurityException) {
+            Timber.e("No permission to clear credentials: ${e.message}")
+            Result.success(Unit)
+        } catch (e: IllegalStateException) {
+            Timber.e("CredentialManager in invalid state: ${e.message}")
+            Result.success(Unit)
         }
     }
 }

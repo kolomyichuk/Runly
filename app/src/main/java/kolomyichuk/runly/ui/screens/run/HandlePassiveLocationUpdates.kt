@@ -18,8 +18,8 @@ private const val LOCATION_UPDATE_INTERVAL = 5000L
 fun HandlePassiveLocationUpdates(
     isTracking: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
-    onLocationUpdate: (LatLng) -> Unit,
-    onCallbackChanged: (LocationCallback?) -> Unit,
+    onLocationUpdate: (LatLng) -> Unit = {},
+    onCallbackChanged: (LocationCallback?) -> Unit = {},
     locationCallback: LocationCallback?,
     hasForegroundLocationPermission: Boolean
 ) {
@@ -37,7 +37,11 @@ fun HandlePassiveLocationUpdates(
                     }
                 }
             }
-            fusedLocationClient.requestLocationUpdates(request, callback, Looper.getMainLooper())
+            fusedLocationClient.requestLocationUpdates(
+                request,
+                callback,
+                Looper.getMainLooper()
+            )
             onCallbackChanged(callback)
         }
         onDispose {

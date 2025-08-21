@@ -27,9 +27,9 @@ import kolomyichuk.runly.ui.navigation.Screen
 
 @Composable
 fun RunControlButtons(
+    distance: String,
     isTracking: Boolean,
     isPause: Boolean,
-    distance: String,
     navController: NavController,
     onSaveRun: () -> Unit
 ) {

@@ -45,11 +45,11 @@ fun GoogleSignInButtonWithLogic(
 
                     onSignInSuccess(idToken)
                 } catch (e: NoCredentialException) {
-                    Timber.e("No Google accounts ${e.message}")
+                    Timber.e(e, "No Google accounts")
                 } catch (e: GetCredentialCancellationException) {
-                    Timber.d("User canceled")
-                } catch (e: Exception) {
-                    Timber.e("Authorization error ${e.message}")
+                    Timber.d(e, "User canceled")
+                } catch (e: IllegalArgumentException) {
+                    Timber.e(e, "Invalid credentials")
                 }
             }
         },

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
+import kolomyichuk.runly.ui.components.model.CircleIconButtonStyle
 
 @Composable
 fun CircleIconButton(
@@ -48,11 +49,7 @@ fun CircleIconButton(
     imageVector: ImageVector? = null,
     iconResId: Int? = null,
     contentDescription: String? = null,
-    backgroundColor: Color = Color.White,
-    iconColor: Color = Color.Black,
-    buttonSize: Dp = 40.dp,
-    iconSize: Dp = 28.dp,
-    elevation: Dp = 8.dp,
+    style: CircleIconButtonStyle = CircleIconButtonStyle()
 ) {
     val clickableModifier = if (onClick != null) {
         Modifier.clickable { onClick() }
@@ -60,10 +57,10 @@ fun CircleIconButton(
 
     Surface(
         shape = CircleShape,
-        color = backgroundColor,
-        shadowElevation = elevation,
+        color = style.backgroundColor,
+        shadowElevation = style.elevation,
         modifier = Modifier
-            .size(buttonSize)
+            .size(style.buttonSize)
             .then(clickableModifier)
     ) {
         Box(
@@ -75,17 +72,17 @@ fun CircleIconButton(
                 Icon(
                     imageVector = imageVector,
                     contentDescription = contentDescription,
-                    tint = iconColor,
-                    modifier = Modifier.size(iconSize)
+                    tint = style.iconColor,
+                    modifier = Modifier.size(style.iconSize)
                 )
             } else if (iconResId != null) {
                 Icon(
                     painter = painterResource(iconResId),
                     contentDescription = contentDescription,
-                    tint = iconColor,
+                    tint = style.iconColor,
                     modifier = Modifier
-                        .size(iconSize)
-                        .background(backgroundColor)
+                        .size(style.iconSize)
+                        .background(style.backgroundColor)
                 )
             }
         }
@@ -127,11 +124,13 @@ fun StopButton(
     CircleIconButton(
         onClick = onClick,
         imageVector = Icons.Filled.Stop,
-        iconColor = MaterialTheme.colorScheme.onPrimary,
-        elevation = 10.dp,
-        iconSize = 28.dp,
-        buttonSize = 40.dp,
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        style = CircleIconButtonStyle(
+            iconColor = MaterialTheme.colorScheme.onPrimary,
+            elevation = 10.dp,
+            iconSize = 28.dp,
+            buttonSize = 40.dp,
+            backgroundColor = MaterialTheme.colorScheme.primary,
+        ),
         contentDescription = stringResource(R.string.stop)
     )
 }
@@ -143,11 +142,13 @@ fun MapVisibilityButton(
     CircleIconButton(
         onClick = onClick,
         imageVector = Icons.Outlined.Map,
-        iconColor = MaterialTheme.colorScheme.onPrimary,
-        elevation = 10.dp,
-        iconSize = 28.dp,
-        buttonSize = 40.dp,
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        style = CircleIconButtonStyle(
+            iconColor = MaterialTheme.colorScheme.onPrimary,
+            elevation = 10.dp,
+            iconSize = 28.dp,
+            buttonSize = 40.dp,
+            backgroundColor = MaterialTheme.colorScheme.primary,
+        ),
         contentDescription = null
     )
 }
@@ -232,4 +233,3 @@ fun SignOutButton(
         )
     }
 }
-

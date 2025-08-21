@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.domain.settings.model.AppTheme
 import kolomyichuk.runly.ui.components.CircleIconButton
+import kolomyichuk.runly.ui.components.model.CircleIconButtonStyle
 
 @Composable
 fun ThemeOption(
@@ -69,13 +70,15 @@ private fun ThemeIcon(
     CircleIconButton(
         imageVector = icon,
         contentDescription = "",
-        backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-        iconColor = MaterialTheme.colorScheme.primary,
-        buttonSize = 40.dp
+        style = CircleIconButtonStyle(
+            backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+            iconColor = MaterialTheme.colorScheme.primary,
+            buttonSize = 40.dp
+        )
     )
 }
 
-private fun AppTheme.getThemeName(context:Context): String {
+private fun AppTheme.getThemeName(context: Context): String {
     return when (this) {
         AppTheme.SYSTEM -> context.getString(R.string.system)
         AppTheme.DARK -> context.getString(R.string.dark)

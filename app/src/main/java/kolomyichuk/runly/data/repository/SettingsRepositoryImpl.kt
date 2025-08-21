@@ -26,6 +26,3 @@ class SettingsRepositoryImpl(
         return preferencesDataStore.distanceUnitDataState
     }
 }
-
-
-

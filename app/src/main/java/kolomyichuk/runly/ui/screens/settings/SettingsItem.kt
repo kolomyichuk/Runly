@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.ui.components.CircleIconButton
+import kolomyichuk.runly.ui.components.model.CircleIconButtonStyle
 
 @Composable
 fun SettingsItem(
@@ -33,9 +34,11 @@ fun SettingsItem(
         CircleIconButton(
             iconResId = settingsItemIcon,
             contentDescription = "",
-            iconColor = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-            buttonSize = 40.dp
+            style = CircleIconButtonStyle(
+                iconColor = MaterialTheme.colorScheme.primary,
+                backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                buttonSize = 40.dp
+            )
         )
         Spacer(Modifier.width(16.dp))
         Text(
