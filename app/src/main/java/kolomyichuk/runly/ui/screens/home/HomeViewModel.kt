@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getAllRunsFromFirestoreUseCase()
                 .catch { e ->
-                    val errorType = when(e){
+                    val errorType = when (e) {
                         is IOException -> ErrorType.NETWORK
                         is FirebaseAuthException -> ErrorType.UNAUTHORIZED
                         else -> ErrorType.UNKNOWN

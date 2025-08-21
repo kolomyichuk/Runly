@@ -31,6 +31,7 @@ identityGoogleid = "1.1.1"
 mockk = "1.13.10"
 coroutinesTest = "1.7.3"
 detekt = "1.23.8"
+crashlytics = "3.0.6"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -75,6 +76,7 @@ credentials-play-services-auth = { group = "androidx.credentials", name = "crede
 identity-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "identityGoogleid" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 
 [plugins]
@@ -87,4 +89,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 
