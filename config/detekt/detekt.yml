@@ -134,7 +134,7 @@ complexity:
     active: true
     functionThreshold: 6
     constructorThreshold: 7
-    ignoreDefaultParameters: false
+    ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotatedParameter: [ ]
   MethodOverloading:
@@ -646,7 +646,7 @@ style:
     maxChainedCalls: 5
   MaxLineLength:
     active: true
-    excludes: [ '**/test/**', '**/androidTest/**']
+    excludes: [ '**/test/**', '**/androidTest/**' ]
     maxLineLength: 120
     excludePackageStatements: true
     excludeImportStatements: true

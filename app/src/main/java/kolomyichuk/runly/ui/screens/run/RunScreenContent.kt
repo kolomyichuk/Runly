@@ -21,7 +21,6 @@ fun RunScreenContent(
     runViewModel: RunViewModel
 ) {
     val runState by runViewModel.runDisplayState.collectAsStateWithLifecycle()
-    val runStartBlockState by runViewModel.runStartBlockState.collectAsStateWithLifecycle()
 
     val foregroundPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -49,7 +48,7 @@ fun RunScreenContent(
             distanceUnit = runState.unit
         )
         RunStartBlock(
-            runStartBlockState = runStartBlockState,
+            runState = runState,
             hasForegroundLocationPermission = foregroundPermissionState.allPermissionsGranted,
             navController = navController,
             onSaveRun = { runViewModel.saveRun() },

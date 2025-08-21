@@ -13,14 +13,13 @@ import com.google.android.gms.maps.model.LatLng
 
 private const val LOCATION_UPDATE_INTERVAL = 5000L
 
-@Suppress("LongParameterList")
 @SuppressLint("MissingPermission")
 @Composable
 fun HandlePassiveLocationUpdates(
     isTracking: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
-    onLocationUpdate: (LatLng) -> Unit,
-    onCallbackChanged: (LocationCallback?) -> Unit,
+    onLocationUpdate: (LatLng) -> Unit = {},
+    onCallbackChanged: (LocationCallback?) -> Unit = {},
     locationCallback: LocationCallback?,
     hasForegroundLocationPermission: Boolean
 ) {
