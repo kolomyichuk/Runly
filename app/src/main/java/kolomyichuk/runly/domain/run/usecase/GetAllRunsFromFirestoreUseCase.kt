@@ -6,9 +6,8 @@ import kolomyichuk.runly.domain.run.repository.RunRepository
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
-class GetAllRunsFromFirestoreUseCase @Inject constructor(
+class GetAllRunsFromFirestoreUseCase(
     private val runRepository: RunRepository,
     private val settingsRepository: SettingsRepository
 ) {

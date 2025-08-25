@@ -8,11 +8,10 @@ import kolomyichuk.runly.utils.FormatterUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.util.Locale
-import javax.inject.Inject
 
-class GetRunDisplayModelUseCase @Inject constructor(
+class GetRunDisplayModelUseCase(
     private val runRepository: RunRepository,
-    private val settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository
 ) {
     operator fun invoke(): Flow<RunDisplayModel> {
         return combine(
