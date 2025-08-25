@@ -1,5 +1,8 @@
 package kolomyichuk.runly.ui.screens.main
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,9 +35,12 @@ fun MainScreen(
                 currentEntry?.destination?.hasRoute<Screen.Dashboard>() == false &&
                 currentEntry?.destination?.hasRoute<Screen.SignIn>() == false
             ) {
-                BottomNavigationBar(navController, runState.isActiveRun)
+                Box(modifier = Modifier.navigationBarsPadding()) {
+                    BottomNavigationBar(navController, runState.isActiveRun)
+                }
             }
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         NavHost(
             navController = navController,

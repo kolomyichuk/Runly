@@ -1,6 +1,7 @@
 package kolomyichuk.runly.ui.screens.rundetails
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +31,8 @@ fun RunDetailsScreen(
                 title = stringResource(R.string.details),
                 onBackClick = onBack
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         RunDetailsScreenContent(
             runDetailsViewModel = runDetailsViewModel,

@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,7 +17,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @Composable
 fun RunScreenContent(
     navController: NavController,
-    runViewModel: RunViewModel
+    runViewModel: RunViewModel,
+    modifier: Modifier = Modifier
 ) {
     val runState by runViewModel.runDisplayState.collectAsStateWithLifecycle()
 
@@ -32,8 +32,7 @@ fun RunScreenContent(
     HandleForegroundPermissions(foregroundPermissionState = foregroundPermissionState)
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
     ) {
         RunMapView(
             modifier = Modifier.weight(1f),
