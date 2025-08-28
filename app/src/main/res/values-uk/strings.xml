@@ -64,4 +64,10 @@
     <string name="error_network">Помилка мережі.\nПеревірте з’єднання.</string>
     <string name="error_unauthorized">Ви не авторизовані.\nУвійдіть повторно.</string>
     <string name="something_went_wrong">Щось пішло не так.</string>
+    <string name="title_for_notification_permission_dialog">Дозвольте надсилати сповіщення</string>
+    <string name="text_for_notification_permission_dialog">
+        Щоб записувати пробіжку у фоновому режимі,
+        додатку потрібен дозвіл на сповіщення.
+        Це дозволить йому залишатися активним та
+        продовжувати відстеження навіть при вимкненому екрані.</string>
 </resources>

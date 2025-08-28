@@ -64,4 +64,10 @@
     <string name="error_network">Network error.\nPlease check your connection.</string>
     <string name="error_unauthorized">You are not authorized.\nPlease log in again.</string>
     <string name="something_went_wrong">Something went wrong.</string>
+    <string name="title_for_notification_permission_dialog">Allow Notifications</string>
+    <string name="text_for_notification_permission_dialog">
+        To record your run in the background,
+        we need permission to send notifications.
+        This allows the app to stay active and keep
+        tracking your progress even when the screen is off.</string>
 </resources>

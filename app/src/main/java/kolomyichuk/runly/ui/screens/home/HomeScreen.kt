@@ -1,9 +1,9 @@
 package kolomyichuk.runly.ui.screens.home
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -16,14 +16,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
     onRunClick: (String) -> Unit
 ) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val notificationPermissionsState = rememberPermissionState(
+            permission = Manifest.permission.POST_NOTIFICATIONS
+        )
+
+        LaunchedEffect(Unit) {
+            notificationPermissionsState.launchPermissionRequest()
+        }
+    }
+
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -53,7 +66,7 @@ fun HomeScreen(
                 title = stringResource(R.string.home)
             )
         },
-        contentWindowInsets = WindowInsets(0,0,0,0)
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         HomeScreenContent(
             homeViewModel = homeViewModel,
