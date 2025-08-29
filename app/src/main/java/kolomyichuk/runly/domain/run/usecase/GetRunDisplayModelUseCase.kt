@@ -2,7 +2,7 @@ package kolomyichuk.runly.domain.run.usecase
 
 import kolomyichuk.runly.domain.run.RunCalculations
 import kolomyichuk.runly.domain.run.model.RunDisplayModel
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kolomyichuk.runly.utils.FormatterUtils
 import kotlinx.coroutines.flow.Flow
@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.combine
 import java.util.Locale
 
 class GetRunDisplayModelUseCase(
-    private val runRepository: RunRepository,
+    private val remoteRunRepository: RemoteRunRepository,
     private val settingsRepository: SettingsRepository
 ) {
     operator fun invoke(): Flow<RunDisplayModel> {
         return combine(
-            runRepository.runState,
+            remoteRunRepository.runState,
             settingsRepository.getDistanceUnit()
         ) { runState, unit ->
             val distance = RunCalculations.convertDistance(runState.distanceInMeters, unit)

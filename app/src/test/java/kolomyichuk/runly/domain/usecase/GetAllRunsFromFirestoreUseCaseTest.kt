@@ -6,7 +6,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kolomyichuk.runly.domain.run.ext.toRunDisplayModel
 import kolomyichuk.runly.domain.run.model.Run
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
 import kolomyichuk.runly.domain.run.usecase.GetAllRunsFromFirestoreUseCase
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
@@ -24,15 +24,15 @@ import org.junit.Before
 import org.junit.Test
 
 class GetAllRunsFromFirestoreUseCaseTest {
-    private lateinit var runRepository: RunRepository
+    private lateinit var remoteRunRepository: RemoteRunRepository
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var useCase: GetAllRunsFromFirestoreUseCase
 
     @Before
     fun setUp() {
-        runRepository = mockk(relaxed = true)
+        remoteRunRepository = mockk(relaxed = true)
         settingsRepository = mockk(relaxed = true)
-        useCase = GetAllRunsFromFirestoreUseCase(runRepository, settingsRepository)
+        useCase = GetAllRunsFromFirestoreUseCase(remoteRunRepository, settingsRepository)
     }
 
     @After
@@ -46,7 +46,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
         val emptyRunsList = emptyList<Run>()
         val distanceUnit = DistanceUnit.KILOMETERS
 
-        coEvery { runRepository.getAllRunsFromFirestore() } returns flowOf(emptyRunsList)
+        coEvery { remoteRunRepository.getAllRunsFromFirestore() } returns flowOf(emptyRunsList)
         coEvery { settingsRepository.getDistanceUnit() } returns flowOf(distanceUnit)
 
 
@@ -55,7 +55,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
 
         // Then
         assertTrue(result.isEmpty())
-        coVerify { runRepository.getAllRunsFromFirestore() }
+        coVerify { remoteRunRepository.getAllRunsFromFirestore() }
         coVerify { settingsRepository.getDistanceUnit() }
     }
 
@@ -66,7 +66,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
             val unit = DistanceUnit.KILOMETERS
             val expected = createRunsList().map { it.toRunDisplayModel(unit) }
 
-            coEvery { runRepository.getAllRunsFromFirestore() } returns flowOf(createRunsList())
+            coEvery { remoteRunRepository.getAllRunsFromFirestore() } returns flowOf(createRunsList())
             coEvery { settingsRepository.getDistanceUnit() } returns flowOf(unit)
 
             // When
@@ -74,7 +74,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
 
             // Then
             assertEquals(expected, result)
-            coVerify { runRepository.getAllRunsFromFirestore() }
+            coVerify { remoteRunRepository.getAllRunsFromFirestore() }
             coVerify { settingsRepository.getDistanceUnit() }
         }
 
@@ -83,7 +83,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
         runTest {
             // Given
             val runs = createRunsList()
-            coEvery { runRepository.getAllRunsFromFirestore() } returns flowOf(createRunsList())
+            coEvery { remoteRunRepository.getAllRunsFromFirestore() } returns flowOf(createRunsList())
             coEvery { settingsRepository.getDistanceUnit() } returns flowOf(
                 DistanceUnit.KILOMETERS,
                 DistanceUnit.MILES
@@ -105,7 +105,7 @@ class GetAllRunsFromFirestoreUseCaseTest {
             // Given
             val initialRuns = listOf(createRun1(), createRun2())
             val runsFlow = flowOf(initialRuns, createRunsList())
-            coEvery { runRepository.getAllRunsFromFirestore() } returns runsFlow
+            coEvery { remoteRunRepository.getAllRunsFromFirestore() } returns runsFlow
             coEvery { settingsRepository.getDistanceUnit() } returns flowOf(DistanceUnit.KILOMETERS)
 
             val expectedInitial = initialRuns.map { it.toRunDisplayModel(DistanceUnit.KILOMETERS) }

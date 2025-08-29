@@ -94,6 +94,9 @@ tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
 }
 
 dependencies {
+    // Chart
+    implementation(libs.vico.compose.m3)
+
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
