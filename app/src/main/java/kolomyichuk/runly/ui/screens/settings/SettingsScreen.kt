@@ -1,5 +1,6 @@
 package kolomyichuk.runly.ui.screens.settings
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -21,7 +22,8 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings),
                 onBackClick = { navController.popBackStack() }
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         SettingsScreenContent(
             navController = navController,

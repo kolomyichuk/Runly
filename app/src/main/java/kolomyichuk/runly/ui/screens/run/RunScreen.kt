@@ -3,7 +3,10 @@ package kolomyichuk.runly.ui.screens.run
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,14 +21,20 @@ fun RunScreen(
     navController: NavController,
     runViewModel: RunViewModel = hiltViewModel(),
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(
-            title = stringResource(R.string.run),
-            onBackClick = { navController.popBackStack() }
-        )
+    Scaffold(
+        topBar = {
+            TopBarApp(
+                title = stringResource(R.string.run),
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+    ) { innerPadding ->
         RunScreenContent(
             navController = navController,
-            runViewModel = runViewModel
+            runViewModel = runViewModel,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         )
     }
 }

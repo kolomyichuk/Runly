@@ -83,7 +83,7 @@ detekt {
 }
 
 tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
-    ignoreFailures = true
+    ignoreFailures = false
     reports {
         html.required.set(true)
         html.outputLocation.set(file("build/reports/detekt.html"))

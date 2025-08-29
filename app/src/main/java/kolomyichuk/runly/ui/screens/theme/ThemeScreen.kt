@@ -1,8 +1,10 @@
 package kolomyichuk.runly.ui.screens.theme
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -19,23 +21,32 @@ fun ThemeScreen(
     onBack: () -> Unit,
     viewModel: ThemeViewModel,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBarApp(
-            title = stringResource(R.string.theme),
-            onBackClick = onBack
+    Scaffold(
+        topBar = {
+            TopBarApp(
+                title = stringResource(R.string.theme),
+                onBackClick = onBack
+            )
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { innerPadding ->
+        ThemeScreenContent(
+            viewModel = viewModel,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         )
-        ThemeScreenContent(viewModel = viewModel)
     }
 }
 
 @Composable
 private fun ThemeScreenContent(
-    viewModel: ThemeViewModel
+    viewModel: ThemeViewModel,
+    modifier: Modifier = Modifier
 ) {
     val currentTheme by viewModel.themeState.collectAsStateWithLifecycle()
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .padding(16.dp)
     ) {
         Column(

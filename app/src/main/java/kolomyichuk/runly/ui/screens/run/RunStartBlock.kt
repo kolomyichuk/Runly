@@ -29,6 +29,7 @@ import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.ui.components.StartButton
 
+@OptIn(ExperimentalPermissionsApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun RunStartBlock(
@@ -39,14 +40,24 @@ fun RunStartBlock(
 ) {
     val context = LocalContext.current
 
-    val backgroundPermissionState =
+    val backgroundLocationPermissionState =
         rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
+    val notificationPermissionState =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
     var showBackgroundLocationDialog by remember { mutableStateOf(false) }
+    var showNotificationPermissionDialog by remember { mutableStateOf(false) }
 
     if (showBackgroundLocationDialog) {
         BackgroundLocationDialog(
             onDismiss = { showBackgroundLocationDialog = false }
+        )
+    }
+
+    if (showNotificationPermissionDialog) {
+        NotificationPermissionDialog(
+            onDismiss = { showNotificationPermissionDialog = false }
         )
     }
 
@@ -56,8 +67,10 @@ fun RunStartBlock(
                 handleStartClick(
                     context = context,
                     hasForegroundLocationPermission = hasForegroundLocationPermission,
-                    backgroundPermissionState = backgroundPermissionState,
-                    onShowDialog = { showBackgroundLocationDialog = true }
+                    backgroundPermissionState = backgroundLocationPermissionState,
+                    onShowBackgroundLocationDialog = { showBackgroundLocationDialog = true },
+                    notificationPermissionState = notificationPermissionState,
+                    onShowNotificationPermissionDialog = { showNotificationPermissionDialog = true }
                 )
             },
             modifier = Modifier
@@ -82,13 +95,17 @@ private fun handleStartClick(
     context: Context,
     hasForegroundLocationPermission: Boolean,
     backgroundPermissionState: PermissionState,
-    onShowDialog: () -> Unit
+    onShowBackgroundLocationDialog: () -> Unit = {},
+    notificationPermissionState: PermissionState,
+    onShowNotificationPermissionDialog: () -> Unit = {}
 ) {
     if (hasForegroundLocationPermission) {
-        handleStartBasedOnAndroidVersion(
+        handleBackgroundLocationAndNotificationPermission(
             context = context,
             backgroundPermissionState = backgroundPermissionState,
-            onShowDialog = onShowDialog
+            onShowBackgroundLocationDialog = onShowBackgroundLocationDialog,
+            notificationPermissionState = notificationPermissionState,
+            onShowNotificationPermissionDialog = onShowNotificationPermissionDialog
         )
     } else {
         Toast.makeText(
@@ -99,13 +116,48 @@ private fun handleStartClick(
     }
 }
 
-private fun handleStartBasedOnAndroidVersion(
+private fun handleBackgroundLocationAndNotificationPermission(
     context: Context,
     backgroundPermissionState: PermissionState,
-    onShowDialog: () -> Unit,
+    onShowBackgroundLocationDialog: () -> Unit,
+    notificationPermissionState: PermissionState,
+    onShowNotificationPermissionDialog: () -> Unit
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         when (val status = backgroundPermissionState.status) {
+            is PermissionStatus.Granted -> {
+                checkNotificationPermission(
+                    context = context,
+                    notificationPermissionState = notificationPermissionState,
+                    onShowNotificationPermissionDialog = onShowNotificationPermissionDialog
+                )
+            }
+
+            is PermissionStatus.Denied -> {
+                if (status.shouldShowRationale) {
+                    onShowBackgroundLocationDialog()
+                }
+            }
+
+            else -> {
+                onShowBackgroundLocationDialog()
+            }
+        }
+    } else {
+        sendCommandToRunService(
+            context = context,
+            route = RunTrackingService.ACTION_START_TRACKING
+        )
+    }
+}
+
+fun checkNotificationPermission(
+    context: Context,
+    notificationPermissionState: PermissionState,
+    onShowNotificationPermissionDialog: () -> Unit
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        when (notificationPermissionState.status) {
             is PermissionStatus.Granted -> {
                 sendCommandToRunService(
                     context = context,
@@ -114,15 +166,14 @@ private fun handleStartBasedOnAndroidVersion(
             }
 
             is PermissionStatus.Denied -> {
-                if (status.shouldShowRationale) {
-                    onShowDialog()
-                }
+                onShowNotificationPermissionDialog()
             }
 
             else -> {
-                onShowDialog()
+                onShowNotificationPermissionDialog()
             }
         }
+
     } else {
         sendCommandToRunService(
             context = context,
