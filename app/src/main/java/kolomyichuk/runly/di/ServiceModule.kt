@@ -16,7 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import kolomyichuk.runly.MainActivity
 import kolomyichuk.runly.R
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.service.RunTrackingService
 import kolomyichuk.runly.service.manager.RunLocationManager
@@ -70,11 +70,11 @@ object ServiceModule {
     @Provides
     fun provideRunLocationManager(
         fusedLocationProviderClient: FusedLocationProviderClient,
-        remoteRunRepository: RemoteRunRepository
+        runRemoteRepository: RunRemoteRepository
     ): RunLocationManager {
         return RunLocationManager(
             fusedLocationProviderClient = fusedLocationProviderClient,
-            remoteRunRepository = remoteRunRepository
+            runRemoteRepository = runRemoteRepository
         )
     }
 
@@ -97,10 +97,10 @@ object ServiceModule {
     @ServiceScoped
     @Provides
     fun provideRunTimerManager(
-        remoteRunRepository: RemoteRunRepository
+        runRemoteRepository: RunRemoteRepository
     ): RunTimerManager {
         return RunTimerManager(
-            remoteRunRepository = remoteRunRepository
+            runRemoteRepository = runRemoteRepository
         )
     }
 }

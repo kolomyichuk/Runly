@@ -6,7 +6,7 @@ import io.mockk.mockk
 import kolomyichuk.runly.domain.run.RunCalculations
 import kolomyichuk.runly.domain.run.model.RunDisplayModel
 import kolomyichuk.runly.domain.run.model.RunState
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
@@ -24,15 +24,15 @@ import org.junit.Test
 import java.util.Locale
 
 class GetRunDisplayModelUseCaseTest {
-    private lateinit var remoteRunRepository: RemoteRunRepository
+    private lateinit var runRemoteRepository: RunRemoteRepository
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var useCase: GetRunDisplayModelUseCase
 
     @Before
     fun setUp() {
-        remoteRunRepository = mockk(relaxed = true)
+        runRemoteRepository = mockk(relaxed = true)
         settingsRepository = mockk(relaxed = true)
-        useCase = GetRunDisplayModelUseCase(remoteRunRepository, settingsRepository)
+        useCase = GetRunDisplayModelUseCase(runRemoteRepository, settingsRepository)
     }
 
     @After
@@ -60,7 +60,7 @@ class GetRunDisplayModelUseCaseTest {
                 initialValue = fakeRunState
             )
 
-            coEvery { remoteRunRepository.runState } returns fakeStateFlow
+            coEvery { runRemoteRepository.runState } returns fakeStateFlow
             coEvery { settingsRepository.getDistanceUnit() } returns flowOf(DistanceUnit.KILOMETERS)
 
             val distance = RunCalculations.convertDistance(
@@ -109,7 +109,7 @@ class GetRunDisplayModelUseCaseTest {
                 initialValue = fakeRunState
             )
 
-            coEvery { remoteRunRepository.runState } returns fakeStateFlow
+            coEvery { runRemoteRepository.runState } returns fakeStateFlow
             coEvery { settingsRepository.getDistanceUnit() } returns flowOf(DistanceUnit.MILES)
 
             val distance = RunCalculations.convertDistance(

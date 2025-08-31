@@ -5,9 +5,9 @@ import kolomyichuk.runly.domain.run.model.RunChart
 import kolomyichuk.runly.domain.run.model.RunState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Date
+import org.threeten.bp.Instant
 
-interface RemoteRunRepository {
+interface RunRemoteRepository {
     val runState: StateFlow<RunState>
     fun updateRunState(update: RunState.() -> RunState)
 
@@ -15,6 +15,6 @@ interface RemoteRunRepository {
     suspend fun deleteRunByIdInFirestore(runId: String)
     fun getAllRunsFromFirestore(): Flow<List<Run>>
     fun getRunByIdFromFirestore(runId: String): Flow<Run>
-    suspend fun getThisWeekDistanceByDay(start: Date, end: Date): List<RunChart>
+    suspend fun getThisWeekDistanceByDay(start: Instant, end: Instant): List<RunChart>
     suspend fun getTotalDistance(): Double
 }

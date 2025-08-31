@@ -1,11 +1,11 @@
 package kolomyichuk.runly.domain.run.usecase
 
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 
 class DeleteRunByIdInFirestoreUseCase(
-    private val remoteRunRepository: RemoteRunRepository
+    private val runRemoteRepository: RunRemoteRepository
 ) {
     suspend operator fun invoke(runId: String) {
-        remoteRunRepository.deleteRunByIdInFirestore(runId)
+        runRemoteRepository.deleteRunByIdInFirestore(runId)
     }
 }

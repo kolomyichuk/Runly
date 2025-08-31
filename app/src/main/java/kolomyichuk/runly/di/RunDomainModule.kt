@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.DeleteRunByIdInFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetAllRunsFromFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetRunByIdFromFirestoreUseCase
@@ -19,51 +19,51 @@ object RunDomainModule {
 
     @Provides
     fun provideDeleteRunByIdInFirestoreUseCase(
-        repository: RemoteRunRepository
+        repository: RunRemoteRepository
     ): DeleteRunByIdInFirestoreUseCase = DeleteRunByIdInFirestoreUseCase(
-        remoteRunRepository = repository
+        runRemoteRepository = repository
     )
 
     @Provides
     fun provideGetAllRunsFromFirestoreUseCase(
-        remoteRunRepository: RemoteRunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetAllRunsFromFirestoreUseCase = GetAllRunsFromFirestoreUseCase(
-        remoteRunRepository = remoteRunRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 
     @Provides
     fun provideGetRunByIdFromFirestoreUseCase(
-        remoteRunRepository: RemoteRunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetRunByIdFromFirestoreUseCase = GetRunByIdFromFirestoreUseCase(
-        remoteRunRepository = remoteRunRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 
     @Provides
     fun provideInsertRunInFirestoreUseCase(
-        remoteRunRepository: RemoteRunRepository
+        runRemoteRepository: RunRemoteRepository
     ): InsertRunInFirestoreUseCase = InsertRunInFirestoreUseCase(
-        remoteRunRepository = remoteRunRepository
+        runRemoteRepository = runRemoteRepository
     )
 
     @Provides
     fun provideGetThisWeekDistanceByDayUseCase(
-        remoteRunRepository: RemoteRunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetThisWeekDistanceByDayUseCase = GetThisWeekDistanceByDayUseCase(
-        remoteRunRepository = remoteRunRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 
     @Provides
     fun provideGetTotalDistanceUseCase(
-        remoteRunRepository: RemoteRunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetTotalDistanceUseCase = GetTotalDistanceUseCase(
-        remoteRunRepository = remoteRunRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 

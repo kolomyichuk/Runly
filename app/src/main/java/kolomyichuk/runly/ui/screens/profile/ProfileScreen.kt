@@ -53,30 +53,34 @@ private fun ProfileScreenContent(
     modifier: Modifier = Modifier
 ) {
     val profile by profileViewModel.userProfile.collectAsStateWithLifecycle()
-    val totalDistance by profileViewModel.totalDistance.collectAsStateWithLifecycle()
     val distanceUnit by profileViewModel.distanceUnit.collectAsStateWithLifecycle()
-    val thisWeekDistanceByDay by profileViewModel.thisWeekDistanceByDay
-        .collectAsStateWithLifecycle()
 
-    val unitLabel = stringResource(id = distanceUnit.getUnitLabel())
+    val thisWeekDistanceByDay = profile.thisWeekDistanceByDay
+    val totalDistance = profile.totalDistance
+    val name = profile.name
+    val photoUrl = profile.photoUrl
 
     Column(
         modifier = modifier
             .padding(16.dp)
     ) {
         ProfileUserInfo(
-            profile = profile
+            name = name,
+            photoUrl = photoUrl
         )
 
         ProvideVicoTheme(rememberM3VicoTheme()) {
             ThisWeekDistanceByDayChart(
                 thisWeekDistanceByDay = thisWeekDistanceByDay,
-                unitLabel = unitLabel
+                unitLabel = stringResource(id = distanceUnit.getUnitLabel())
             )
         }
 
         Text(
-            text = stringResource(R.string.total_distance_all_time, totalDistance, unitLabel),
+            text = stringResource(
+                R.string.total_distance_all_time, totalDistance,
+                stringResource(id = distanceUnit.getUnitLabel())
+            ),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 25.dp)

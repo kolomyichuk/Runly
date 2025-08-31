@@ -10,7 +10,7 @@ import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
 import kolomyichuk.runly.domain.run.model.Run
 import kolomyichuk.runly.domain.run.model.RunChart
 import kolomyichuk.runly.domain.run.model.RunState
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,18 +20,18 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
+import org.threeten.bp.Instant
 import timber.log.Timber
-import java.util.Date
 
 private const val RUNS_COLLECTION = "runs"
 private const val USER_ID_FIELD = "userId"
 private const val TIMESTAMP_FIELD = "timestamp"
 private const val DISTANCE_IN_METERS_FIELD = "distanceInMeters"
 
-class RemoteRunRepositoryImpl(
+class RunRemoteRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
-) : RemoteRunRepository {
+) : RunRemoteRepository {
 
     private val _runState = MutableStateFlow(RunState())
     override val runState: StateFlow<RunState> = _runState.asStateFlow()
@@ -105,25 +105,20 @@ class RemoteRunRepositoryImpl(
         }
     }
 
-    override suspend fun getThisWeekDistanceByDay(start: Date, end: Date): List<RunChart> {
+    override suspend fun getThisWeekDistanceByDay(start: Instant, end: Instant): List<RunChart> {
         val userId = auth.currentUser?.uid
 
         val snapshot = firestore.collection(RUNS_COLLECTION)
             .whereEqualTo(USER_ID_FIELD, userId)
-            .whereGreaterThanOrEqualTo(TIMESTAMP_FIELD, start.time)
-            .whereLessThanOrEqualTo(TIMESTAMP_FIELD, end.time)
+            .whereGreaterThanOrEqualTo(TIMESTAMP_FIELD, start.toEpochMilli())
+            .whereLessThanOrEqualTo(TIMESTAMP_FIELD, end.toEpochMilli())
             .get()
             .await()
 
         return snapshot.documents.mapNotNull { doc ->
-            val timestampMillis = doc.getLong(TIMESTAMP_FIELD) ?: return@mapNotNull null
-            val timestamp = Date(timestampMillis)
-            val distance =
-                doc.getDouble(DISTANCE_IN_METERS_FIELD)?.toFloat() ?: return@mapNotNull null
-
             RunChart(
-                distanceMeters = distance,
-                timestamp = timestamp
+                distanceMeters = doc.getDouble(DISTANCE_IN_METERS_FIELD)?.toFloat() ?: 0f,
+                timestamp = doc.getLong(TIMESTAMP_FIELD) ?: 0L
             )
         }
     }

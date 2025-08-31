@@ -94,6 +94,9 @@ tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
 }
 
 dependencies {
+    // ThreeTenABP — backport of Java 8 time API for Android, compatible with minSdk 24
+    implementation (libs.threetenabp)
+
     // Chart
     implementation(libs.vico.compose.m3)
 

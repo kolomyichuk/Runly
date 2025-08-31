@@ -5,7 +5,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kolomyichuk.runly.domain.run.ext.toRunDisplayModel
-import kolomyichuk.runly.domain.run.repository.RemoteRunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunByIdFromFirestoreUseCase
 import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
@@ -19,15 +19,15 @@ import org.junit.Before
 import org.junit.Test
 
 class GetRunByIdFromFirestoreUseCaseTest {
-    private lateinit var remoteRunRepository: RemoteRunRepository
+    private lateinit var runRemoteRepository: RunRemoteRepository
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var useCase: GetRunByIdFromFirestoreUseCase
 
     @Before
     fun setUp() {
-        remoteRunRepository = mockk(relaxed = true)
+        runRemoteRepository = mockk(relaxed = true)
         settingsRepository = mockk(relaxed = true)
-        useCase = GetRunByIdFromFirestoreUseCase(remoteRunRepository, settingsRepository)
+        useCase = GetRunByIdFromFirestoreUseCase(runRemoteRepository, settingsRepository)
     }
 
     @After
@@ -43,7 +43,7 @@ class GetRunByIdFromFirestoreUseCaseTest {
         val unit = DistanceUnit.KILOMETERS
         val expectedDisplayModel = run.toRunDisplayModel(unit)
 
-        coEvery { remoteRunRepository.getRunByIdFromFirestore(runId) } returns flowOf(run)
+        coEvery { runRemoteRepository.getRunByIdFromFirestore(runId) } returns flowOf(run)
         coEvery { settingsRepository.getDistanceUnit() } returns flowOf(unit)
 
         // When
@@ -52,7 +52,7 @@ class GetRunByIdFromFirestoreUseCaseTest {
         // Then
         assertEquals(expectedDisplayModel, result.first())
 
-        coVerify { remoteRunRepository.getRunByIdFromFirestore(runId) }
+        coVerify { runRemoteRepository.getRunByIdFromFirestore(runId) }
         coVerify { settingsRepository.getDistanceUnit() }
     }
 }
