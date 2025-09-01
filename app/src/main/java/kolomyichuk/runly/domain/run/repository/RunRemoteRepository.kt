@@ -5,7 +5,7 @@ import kolomyichuk.runly.domain.run.model.RunChart
 import kolomyichuk.runly.domain.run.model.RunState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import org.threeten.bp.Instant
+import java.time.Instant
 
 interface RunRemoteRepository {
     val runState: StateFlow<RunState>

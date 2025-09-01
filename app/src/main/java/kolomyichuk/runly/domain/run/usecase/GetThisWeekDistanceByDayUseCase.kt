@@ -4,12 +4,12 @@ import kolomyichuk.runly.domain.run.RunCalculations
 import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.temporal.WeekFields
+import java.time.DayOfWeek
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.temporal.WeekFields
 import java.util.Date
 
 class GetThisWeekDistanceByDayUseCase(

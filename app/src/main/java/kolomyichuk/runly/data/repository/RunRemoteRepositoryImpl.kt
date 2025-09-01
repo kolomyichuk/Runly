@@ -20,8 +20,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
-import org.threeten.bp.Instant
 import timber.log.Timber
+import java.time.Instant
 
 private const val RUNS_COLLECTION = "runs"
 private const val USER_ID_FIELD = "userId"

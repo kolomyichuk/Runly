@@ -54,6 +54,8 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -94,8 +96,8 @@ tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
 }
 
 dependencies {
-    // ThreeTenABP — backport of Java 8 time API for Android, compatible with minSdk 24
-    implementation (libs.threetenabp)
+    // Java 8+ API backport
+    coreLibraryDesugaring (libs.desugar.jdk.libs)
 
     // Chart
     implementation(libs.vico.compose.m3)
