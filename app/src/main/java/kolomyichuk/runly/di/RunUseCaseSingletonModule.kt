@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 import javax.inject.Singleton
@@ -16,10 +16,10 @@ object RunUseCaseSingletonModule {
     @Provides
     @Singleton
     fun provideGetRunDisplayModelUseCase(
-        runRepository: RunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetRunDisplayModelUseCase = GetRunDisplayModelUseCase(
-        runRepository = runRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 }

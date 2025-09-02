@@ -12,8 +12,10 @@ import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.local.room.AppDatabase
 import kolomyichuk.runly.data.local.room.MIGRATION_1_2
 import kolomyichuk.runly.data.local.room.dao.RunDao
-import kolomyichuk.runly.data.repository.RunRepositoryImpl
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.data.repository.RunLocalRepositoryImpl
+import kolomyichuk.runly.data.repository.RunRemoteRepositoryImpl
+import kolomyichuk.runly.domain.run.repository.RunLocalRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import javax.inject.Singleton
 
 @Module
@@ -46,11 +48,18 @@ object RunDataModule {
 
     @Provides
     @Singleton
-    fun provideRunRepository(
-        runDao: RunDao,
+    fun provideRunRemoteRepository(
         firestore: FirebaseFirestore,
         auth: FirebaseAuth
-    ): RunRepository {
-        return RunRepositoryImpl(runDao, firestore, auth)
+    ): RunRemoteRepository {
+        return RunRemoteRepositoryImpl(firestore, auth)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRunLocalRepository(
+        runDao: RunDao
+    ): RunLocalRepository {
+        return RunLocalRepositoryImpl(runDao)
     }
 }

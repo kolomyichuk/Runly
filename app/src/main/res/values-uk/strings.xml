@@ -70,4 +70,13 @@
         додатку потрібен дозвіл на сповіщення.
         Це дозволить йому залишатися активним та
         продовжувати відстеження навіть при вимкненому екрані.</string>
+    <string name="mon">Пн</string>
+    <string name="tue">Вт</string>
+    <string name="wed">Ср</string>
+    <string name="thu">Чт</string>
+    <string name="fri">Пт</string>
+    <string name="sat">Сб</string>
+    <string name="sun">Нд</string>
+    <string name="weekly_distance_by_day">Цього тижня %1$s</string>
+    <string name="total_distance_all_time">Всі пробіжки: %1$s %2$s</string>
 </resources>

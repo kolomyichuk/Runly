@@ -1,18 +1,17 @@
 package kolomyichuk.runly.service.manager
 
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val TIMER_INTERVAL = 1000L
 
 class RunTimerManager(
-    private val runRepository: RunRepository
+    private val runRemoteRepository: RunRemoteRepository
 ) {
 
     private var startTime = 0L
@@ -29,12 +28,12 @@ class RunTimerManager(
         timerJob = scope.launch(CoroutineExceptionHandler { _, throwable ->
             Timber.e("Timer error: ${throwable.localizedMessage}")
         }) {
-            while (runRepository.runState.value.isTracking) {
+            while (runRemoteRepository.runState.value.isTracking) {
                 delay(TIMER_INTERVAL)
                 val currentTime = System.currentTimeMillis()
                 val updatedTime = timeRun + (currentTime - startTime)
 
-                runRepository.updateRunState { copy(timeInMillis = updatedTime) }
+                runRemoteRepository.updateRunState { copy(timeInMillis = updatedTime) }
             }
         }
     }

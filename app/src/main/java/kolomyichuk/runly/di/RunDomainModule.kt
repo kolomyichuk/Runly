@@ -4,10 +4,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.DeleteRunByIdInFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetAllRunsFromFirestoreUseCase
 import kolomyichuk.runly.domain.run.usecase.GetRunByIdFromFirestoreUseCase
+import kolomyichuk.runly.domain.run.usecase.GetThisWeekDistanceByDayUseCase
+import kolomyichuk.runly.domain.run.usecase.GetTotalDistanceUseCase
 import kolomyichuk.runly.domain.run.usecase.InsertRunInFirestoreUseCase
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
 
@@ -17,34 +19,52 @@ object RunDomainModule {
 
     @Provides
     fun provideDeleteRunByIdInFirestoreUseCase(
-        repository: RunRepository
+        repository: RunRemoteRepository
     ): DeleteRunByIdInFirestoreUseCase = DeleteRunByIdInFirestoreUseCase(
-        runRepository = repository
+        runRemoteRepository = repository
     )
 
     @Provides
     fun provideGetAllRunsFromFirestoreUseCase(
-        runRepository: RunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetAllRunsFromFirestoreUseCase = GetAllRunsFromFirestoreUseCase(
-        runRepository = runRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 
     @Provides
     fun provideGetRunByIdFromFirestoreUseCase(
-        runRepository: RunRepository,
+        runRemoteRepository: RunRemoteRepository,
         settingsRepository: SettingsRepository
     ): GetRunByIdFromFirestoreUseCase = GetRunByIdFromFirestoreUseCase(
-        runRepository = runRepository,
+        runRemoteRepository = runRemoteRepository,
         settingsRepository = settingsRepository
     )
 
     @Provides
     fun provideInsertRunInFirestoreUseCase(
-        runRepository: RunRepository
+        runRemoteRepository: RunRemoteRepository
     ): InsertRunInFirestoreUseCase = InsertRunInFirestoreUseCase(
-        runRepository = runRepository
+        runRemoteRepository = runRemoteRepository
+    )
+
+    @Provides
+    fun provideGetThisWeekDistanceByDayUseCase(
+        runRemoteRepository: RunRemoteRepository,
+        settingsRepository: SettingsRepository
+    ): GetThisWeekDistanceByDayUseCase = GetThisWeekDistanceByDayUseCase(
+        runRemoteRepository = runRemoteRepository,
+        settingsRepository = settingsRepository
+    )
+
+    @Provides
+    fun provideGetTotalDistanceUseCase(
+        runRemoteRepository: RunRemoteRepository,
+        settingsRepository: SettingsRepository
+    ): GetTotalDistanceUseCase = GetTotalDistanceUseCase(
+        runRemoteRepository = runRemoteRepository,
+        settingsRepository = settingsRepository
     )
 
 }

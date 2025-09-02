@@ -70,4 +70,13 @@
         we need permission to send notifications.
         This allows the app to stay active and keep
         tracking your progress even when the screen is off.</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
+    <string name="weekly_distance_by_day">This week %1$s</string>
+    <string name="total_distance_all_time">All runs: %1$s %2$s</string>
 </resources>

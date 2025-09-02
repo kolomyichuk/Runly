@@ -4,15 +4,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import kolomyichuk.runly.data.local.room.dao.RunDao
-import kolomyichuk.runly.data.local.room.mappers.toRun
-import kolomyichuk.runly.data.local.room.mappers.toRunEntity
 import kolomyichuk.runly.data.remote.firestore.mappers.toRun
 import kolomyichuk.runly.data.remote.firestore.mappers.toRunFirestoreModel
 import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
 import kolomyichuk.runly.domain.run.model.Run
+import kolomyichuk.runly.domain.run.model.RunChart
 import kolomyichuk.runly.domain.run.model.RunState
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,20 +18,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.time.Instant
 
 private const val RUNS_COLLECTION = "runs"
 private const val USER_ID_FIELD = "userId"
 private const val TIMESTAMP_FIELD = "timestamp"
+private const val DISTANCE_IN_METERS_FIELD = "distanceInMeters"
 
-class RunRepositoryImpl(
-    private val runDao: RunDao,
+class RunRemoteRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
-) : RunRepository {
+) : RunRemoteRepository {
+
     private val _runState = MutableStateFlow(RunState())
     override val runState: StateFlow<RunState> = _runState.asStateFlow()
 
@@ -106,23 +105,34 @@ class RunRepositoryImpl(
         }
     }
 
-    override suspend fun insertRun(run: Run) {
-        runDao.insertRun(run.toRunEntity())
-    }
+    override suspend fun getThisWeekDistanceByDay(start: Instant, end: Instant): List<RunChart> {
+        val userId = auth.currentUser?.uid
 
-    override suspend fun deleteRunById(runId: Int) {
-        runDao.deleteRunById(runId)
-    }
+        val snapshot = firestore.collection(RUNS_COLLECTION)
+            .whereEqualTo(USER_ID_FIELD, userId)
+            .whereGreaterThanOrEqualTo(TIMESTAMP_FIELD, start.toEpochMilli())
+            .whereLessThanOrEqualTo(TIMESTAMP_FIELD, end.toEpochMilli())
+            .get()
+            .await()
 
-    override fun getAllRuns(): Flow<List<Run>> {
-        return runDao.getAllRuns().map { list ->
-            list.map { it.toRun() }
+        return snapshot.documents.mapNotNull { doc ->
+            RunChart(
+                distanceMeters = doc.getDouble(DISTANCE_IN_METERS_FIELD)?.toFloat() ?: 0f,
+                timestamp = doc.getLong(TIMESTAMP_FIELD) ?: 0L
+            )
         }
     }
 
-    override fun getRunById(runId: Int): Flow<Run> {
-        return runDao.getRunById(runId).map { run ->
-            run.toRun()
+    override suspend fun getTotalDistance(): Double {
+        val userId = auth.currentUser?.uid
+
+        val snapshot = firestore.collection(RUNS_COLLECTION)
+            .whereEqualTo(USER_ID_FIELD, userId)
+            .get()
+            .await()
+
+        return snapshot.documents.sumOf {
+            it.getDouble(DISTANCE_IN_METERS_FIELD) ?: 0.0
         }
     }
 }

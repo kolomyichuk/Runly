@@ -29,7 +29,8 @@ import timber.log.Timber
 
 @Composable
 fun ProfileUserInfo(
-    profile: UserProfile
+    name: String?,
+    photoUrl: String?
 ) {
     val context = LocalContext.current
 
@@ -37,7 +38,7 @@ fun ProfileUserInfo(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!profile.photoUrl.isNullOrBlank()) {
+        if (!photoUrl.isNullOrBlank()) {
             val imageLoader = remember {
                 ImageLoader.Builder(context)
                     .components {
@@ -46,7 +47,7 @@ fun ProfileUserInfo(
             }
 
             AsyncImage(
-                model = profile.photoUrl,
+                model = photoUrl,
                 imageLoader = imageLoader,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -70,7 +71,7 @@ fun ProfileUserInfo(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = profile.name ?: stringResource(R.string.user),
+            text = name ?: stringResource(R.string.user),
             fontSize = 18.sp,
             maxLines = 1,
             color = MaterialTheme.colorScheme.onBackground

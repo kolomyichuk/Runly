@@ -7,14 +7,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.TopBarApp
+import kolomyichuk.runly.ui.ext.getUnitLabel
 
 @Composable
 fun ProfileScreen(
@@ -38,6 +44,7 @@ fun ProfileScreen(
                 .padding(innerPadding)
         )
     }
+
 }
 
 @Composable
@@ -46,13 +53,32 @@ private fun ProfileScreenContent(
     modifier: Modifier = Modifier
 ) {
     val profile by profileViewModel.userProfile.collectAsStateWithLifecycle()
+    val distanceUnit by profileViewModel.distanceUnit.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
             .padding(16.dp)
     ) {
         ProfileUserInfo(
-            profile = profile
+            name = profile.name,
+            photoUrl = profile.photoUrl
+        )
+
+        ProvideVicoTheme(rememberM3VicoTheme()) {
+            ThisWeekDistanceByDayChart(
+                thisWeekDistanceByDay = profile.thisWeekDistanceByDay,
+                unitLabel = stringResource(id = distanceUnit.getUnitLabel())
+            )
+        }
+
+        Text(
+            text = stringResource(
+                R.string.total_distance_all_time, profile.totalDistance,
+                stringResource(id = distanceUnit.getUnitLabel())
+            ),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 25.dp)
         )
     }
 }

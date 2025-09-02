@@ -6,7 +6,7 @@ import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import kolomyichuk.runly.R
 import kolomyichuk.runly.domain.run.model.RunState
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.domain.run.usecase.GetRunDisplayModelUseCase
 import kolomyichuk.runly.service.manager.RunLocationManager
 import kolomyichuk.runly.service.manager.RunNotificationManager
@@ -34,7 +34,7 @@ class RunTrackingService : Service() {
     lateinit var getRunDisplayModelUseCase: GetRunDisplayModelUseCase
 
     @Inject
-    lateinit var runRepository: RunRepository
+    lateinit var runRemoteRepository: RunRemoteRepository
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -59,10 +59,10 @@ class RunTrackingService : Service() {
     }
 
     private fun startTracking() {
-        runRepository.updateRunState {
+        runRemoteRepository.updateRunState {
             copy(isTracking = true, isActiveRun = true, isPause = false)
         }
-        val currentTime = runRepository.runState.value.timeInMillis
+        val currentTime = runRemoteRepository.runState.value.timeInMillis
         val notification = runNotificationManager.getNotification(
             getString(R.string.run),
             FormatterUtils.formatTime(currentTime)
@@ -80,15 +80,15 @@ class RunTrackingService : Service() {
     }
 
     private fun pauseTracking() {
-        runRepository.updateRunState { copy(isTracking = false, isPause = true) }
+        runRemoteRepository.updateRunState { copy(isTracking = false, isPause = true) }
         runTimerManager.pauseTimer()
         runLocationManager.stopLocationTracking()
     }
 
     private fun resumeTracking() {
-        if (!runRepository.runState.value.isTracking) {
-            runRepository.updateRunState {
-                val updatedPath = runRepository.runState.value.pathPoints.toMutableList()
+        if (!runRemoteRepository.runState.value.isTracking) {
+            runRemoteRepository.updateRunState {
+                val updatedPath = runRemoteRepository.runState.value.pathPoints.toMutableList()
                 updatedPath.add(emptyList())
                 copy(isTracking = true, isPause = false, pathPoints = updatedPath.toList())
             }
@@ -100,7 +100,7 @@ class RunTrackingService : Service() {
     }
 
     private fun stopTracking() {
-        runRepository.updateRunState { RunState() }
+        runRemoteRepository.updateRunState { RunState() }
         runTimerManager.stopTimer()
         runLocationManager.stopLocationTracking()
         stopForeground(STOP_FOREGROUND_REMOVE)

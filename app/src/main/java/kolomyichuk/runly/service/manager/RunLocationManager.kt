@@ -9,16 +9,15 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
-import kolomyichuk.runly.domain.run.repository.RunRepository
+import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
 import kolomyichuk.runly.ui.ext.toLatLng
 import kolomyichuk.runly.ui.ext.toRoutePoint
-import javax.inject.Inject
 
 private const val LOCATION_UPDATE_INTERVAL = 3000L
 
 class RunLocationManager(
     private val fusedLocationProviderClient: FusedLocationProviderClient,
-    private val runRepository: RunRepository
+    private val runRemoteRepository: RunRemoteRepository
 ) {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -26,12 +25,12 @@ class RunLocationManager(
             locationResult.locations.lastOrNull()?.let { location ->
                 val newPoint = LatLng(location.latitude, location.longitude)
                 addLocationPoints(newPoint)
-                val currentPath = runRepository.runState.value.pathPoints
+                val currentPath = runRemoteRepository.runState.value.pathPoints
                 val segmentDistance = currentPath.map { segment ->
                     SphericalUtil.computeLength(segment.map { it.toLatLng() })
                 }
                 val totalDistance = segmentDistance.sum()
-                runRepository.updateRunState { copy(distanceInMeters = totalDistance) }
+                runRemoteRepository.updateRunState { copy(distanceInMeters = totalDistance) }
             }
         }
     }
@@ -57,7 +56,7 @@ class RunLocationManager(
     }
 
     private fun addLocationPoints(point: LatLng) {
-        val updatedPath = runRepository.runState.value.pathPoints.toMutableList()
+        val updatedPath = runRemoteRepository.runState.value.pathPoints.toMutableList()
         if (updatedPath.isEmpty()) {
             updatedPath.add(listOf(point.toRoutePoint()))
         } else {
@@ -65,7 +64,7 @@ class RunLocationManager(
             lastSegment.add(point.toRoutePoint())
             updatedPath[updatedPath.lastIndex] = lastSegment
         }
-        runRepository.updateRunState {
+        runRemoteRepository.updateRunState {
             copy(pathPoints = updatedPath.toList())
         }
     }

@@ -54,6 +54,8 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -94,6 +96,12 @@ tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
 }
 
 dependencies {
+    // Java 8+ API backport
+    coreLibraryDesugaring (libs.desugar.jdk.libs)
+
+    // Chart
+    implementation(libs.vico.compose.m3)
+
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
