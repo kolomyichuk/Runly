@@ -2,8 +2,9 @@ package kolomyichuk.runly.domain.run.usecase
 
 import kolomyichuk.runly.domain.run.RunCalculations
 import kolomyichuk.runly.domain.run.repository.RunRemoteRepository
+import kolomyichuk.runly.domain.settings.model.DistanceUnit
 import kolomyichuk.runly.domain.settings.repository.SettingsRepository
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -17,7 +18,7 @@ class GetThisWeekDistanceByDayUseCase(
     private val settingsRepository: SettingsRepository
 ) {
     suspend fun invoke(): List<Float> {
-        val unit = settingsRepository.getDistanceUnit().first()
+        val unit = settingsRepository.getDistanceUnit().firstOrNull() ?: DistanceUnit.KILOMETERS
         val (startOfWeek, endOfWeek) = getStartAndEndOfCurrentWeek()
 
         val runs = runRemoteRepository.getThisWeekDistanceByDay(startOfWeek, endOfWeek)
