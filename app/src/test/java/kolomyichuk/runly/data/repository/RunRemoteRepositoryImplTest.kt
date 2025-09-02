@@ -1,5 +1,6 @@
 package kolomyichuk.runly.data.repository
 
+import app.cash.turbine.test
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +17,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kolomyichuk.runly.data.remote.firestore.model.RunFirestoreModel
+import kolomyichuk.runly.domain.run.model.RunState
 import kolomyichuk.runly.utils.createRun1
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -47,6 +49,26 @@ class RunRemoteRepositoryImplTest {
     fun tearDown() {
         clearAllMocks()
     }
+
+    @Test
+    fun `Given initial runState, When updateRunState is called, Then runState emits new state`() =
+        runTest {
+            runRemoteRepository.runState.test {
+                // Given
+                val initial = awaitItem()
+                assertEquals(RunState(), initial)
+
+                // When
+                val newState = RunState(distanceInMeters = 4000.0)
+                runRemoteRepository.updateRunState { newState }
+
+                // Then
+                val emitted = awaitItem()
+                assertEquals(newState, emitted)
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
 
     @Test
     fun `Given valid user, When insertRunInFirestore called, Then run is converted and set in Firestore`() =
