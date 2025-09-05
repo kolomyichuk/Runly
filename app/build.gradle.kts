@@ -1,3 +1,4 @@
+
 import java.util.Properties
 
 plugins {
@@ -38,16 +39,35 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../release.keystore")
+            storePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: ""
+            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: ""
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isDebuggable = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            val releaseApiKey = localProperties.getProperty("RELEASE_GOOGLE_MAP_API_KEY") ?: ""
+            buildConfigField("String", "MAP_API_KEY", "\"$releaseApiKey\"")
+            manifestPlaceholders["GOOGLE_MAP_API_KEY"] = releaseApiKey
         }
-        //Change before release
+
         debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+
             val debugApiKey = localProperties.getProperty("DEBUG_GOOGLE_MAP_API_KEY") ?: ""
             buildConfigField("String", "MAP_API_KEY", "\"$debugApiKey\"")
             manifestPlaceholders["GOOGLE_MAP_API_KEY"] = debugApiKey
@@ -97,7 +117,7 @@ tasks.named<io.gitlab.arturbosch.detekt.Detekt>("detekt").configure {
 
 dependencies {
     // Java 8+ API backport
-    coreLibraryDesugaring (libs.desugar.jdk.libs)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Chart
     implementation(libs.vico.compose.m3)
