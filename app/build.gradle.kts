@@ -1,3 +1,4 @@
+
 import java.util.Properties
 
 plugins {
@@ -48,7 +49,7 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isDebuggable = false
@@ -65,6 +66,7 @@ android {
 
         debug {
             isDebuggable = true
+            isMinifyEnabled = false
 
             val debugApiKey = localProperties.getProperty("DEBUG_GOOGLE_MAP_API_KEY") ?: ""
             buildConfigField("String", "MAP_API_KEY", "\"$debugApiKey\"")
