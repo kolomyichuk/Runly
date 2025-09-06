@@ -73,6 +73,8 @@ fun SettingsScreenContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        SettingsPrivacyPolicy()
+
         SignOutButton(onSignOutClick = { settingsViewModel.signOut() })
     }
 }

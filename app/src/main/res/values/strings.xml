@@ -79,4 +79,8 @@
     <string name="sun">Sun</string>
     <string name="weekly_distance_by_day">This week %1$s</string>
     <string name="total_distance_all_time">All runs: %1$s %2$s</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="and">" and "</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="by_continuing_you_are_agreeing_to_our">By continuing, you are agreeing to our</string>
 </resources>
