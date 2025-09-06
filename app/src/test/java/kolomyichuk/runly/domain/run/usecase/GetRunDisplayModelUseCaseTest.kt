@@ -1,4 +1,4 @@
-package kolomyichuk.runly.domain.usecase
+package kolomyichuk.runly.domain.run.usecase
 
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
