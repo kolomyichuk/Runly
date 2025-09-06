@@ -18,8 +18,8 @@ import timber.log.Timber
 
 @Composable
 fun GoogleSignInButtonWithLogic(
-    modifier: Modifier = Modifier,
-    onSignInSuccess: (String) -> Unit
+    onSignInSuccess: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalActivity.current as Activity

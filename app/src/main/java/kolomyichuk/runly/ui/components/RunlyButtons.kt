@@ -177,7 +177,7 @@ fun MapTypeToggleButton(
 @Composable
 fun GoogleSignInButton(
     onSignInClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onSignInClick,
@@ -189,7 +189,7 @@ fun GoogleSignInButton(
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         border = BorderStroke(1.dp, Color.LightGray),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
