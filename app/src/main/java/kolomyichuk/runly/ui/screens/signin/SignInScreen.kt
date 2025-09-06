@@ -47,8 +47,7 @@ private fun SignInScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             GoogleSignInButtonWithLogic(
-                onSignInSuccess = onSignInSuccess,
-                modifier = Modifier.padding(8.dp)
+                onSignInSuccess = onSignInSuccess
             )
 
             SignInTermsAndPrivacy()

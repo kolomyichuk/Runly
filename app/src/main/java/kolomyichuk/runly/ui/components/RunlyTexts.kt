@@ -7,30 +7,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun ClickableLinkText(
     text: String,
-    modifier: Modifier = Modifier,
-    fontSize: TextUnit = 12.sp,
-    url: String,
-    color: Color = MaterialTheme.colorScheme.tertiary
+    url: String
 ) {
     val context = LocalContext.current
 
     Text(
         text = text,
-        fontSize = fontSize,
-        modifier = modifier.clickable {
+        fontSize = 12.sp,
+        modifier = Modifier.clickable {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             context.startActivity(intent)
         },
         textDecoration = TextDecoration.Underline,
-        color = color
+        color = MaterialTheme.colorScheme.tertiary
     )
 }

@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.ClickableLinkText
+import kolomyichuk.runly.ui.screens.signin.PRIVACY_POLICY
 
 @Composable
 fun SettingsPrivacyPolicy() {
@@ -18,7 +18,7 @@ fun SettingsPrivacyPolicy() {
     ) {
         ClickableLinkText(
             text = stringResource(R.string.privacy_policy),
-            url = "https://sites.google.com/view/runly-privacy-policy"
+            url = PRIVACY_POLICY
         )
     }
 }

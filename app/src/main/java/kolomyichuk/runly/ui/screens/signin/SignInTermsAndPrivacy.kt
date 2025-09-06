@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.sp
 import kolomyichuk.runly.R
 import kolomyichuk.runly.ui.components.ClickableLinkText
 
+private const val TERMS_OF_SERVICE = "https://sites.google.com/view/termsofserviceforrunly"
+const val PRIVACY_POLICY = "https://sites.google.com/view/runly-privacy-policy"
+
 @Composable
 fun SignInTermsAndPrivacy() {
     Column(
@@ -32,7 +35,7 @@ fun SignInTermsAndPrivacy() {
         Row {
             ClickableLinkText(
                 text = stringResource(R.string.terms_of_service),
-                url = "https://sites.google.com/view/termsofserviceforrunly"
+                url = TERMS_OF_SERVICE
             )
 
             Text(
@@ -43,7 +46,7 @@ fun SignInTermsAndPrivacy() {
 
             ClickableLinkText(
                 text = stringResource(R.string.privacy_policy),
-                url = "https://sites.google.com/view/runly-privacy-policy"
+                url = PRIVACY_POLICY
             )
         }
     }

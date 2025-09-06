@@ -2,9 +2,11 @@ package kolomyichuk.runly.ui.screens.signin
 
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
@@ -18,8 +20,7 @@ import timber.log.Timber
 
 @Composable
 fun GoogleSignInButtonWithLogic(
-    onSignInSuccess: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onSignInSuccess: (String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalActivity.current as Activity
@@ -53,6 +54,6 @@ fun GoogleSignInButtonWithLogic(
                 }
             }
         },
-        modifier = modifier
+        modifier = Modifier.padding(8.dp)
     )
 }
