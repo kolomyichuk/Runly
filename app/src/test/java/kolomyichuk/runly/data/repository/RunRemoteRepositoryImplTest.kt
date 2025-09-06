@@ -303,8 +303,9 @@ class RunRemoteRepositoryImplTest {
                 every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 1000.0
             }
 
-            val runDoc2 = mockk<DocumentSnapshot>
-            { every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 2000.0 }
+            val runDoc2 = mockk<DocumentSnapshot> {
+                every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 2000.0
+            }
 
             val snapshot = mockk<QuerySnapshot> {
                 every { documents } returns listOf(runDoc1, runDoc2)
