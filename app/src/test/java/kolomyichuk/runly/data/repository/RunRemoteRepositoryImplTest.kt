@@ -299,8 +299,9 @@ class RunRemoteRepositoryImplTest {
             every { auth.currentUser } returns user
             every { user.uid } returns TEST_USER_ID
 
-            val runDoc1 = mockk<DocumentSnapshot>
-            { every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 1000.0 }
+            val runDoc1 = mockk<DocumentSnapshot> {
+                every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 1000.0
+            }
 
             val runDoc2 = mockk<DocumentSnapshot>
             { every { getDouble(TEST_DISTANCE_IN_METERS_FIELD) } returns 2000.0 }
