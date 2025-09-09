@@ -25,8 +25,8 @@ class GetTotalDistanceUseCaseTest {
 
     @Before
     fun setup() {
-        runRemoteRepository = mockk()
-        settingsRepository = mockk()
+        runRemoteRepository = mockk(relaxed = true)
+        settingsRepository = mockk(relaxed = true)
         useCase = GetTotalDistanceUseCase(runRemoteRepository, settingsRepository)
         mockkObject(RunCalculations)
     }
