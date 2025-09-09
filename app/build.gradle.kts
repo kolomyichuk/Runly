@@ -22,8 +22,8 @@ android {
         applicationId = "kolomyichuk.runly"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -178,7 +178,6 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Testing
-    testImplementation(libs.turbine)
     testImplementation(libs.mockk)
     testImplementation(libs.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
