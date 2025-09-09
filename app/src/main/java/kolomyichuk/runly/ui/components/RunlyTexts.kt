@@ -20,7 +20,7 @@ fun ClickableLinkText(
 
     Text(
         text = text,
-        fontSize = 12.sp,
+        fontSize = 10.sp,
         modifier = Modifier.clickable {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             context.startActivity(intent)
