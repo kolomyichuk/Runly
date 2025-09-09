@@ -45,7 +45,7 @@ fun SignInTermsAndPrivacy() {
             )
 
             ClickableLinkText(
-                text = stringResource(R.string.privacy_policy),
+                text = stringResource(R.string.privacy_policy_sign_in),
                 url = PRIVACY_POLICY
             )
         }

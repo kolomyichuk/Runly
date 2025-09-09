@@ -17,7 +17,7 @@ fun SettingsPrivacyPolicy() {
         horizontalArrangement = Arrangement.Center
     ) {
         ClickableLinkText(
-            text = stringResource(R.string.privacy_policy),
+            text = stringResource(R.string.privacy_policy_settings),
             url = PRIVACY_POLICY
         )
     }

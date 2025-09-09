@@ -79,7 +79,8 @@
     <string name="sun">Нд</string>
     <string name="weekly_distance_by_day">Цього тижня %1$s</string>
     <string name="total_distance_all_time">Всі пробіжки: %1$s %2$s</string>
-    <string name="privacy_policy">Політика конфідеційності</string>
+    <string name="privacy_policy_settings">Політика конфідеційності</string>
+    <string name="privacy_policy_sign_in">Політику конфіденційності</string>
     <string name="and">" і "</string>
     <string name="terms_of_service">Умови надання послуг</string>
     <string name="by_continuing_you_are_agreeing_to_our">Продовжуючи, ви приймаєте наші</string>

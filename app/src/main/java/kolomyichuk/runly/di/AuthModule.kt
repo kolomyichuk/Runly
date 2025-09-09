@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kolomyichuk.runly.data.repository.AuthRepository
+import kolomyichuk.runly.ui.screens.signin.GoogleSignInHelper
 import javax.inject.Singleton
 
 @Module
@@ -32,5 +33,11 @@ object AuthModule {
         credentialManager: CredentialManager
     ): AuthRepository {
         return AuthRepository(firebaseAuth, credentialManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoogleSignInHelper(firebaseAuth: FirebaseAuth): GoogleSignInHelper {
+        return GoogleSignInHelper(firebaseAuth)
     }
 }

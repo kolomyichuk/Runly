@@ -1,19 +1,19 @@
+@file:Suppress("DEPRECATION")
+
 package kolomyichuk.runly.ui.screens.signin
 
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.credentials.exceptions.NoCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import kolomyichuk.runly.R
+import androidx.compose.ui.platform.LocalContext
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import dagger.hilt.android.EntryPointAccessors
+import kolomyichuk.runly.di.GoogleSignInHelperEntryPoint
 import kolomyichuk.runly.ui.components.GoogleSignInButton
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,36 +24,43 @@ fun GoogleSignInButtonWithLogic(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalActivity.current as Activity
+    val googleSignInHelper = rememberGoogleSignInHelper()
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account.idToken?.let {
+                googleSignInHelper.signInWithFirebase(it, onSignInSuccess)
+            }
+        } catch (e: ApiException) {
+            Timber.e("Google sign-in failed: ${e.statusCode} (${e.message})")
+        }
+    }
 
     GoogleSignInButton(
         onSignInClick = {
             coroutineScope.launch {
-                try {
-                    val credentialManager = CredentialManager.create(activity)
-                    val googleIdOption = GetGoogleIdOption.Builder()
-                        .setServerClientId(activity.getString(R.string.default_web_client_id))
-                        .setFilterByAuthorizedAccounts(false)
-                        .build()
-
-                    val request = GetCredentialRequest.Builder()
-                        .addCredentialOption(googleIdOption)
-                        .build()
-
-                    val result = credentialManager.getCredential(activity, request)
-                    val credential =
-                        GoogleIdTokenCredential.createFrom(result.credential.data)
-                    val idToken = credential.idToken
-
-                    onSignInSuccess(idToken)
-                } catch (e: NoCredentialException) {
-                    Timber.e(e, "No Google accounts")
-                } catch (e: GetCredentialCancellationException) {
-                    Timber.d(e, "User canceled")
-                } catch (e: IllegalArgumentException) {
-                    Timber.e(e, "Invalid credentials")
+                val idToken = googleSignInHelper.getIdTokenWithCredentialManager(activity)
+                if (idToken != null) {
+                    googleSignInHelper.signInWithFirebase(idToken, onSignInSuccess)
+                } else {
+                    googleSignInHelper.launchGoogleSignIn(activity, googleSignInLauncher)
                 }
             }
-        },
-        modifier = Modifier.padding(8.dp)
+        }
     )
+}
+
+@Composable
+private fun rememberGoogleSignInHelper(): GoogleSignInHelper {
+    val context = LocalContext.current.applicationContext
+    return remember {
+        EntryPointAccessors.fromApplication(
+            context,
+            GoogleSignInHelperEntryPoint::class.java
+        ).googleSignInHelper()
+    }
 }
