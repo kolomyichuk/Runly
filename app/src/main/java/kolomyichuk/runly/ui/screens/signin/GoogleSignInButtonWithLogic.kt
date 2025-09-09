@@ -7,8 +7,11 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -26,9 +29,12 @@ fun GoogleSignInButtonWithLogic(
     val activity = LocalActivity.current as Activity
     val googleSignInHelper = rememberGoogleSignInHelper()
 
+    var isSigningIn by remember { mutableStateOf(false) }
+
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        isSigningIn = false
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
@@ -42,6 +48,8 @@ fun GoogleSignInButtonWithLogic(
 
     GoogleSignInButton(
         onSignInClick = {
+            if (isSigningIn) return@GoogleSignInButton
+            isSigningIn = true
             coroutineScope.launch {
                 val idToken = googleSignInHelper.getIdTokenWithCredentialManager(activity)
                 if (idToken != null) {

@@ -28,7 +28,7 @@ fun SignInTermsAndPrivacy() {
     ) {
         Text(
             text = stringResource(R.string.by_continuing_you_are_agreeing_to_our),
-            fontSize = 12.sp,
+            fontSize = 10.sp,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -40,7 +40,7 @@ fun SignInTermsAndPrivacy() {
 
             Text(
                 text = stringResource(R.string.and),
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
